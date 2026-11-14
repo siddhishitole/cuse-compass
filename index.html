@@ -1142,10 +1142,17 @@ function navStart(from, to, intro){
   igLiveRender(); if (st.voice) speak((intro ? intro + ' ' : '') + r.steps[0].text);
   return true;
 }
+function navTask(room, type, intro){
+  const r = igNearest(room, type); if (r.error) { toast(r.error); return false; }
+  if (st.nav) clearTimeout(st.nav.timer);
+  st.nav = {from:room, to:r.sub, label:type === 'restroom' ? 'the nearest restroom' : 'the nearest elevator', task:type, route:r, i:0, auto:false, done:false, timer:null};
+  st.ig.here = room; igLiveRender(); if (st.voice) speak((intro ? intro + ' ' : '') + r.steps[0].text);
+  return true;
+}
 function navGo(d){
   const n = st.nav; if (!n) return; clearTimeout(n.timer); st.voiceOk = true;
   const j = n.i + d; if (j < 0) return;
-  if (j >= n.route.steps.length) { n.done = true; igLiveRender(); burst(window.innerWidth / 2, window.innerHeight * 0.35); if (st.voice) speak(`You’ve arrived at room ${n.to}.`); return; }
+  if (j >= n.route.steps.length) { n.done = true; igLiveRender(); burst(window.innerWidth / 2, window.innerHeight * 0.35); if (st.voice) speak(`You’ve arrived at ${n.label || 'room ' + n.to}.`); return; }
   n.done = false; n.i = j; igLiveRender(); navSpeak(); navSchedule();
 }
 function navFromRoom(v){
@@ -1156,16 +1163,17 @@ function navFromRoom(v){
 }
 function navStepHTML(){
   const n = st.nav, R = n.route, N = R.steps.length;
-  if (n.done) return `<div class="igl-head"><b>You’ve arrived</b><span>Room ${esc(n.to)}</span></div><div class="nav-btns"><button class="btn ghost" data-navprev="1" type="button">Back</button><button class="btn" data-navchange="1" type="button">New route</button></div>`;
+  if (n.done) return `<div class="igl-head"><b>You’ve arrived</b><span>${n.label ? esc(n.label) : 'Room ' + esc(n.to)}</span></div><div class="nav-btns"><button class="btn ghost" data-navprev="1" type="button">Back</button><button class="btn" data-navchange="1" type="button">New route</button></div>`;
   const s = R.steps[n.i], nx = R.steps[n.i + 1], last = n.i === N - 1, f = s.f;
   const seg = s.sx != null ? [[s.sx, s.sy], [s.ex, s.ey]] : null, you = seg ? seg[0] : (s.x != null ? [s.x, s.y] : null);
   const svg = INDOOR.floors[f] && (you || R.plan.per[f]) ? igFloorSVG(f, {pts:R.plan.per[f] || [], boxPts:seg || (you ? [you] : R.plan.per[f]), hi:R.plan.hi, marks:(R.plan.marks[f] || []).filter(m => m.type === 'end'), seg, you}) : '<p class="igl-hint">Floor 1 isn’t on the hand-traced map yet. Follow the door signs from here.</p>';
-  return `<div class="nav-head"><span>Step ${n.i + 1} of ${N}</span><span>Floor ${f} · to Room ${esc(n.to)}</span></div>
+  return `<div class="nav-head"><span>Step ${n.i + 1} of ${N}</span><span>Floor ${f} · ${n.label ? esc(n.label) : 'to Room ' + esc(n.to)}</span></div>
   <div class="nav-main"><div class="gicon nav-ico">${navArrow(s.kind)}</div><div class="nav-txt"><b>${esc(s.text)}</b>${nx ? `<em>Then: ${esc(nx.text)}</em>` : ''}</div></div>
   ${st.voiceOk ? '' : '<button class="btn sm voiceon" data-voiceon="1" type="button">Tap to turn on voice</button>'}
   <div class="igl-map">${svg}</div>
   <div class="nav-btns"><button class="btn ghost" data-navprev="1" type="button">Back</button><button class="btn" data-navnext="1" type="button">${last ? 'I’m here' : 'Next step'}</button><button class="btn ghost" data-navrep="1" type="button">Repeat</button></div>
-  <div class="nav-row"><button class="chip" data-navauto="1" aria-pressed="${n.auto}" type="button">Hands-free: ${n.auto ? 'on' : 'off'}</button><button class="chip" data-navchange="1" type="button">Change start</button></div>`;
+  <div class="nav-row"><button class="chip" data-navauto="1" aria-pressed="${n.auto}" type="button">Hands-free: ${n.auto ? 'on' : 'off'}</button><button class="chip" data-navchange="1" type="button">Change start</button></div>
+  <div class="nav-row"><button class="chip" data-igl="restroom" type="button">Nearest restroom</button><button class="chip" data-igl="elevator" type="button">Nearest elevator</button></div>`;
 }
 function igLiveRender(){
   const box = $('igLive'); if (!box) return;
@@ -1174,7 +1182,7 @@ function igLiveRender(){
   box.hidden = false;
   if (cg && st.stage === 'guide') cg.hidden = !!(n && tn);
   if (tn && here && here === tn) { st.nav = null; box.innerHTML = `<div class="igl-head"><b>You’re at Room ${esc(here)}</b><span>Floor ${IG.rooms[here] ? IG.rooms[here].f : ''}</span></div>`; return; }
-  if (n && tn) { box.innerHTML = navStepHTML(); return; }
+  if (n && (tn || n.task)) { box.innerHTML = navStepHTML(); return; }
   if (tn) {
     box.innerHTML = `<div class="igl-head"><b>Where are you now?</b><span>Tell me once, then I’ll give you turn-by-turn steps to Room ${esc(tn)}.</span></div><div class="row navchips">${NAV_STARTS.map(x => `<button class="chip" data-navfrom="${x[0]}" type="button">${esc(x[1])} · ${x[0]}</button>`).join('')}</div><div class="navfrom"><input id="navFrom" type="text" placeholder="A room number you can see, like 244" aria-label="Room number near you"><button class="btn sm" data-navfromgo="1" type="button">Start</button></div><p class="igl-hint">Or point the camera at any door number. You only need to do this once.</p>`;
     return;
@@ -1183,13 +1191,17 @@ function igLiveRender(){
   const R = IG.rooms[here], hi = {}; hi[here] = 1;
   box.innerHTML = `<div class="igl-head"><b>You’re near Room ${esc(here)}</b><span>Floor ${R.f}</span></div><div class="igl-map">${igFloorSVG(R.f, {pts:[[R.x, R.y]], hi, marks:[{type:'start', x:R.x, y:R.y}], full:false})}</div><div class="row"><button class="btn ghost sm" data-igl="restroom" type="button">Nearest restroom</button><button class="btn ghost sm" data-igl="elevator" type="button">Nearest elevator</button></div>`;
 }
-function igLocated(room){
+function igLocated(room, auto){
   const changed = st.ig.here !== room; st.ig.here = room;
   if (FW.active) { fwResync(room); return; }
-  const t = st.target, tn = mappedNum(t), R = IG.rooms[room];
+  if (!changed && auto) return; // auto-scan saw the same door again: nothing to do, keep your place in the steps
+  const t = st.target, tn = mappedNum(t), R = IG.rooms[room], n = st.nav;
   if (tn === room) { st.nav = null; igLiveRender(); if (changed && st.voice) speak(`You’re at room ${room}. You’ve arrived.`); return; }
-  if (tn) { if (changed || !st.nav) navStart(room, tn, `You’re near room ${room}, on floor ${R.f}.`); else igLiveRender(); return; }
-  igLiveRender(); if (changed && st.voice) speak(`You’re near room ${room}, on floor ${R.f}.`);
+  const intro = changed ? `You’re near room ${room}, on floor ${R.f}.` : `You’re still near room ${room}.`;
+  if (!changed) setStatus(`You’re still near room ${room}${n ? '. Starting the steps again from here.' : '.'}`);
+  if (n && n.task) { navTask(room, n.task, intro); return; }            // a restroom or elevator search keeps following you
+  if (tn) { if (changed || !n || n.i > 0) navStart(room, tn, intro); else { igLiveRender(); if (st.voice) speak(intro + ' ' + n.route.steps[0].text); } return; }
+  igLiveRender(); if (st.voice) speak(intro);
 }
 /* ----- timed hands-free walk (kept for compatibility; the navigator above is the main way) ----- */
 const FW = {steps:[], i:0, timer:null, paused:false, active:false, route:null, from:'', to:''};
@@ -1601,8 +1613,8 @@ function applyMove(move, why){
 }
 function handleScan(res, auto){
   const list = res.numbers;
-  const mapped = list.find(n => IG.rooms[n]); if (mapped) igLocated(mapped);
   if (list.length) showFound(list);
+  const mapped = list.find(n => IG.rooms[n]); if (mapped) igLocated(mapped, auto); // after the popup, so "You’re still near room …" is what stays on screen
   const t = st.target;
   if (t) {
     const hit = list.some(n => t.nums.includes(n));
@@ -2003,12 +2015,12 @@ document.addEventListener('click', e => {
   else if (d.navprev) navGo(-1);
   else if (d.navrep) { st.voiceOk = true; navSpeak(); }
   else if (d.navauto) { const n = st.nav; if (n) { n.auto = !n.auto; st.voiceOk = true; igLiveRender(); navSchedule(); } }
-  else if (d.navchange) { if (st.nav) clearTimeout(st.nav.timer); st.nav = null; st.ig.here = null; igLiveRender(); }
+  else if (d.navchange) { const keep = st.nav && st.nav.task; if (st.nav) clearTimeout(st.nav.timer); st.nav = null; if (!keep) st.ig.here = null; igLiveRender(); }
   else if (d.navfrom) navFromRoom(d.navfrom);
   else if (d.navfromgo) navFromRoom(($('navFrom') || {}).value || '');
   else if (d.voiceon) { st.voiceOk = true; st.voice = true; unlockAudio(); updateVoiceBtn(); speak('Voice is on.'); toast(voiceMode === 'elevenlabs' ? 'Voice: ElevenLabs' : 'Voice: this device'); igLiveRender(); }
   else if (d.navgo) { const rs = st.ig.res, nv = rs && (rs.nav || (rs.from && rs.to ? {from:rs.from, to:rs.to} : null)); if (nv) { st.pendingNav = {from:nv.from, to:nv.to}; startGuideTo(targetFromNum(nv.to)); } }
-  else if (d.igl) { const r = igNearest(st.ig.here, d.igl); if (r.error) toast(r.error); else { const o = $('igLive'); if (o) o.innerHTML = `<div class="igl-head"><b>${esc(r.title)}</b><span>${esc(r.sub)}</span></div><p class="igl-next">${esc(r.steps[0].text)}</p><div class="igl-map">${igFloorSVG(IG.rooms[st.ig.here].f, {pts:r.plan.per[IG.rooms[st.ig.here].f] || [], hi:r.plan.hi, marks:r.plan.marks[IG.rooms[st.ig.here].f] || [], full:false})}</div>`; if (st.voice) speak(r.title + '. ' + r.steps[0].text); } }
+  else if (d.igl) { st.voiceOk = true; navTask(st.ig.here, d.igl, `You’re near room ${st.ig.here}.`); }
   else if (d.igrest) { igVal(); igRun(igNearest(st.ig.from, 'restroom')); }
   else if (d.igelev) { igVal(); igRun(igNearest(st.ig.from, 'elevator')); }
   else if (d.igview) { st.ig.view = d.igview; const o = $('igOut'); if (o && st.ig.res) o.innerHTML = igResultHTML(st.ig.res); igAlign(); }

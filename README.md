@@ -121,7 +121,7 @@ CuseCompass is a web app: open **https://cuse-compass.vercel.app** on any phone.
 - **iPhone (Safari):** tap Share, then **Add to Home Screen**.
 - **Android (Chrome):** tap the menu (three dots), then **Install app** or **Add to Home screen**.
 - Allow **camera**, **location**, and **motion** when asked (motion makes the arrow follow the way you face).
-- A QR code for the link is at the top of this README, in `cusecompass-qr.png`, and on the Map tab for people on a laptop. A printable one-page card with install steps is in `cusecompass-share-card.png`.
+- A QR code for the link is at the top of this README, in `cusecompass-qr.png`, and on the Map tab for people on a laptop. A printable one-page card with install steps is in `cusecompass-share-card.png`, and a full one-page handout (QR, iPhone and Android install steps, how to use it, troubleshooting) is in `cusecompass-handout.pdf` / `.png`.
 
 Checked in iPhone 13 and Pixel 7 emulation: the install manifest and icons load, Chrome reports no installability errors, and nothing scrolls sideways. Real-device testing of the camera, GPS, compass, and voice is still on you before judging.
 
