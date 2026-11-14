@@ -4,6 +4,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="color-scheme" content="light">
+<meta name="theme-color" content="#0B1146">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="CuseCompass">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='40' fill='%230B1146'/%3E%3Cpath d='M90 28l18 62H72z' fill='%23FF6B1A'/%3E%3Cpath d='M90 152l-18-62h36z' fill='%23F3F5FF'/%3E%3C/svg%3E">
 <title>CuseCompass</title>
 <meta name="description" content="Find the room, not just the building. Stand at the entrance, open the camera, and get directions you can see and hear.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='30' fill='%230B1146'/%3E%3Cpath d='M32 10l6 22H26z' fill='%23FF6B1A'/%3E%3Cpath d='M32 54l-6-22h12z' fill='%23F3F5FF'/%3E%3C/svg%3E">
@@ -934,7 +941,26 @@ function wireScan(){
 }
 
 /* ===== voice ===== */
-let voicePlayer = null, ttsRemote = true, synthVoice = null;
+let voicePlayer = null, ttsRemote = true, synthVoice = null, wakeLock = null;
+const ttsCache = new Map();
+fetch('/api/speak').then(r => r.ok ? r.json() : null).then(d => { if (d && d.ready === false) ttsRemote = false; }).catch(() => {});
+async function keepScreenAwake(on){
+  try {
+    if (on && 'wakeLock' in navigator && !wakeLock) {
+      wakeLock = await navigator.wakeLock.request('screen');
+      wakeLock.addEventListener('release', () => { wakeLock = null; });
+    } else if (!on && wakeLock) {
+      await wakeLock.release();
+      wakeLock = null;
+    }
+  } catch (e) {}
+}
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible' && !$('cam').hidden) keepScreenAwake(true);
+});
+['touchstart', 'pointerdown', 'keydown'].forEach(ev => {
+  document.addEventListener(ev, () => { if (!voicePlayer) unlockAudio(); }, { once: true, passive: true });
+});
 const utts = []; // keep references so the browser doesn't drop utterances mid-speech
 const SILENT = 'data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQAAAAA=';
 function toast(msg){
@@ -990,12 +1016,20 @@ function browserSpeak(text){
 }
 async function speak(text){
   if (!text) return; stopSpeak();
+  const clean = String(text).slice(0, 600).trim();
+  if (!clean) return;
   if (ttsRemote) {
     try {
-      const r = await fetch('/api/speak', {method:'POST', headers:{'content-type':'application/json'}, body:JSON.stringify({text:String(text).slice(0, 600)})});
-      if (!r.ok) { ttsRemote = false; throw new Error('HTTP ' + r.status); }
-      const url = URL.createObjectURL(await r.blob());
+      let url = ttsCache.get(clean);
+      if (!url) {
+        const r = await fetch('/api/speak', {method:'POST', headers:{'content-type':'application/json'}, body:JSON.stringify({text:clean})});
+        if (!r.ok) { ttsRemote = false; throw new Error('HTTP ' + r.status); }
+        url = URL.createObjectURL(await r.blob());
+        if (ttsCache.size > 40) { const firstKey = ttsCache.keys().next().value; URL.revokeObjectURL(ttsCache.get(firstKey)); ttsCache.delete(firstKey); }
+        ttsCache.set(clean, url);
+      }
       if (!voicePlayer) voicePlayer = new Audio();
+      voicePlayer.setAttribute('playsinline', '');
       voicePlayer.src = url;
       await new Promise((res, rej) => { voicePlayer.onended = res; voicePlayer.onerror = rej; const p = voicePlayer.play(); if (p && p.catch) p.catch(rej); });
       return;
@@ -1165,7 +1199,7 @@ function startEntrance(here){
   openCam(here ? 'ask' : 'where');
 }
 async function openCam(stage){
-  st.stage = stage || 'where'; $('cam').hidden = false; document.body.style.overflow = 'hidden';
+  st.stage = stage || 'where'; $('cam').hidden = false; document.body.style.overflow = 'hidden'; keepScreenAwake(true);
   camAuto = true; camScans = 0; camLast = ''; camBusy = false; updateAutoBtn(); updateVoiceBtn();
   $('camCard').hidden = true; $('camCard').innerHTML = '';
   if (st.stage !== 'walk') stopWalk();
@@ -1186,7 +1220,7 @@ async function openCam(stage){
   }
 }
 function closeCam(){
-  stopWalk();
+  keepScreenAwake(false); stopWalk();
   if (camTimer) { clearInterval(camTimer); camTimer = null; }
   if (camStream) { camStream.getTracks().forEach(t => t.stop()); camStream = null; }
   stopSpeak(); $('cam').hidden = true; document.body.style.overflow = ''; st.target = null;
