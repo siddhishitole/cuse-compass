@@ -54,9 +54,9 @@ No public indoor map of Newhouse's hallways exists, and SU's floor plans don't d
 
 ---
 
-### Inside the building: the indoor map (floors 2 and 3)
+### Inside the building: the indoor map (floors 2 to 5)
 
-The **Guide** tab has **Route inside Newhouse**. Type where you are and where you're going (like 206F to 305) and it gives you:
+The **Inside** tab has **Route inside Newhouse**. Type where you are and where you're going (like 206F to 305) and it gives you:
 
 - **Step-by-step directions** along the real hallways: head along the hallway, bear or turn left or right, which room numbers you pass and on which side, and which room is on your left or right at the end.
 - **The elevator when you change floors,** by name (NH1, NH2, or NH3 elevator), with "Leave the elevator on floor 3" on the other side.
@@ -64,7 +64,7 @@ The **Guide** tab has **Route inside Newhouse**. Type where you are and where yo
 - **Nearest restroom** and **Nearest elevator** from any mapped room.
 - **A Map button in the camera guide** that opens the planner with your target room filled in.
 
-How it was made, honestly: SU doesn't publish a hallway map as data, so we traced the hallway network, elevators, stairs, and restrooms by hand from SU's published floor plans (floor 2 and floor 3 of Newhouse 1, 2, and 3), then built a walking graph and a shortest-path router on top. The drawing is our own redraw of the hallway network, not SU's artwork. Because it is traced by eye from a tilted 3D map, distances are shown as "a few steps / a short walk / a long hallway" and sides are approximate, and rooms deep inside blocks away from a hallway are described as "in this area". Elevators are used for floor changes because we could not confidently match stairs between the two floors. **Floors 1 and 4 are next** (that is where Rooms 101, 102, 432/434, and 469 are), and the Guide tab says so when you ask about them.
+How it was made, honestly: SU doesn't publish a hallway map as data, so we traced the hallway network, elevators, stairs, and restrooms by hand from SU's published floor plans (floors 2 to 5 of Newhouse 1, 2, and 3; floor 5 is Newhouse 1 only), then built a walking graph and a shortest-path router on top. The drawing is our own redraw of the hallway network, not SU's artwork. Because it is traced by eye from a tilted 3D map, distances are shown as "a few steps / a short walk / a long hallway" and sides are approximate, and rooms deep inside blocks away from a hallway are described as "in this area". Elevators are used for floor changes because we could not confidently match stairs between the two floors. **Floor 1 is next** (Rooms 101 and 102), and the Guide tab says so when you ask about them.
 
 ---
 
@@ -103,6 +103,12 @@ The camera scans automatically every few seconds, and you can tap **Scan now** a
 
 ---
 
+## Live map, locate-me, and voice
+
+- **Map tab (home):** a live map with your blue dot, the Newhouse pins (tap one to start walking), and your distance to the building. The walking screen shows the street route on the map with your dot moving, the next turn ringed, and a voice for each turn. Map data is OpenStreetMap, tiles are CARTO; the map is our own small tile viewer, so there is no map library to fail.
+- **Where am I inside?** Open the camera, point it at any door number, and the app places you on the floor plan (floors 2 to 5) and, if you have a destination, shows the route from where you are with the next step spoken. Scan another door and it updates.
+- **Voice:** set `ELEVENLABS_API_KEY` in Vercel (Settings, Environment Variables, then redeploy) to use the ElevenLabs voice from the summit's tool list. Short lines use ElevenLabs (repeated lines are cached to save credits); long answers use the device voice. The Ask AI tab shows which voice is active. Without a key the app uses the device voice and says so if none is available.
+
 ## Also in the app
 
 - **Around > Ride:** bus or walking directions from where you are to either Newhouse entrance, or to any building or address you type, opened in Google Maps. Live bus positions and arrival times are in SU's own tracker (linked), because SU's and Centro's live feeds need the agency's own access key, so the app does not pretend to show live arrivals.
@@ -119,7 +125,7 @@ Everything the app states comes from a source we can name:
 
 - **Sessions and rooms:** the official 2026 AI Creative Summit event deck
 - **Floors and room names:** SU's campus map floor plans, SU IT classroom pages, SU's events calendar
-- **Indoor hallway map (floors 2 and 3):** traced by hand from SU's campus map floor plans (Concept3D), then redrawn as our own walking graph. Approximate by design; always confirm with the door signs.
+- **Indoor hallway map (floors 2 to 5):** traced by hand from SU's campus map floor plans (Concept3D), then redrawn as our own walking graph. Approximate by design; always confirm with the door signs.
 - **Buses and loops:** SU Parking and Transportation Services, 2026–2027 schedules
 - **Food:** SU Campus Dining and SU News
 - **Building descriptions:** SU's campus map, SU IT, SU's public art page for Newhouse 3, Wikipedia (the 2014 Newhouse 2 renovation), and the architects' project page (Newhouse 3 connects Newhouse 1 and 2 on all floors)
@@ -133,7 +139,7 @@ What we don't have: a verified location for the Welcome session, the two 3:45 PM
 
 ## Try it in 60 seconds
 
-0. Outside? Home: tap **Walk to Newhouse**, allow location, and follow the arrow.
+0. Outside? Map tab: tap **Locate me**, then **Walk to the building**, and follow the live map and voice.
 1. Home: tap **Start at the entrance** and allow the camera.
 2. Tap **Newhouse 2**. A card says what the building is for. Tap **What's happening here**, then **Guide me** on an event.
 3. Aim the camera at a door number. You'll get a popup for each room you pass, plus an arrow and a spoken direction when a sign shows the way.
@@ -149,7 +155,7 @@ What we don't have: a verified location for the Welcome session, the two 3:45 PM
 
 - **Now:** Newhouse 1, 2, and 3, with verified rooms, floors, sessions, food, and rides. Street routes work from anywhere near Syracuse.
 - **Next:** more campus buildings. The data is already structured as building, floor, room, and what happens there, so each building is a data addition, not a rebuild. SU's campus map floor plans are the source.
-- **Next:** trace floors 1, 4, and 5 the same way (floors 2 and 3 are done), match stairs between floors, and walk the routes to check them.
+- **Next:** trace floor 1 the same way (floors 2 to 5 are done), match stairs between floors, and walk the routes to check them.
 - **Then:** classes and campus events beyond the summit, surveyed entrance coordinates, and more buildings.
 - **Known limits:** no public indoor hallway map exists, GPS drifts near buildings, and phone speech features depend on the browser (Chrome and Safari work best).
 

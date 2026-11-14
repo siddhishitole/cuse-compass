@@ -4,13 +4,6 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="color-scheme" content="light">
-<meta name="theme-color" content="#000E2F">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="CuseCompass">
-<link rel="manifest" href="/manifest.webmanifest">
-<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='40' fill='%230B1146'/%3E%3Cpath d='M90 28l18 62H72z' fill='%23FF6B1A'/%3E%3Cpath d='M90 152l-18-62h36z' fill='%23F3F5FF'/%3E%3C/svg%3E">
 <title>CuseCompass</title>
 <meta name="description" content="Find the room, not just the building. Stand at the entrance, open the camera, and get directions you can see and hear.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='30' fill='%230B1146'/%3E%3Cpath d='M32 10l6 22H26z' fill='%23FF6B1A'/%3E%3Cpath d='M32 54l-6-22h12z' fill='%23F3F5FF'/%3E%3C/svg%3E">
@@ -20,8 +13,8 @@
 <style>
 :root{
   color-scheme:light;
-  --paper:#000E2F; --tint:rgba(8,12,51,0.85); --surface:#080C33; --ink:#FFFFFF; --muted:#9CCBFF; --line:rgba(156,203,255,0.25);
-  --tang:#D44500; --tang-ink:#C24100; --lemon:#FFD84D; --sky:#9CCBFF; --on-tang:#1A0A00; --dial:#000E2F; --navy:#000E2F;
+  --paper:#FFFFFF; --tint:#EEF4FF; --surface:#FFFFFF; --ink:#0B1146; --muted:#55608F; --line:#DCE4F5;
+  --tang:#FF6B1A; --tang-ink:#C24100; --lemon:#FFD84D; --sky:#9CCBFF; --on-tang:#1A0A00; --dial:#0B1146; --navy:#0B1146;
   --c-creative:rgba(255,107,26,.14); --c-product:rgba(156,203,255,.38); --c-all:rgba(255,216,77,.34);
   --f-display:"Bricolage Grotesque","Trebuchet MS",system-ui,sans-serif;
   --f-body:"Instrument Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
@@ -263,12 +256,12 @@ h2.day{font-size:22px;margin:22px 0 2px;}
 .crow b{display:block;font:500 16px var(--f-display);}
 .crow span{display:block;font-size:13.5px;color:#C9D0F5;}
 .cbtn2{flex:none;font:600 13.5px var(--f-body);cursor:pointer;padding:7px 14px;border:1px solid var(--tang);border-radius:999px;background:var(--tang);color:var(--on-tang);}
-.camcard{margin-bottom:10px;padding:14px 16px;border-radius:20px;background:rgba(243,245,255,.96);color:#000E2F;}
+.camcard{margin-bottom:10px;padding:14px 16px;border-radius:20px;background:rgba(243,245,255,.96);color:#0B1146;}
 .camcard[hidden]{display:none;}
 .camcard h3{font-size:20px;}
 .camcard .tag{border-color:#C5D0EC;color:#55608F;}
 .camcard .sub{color:#55608F;}
-.camcard .banner{color:#000E2F;}
+.camcard .banner{color:#0B1146;}
 .camstatus{font-size:14.5px;margin-bottom:8px;color:#E4E8FF;}
 .camform{display:flex;gap:8px;margin-bottom:10px;}
 .camform[hidden],.camctl[hidden]{display:none;}
@@ -332,7 +325,62 @@ body::before{content:"";display:block;height:5px;background:var(--tang);}
 .igstack{position:absolute;inset:0;transform-style:preserve-3d;transform:rotateX(48deg) rotateZ(-12deg) scale(.92);}
 .igplate{position:absolute;left:5%;right:5%;top:16%;transform-style:preserve-3d;transform:translate3d(var(--dx,0px),var(--dy,0px),var(--z,0px));}
 .igplate .igsvg{box-shadow:0 24px 36px rgba(11,17,70,.28);}
-.igtag{position:absolute;left:8px;top:8px;background:#D44500;color:#1A0A00;font:700 13px var(--f-body);padding:3px 10px;border-radius:999px;transform:translateZ(1px);}
+.igtag{position:absolute;left:8px;top:8px;background:#FF6B1A;color:#1A0A00;font:700 13px var(--f-body);padding:3px 10px;border-radius:999px;transform:translateZ(1px);}
+
+/* ===== map-first Home and live maps ===== */
+.homehead{margin:14px 0 0;}
+.homehead h1{font-size:clamp(26px,6vw,36px);line-height:1.1;margin:0;}
+.homehead p{color:var(--muted);margin:6px 0 0;max-width:46ch;}
+.mapcard{margin:16px 0 0;border:1px solid var(--line);border-radius:22px;overflow:hidden;background:var(--surface);box-shadow:0 8px 24px rgba(11,17,70,.08);}
+.lmhost{height:300px;}
+.mapbar{display:flex;gap:10px;align-items:center;justify-content:space-between;padding:10px 14px;border-top:1px solid var(--line);}
+.mapbar span{font-size:14.5px;color:var(--ink);}
+.lm{position:relative;overflow:hidden;touch-action:none;background:#E6ECF6;user-select:none;-webkit-user-select:none;}
+.lm-tiles{position:absolute;left:0;top:0;width:100%;height:100%;}
+.lm-tile{position:absolute;left:0;top:0;width:256px;height:256px;max-width:none;pointer-events:none;}
+.lm-svg{position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none;}
+.lm-marks{position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none;}
+.lm-pin{position:absolute;transform:translate(-50%,-100%);pointer-events:auto;border:0;background:none;padding:0;cursor:pointer;display:flex;flex-direction:column;align-items:center;}
+.lm-pin b{width:26px;height:26px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);background:var(--tang);border:3px solid #fff;box-shadow:0 3px 8px rgba(0,0,0,.3);}
+.lm-pin.dest b{background:#FFD84D;border-color:var(--navy);}
+.lm-pin span{margin-top:3px;font:600 12px var(--f-body);background:#fff;color:var(--navy);padding:2px 8px;border-radius:999px;box-shadow:0 2px 6px rgba(0,0,0,.2);white-space:nowrap;}
+.lm-me{position:absolute;width:0;height:0;}
+.lm-me b{position:absolute;left:-9px;top:-9px;width:18px;height:18px;border-radius:50%;background:#2F6BFF;border:3px solid #fff;box-shadow:0 0 0 2px rgba(47,107,255,.35),0 2px 8px rgba(0,0,0,.35);}
+.lm-me i{position:absolute;left:-14px;top:-30px;width:28px;height:28px;transform-origin:14px 30px;}
+.lm-me i::before{content:"";position:absolute;left:5px;top:0;border:9px solid transparent;border-bottom:16px solid #2F6BFF;border-top:0;}
+.lm-acc{position:absolute;transform:translate(-50%,-50%);border-radius:50%;background:rgba(47,107,255,.14);border:1px solid rgba(47,107,255,.35);}
+.lm-ctl{position:absolute;right:10px;top:10px;display:flex;flex-direction:column;gap:6px;z-index:3;}
+.lm-ctl button{width:38px;height:38px;border-radius:12px;border:1px solid var(--line);background:#fff;color:var(--navy);font:600 20px var(--f-body);box-shadow:0 2px 8px rgba(0,0,0,.18);cursor:pointer;}
+.lm-attr{position:absolute;left:6px;bottom:4px;font-size:10px;color:#334;background:rgba(255,255,255,.8);padding:1px 6px;border-radius:6px;z-index:2;}
+.acts3{display:grid;gap:10px;margin:16px 0 0;}
+@media(min-width:620px){.acts3{grid-template-columns:repeat(3,1fr);}}
+.act{display:flex;flex-direction:column;gap:2px;text-align:left;padding:14px 16px;border:1px solid var(--line);border-radius:18px;background:var(--surface);color:var(--ink);cursor:pointer;border-top:4px solid var(--tang);}
+.act b{font:600 17px var(--f-display);}
+.act span{color:var(--muted);font-size:14px;}
+.act:hover{border-color:var(--tang);}
+.more{margin:22px 0 0;border:1px solid var(--line);border-radius:18px;padding:4px 14px 14px;background:var(--surface);}
+.more summary{cursor:pointer;font:600 16px var(--f-display);padding:12px 0;}
+.walkmap{position:absolute;left:0;right:0;top:0;bottom:0;z-index:1;}
+.walkmap[hidden]{display:none;}
+.camtop{z-index:5;}
+.camdock{z-index:5;}
+.iglive{margin-bottom:10px;padding:10px 12px;border-radius:18px;background:rgba(8,12,51,.88);border:1px solid rgba(243,245,255,.2);color:#fff;}
+.iglive[hidden]{display:none;}
+.igl-head{display:flex;flex-direction:column;}
+.igl-head b{font:600 17px var(--f-display);}
+.igl-head span{color:#B9C4F0;font-size:13.5px;}
+.igl-next{margin:6px 0;font-size:15px;}
+.igl-hint{margin:0;color:#DDE3FF;font-size:14.5px;}
+.igl-map .igsvg{max-height:170px;}
+.vbadge{font-size:12.5px;color:var(--muted);margin-left:auto;}
+.lm-pin.up span{order:-1;margin:0 0 3px;}
+.lm-pin.up{flex-direction:column;}
+.cam.walking .walkmap{bottom:40vh;}
+.cam.walking .camdock{max-height:44vh;}
+.cam.walking .lm-ctl{top:66px;}
+.cam.walking .campanel{padding:12px 14px;}
+.wdest{margin-top:8px;color:#DDE3FF;font-size:14px;}
+.wdest summary{cursor:pointer;padding:6px 0;}
 @media (prefers-reduced-motion: reduce){
   *,*::before,*::after{animation:none !important;transition:none !important;}
 }
@@ -341,7 +389,7 @@ body::before{content:"";display:block;height:5px;background:var(--tang);}
 <body>
 <header class="top">
   <button class="logo" id="logo" type="button" aria-label="CuseCompass home">
-    <svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="29" fill="#000E2F" stroke="#D44500" stroke-width="3"/><path d="M32 11l6 21H26z" fill="#D44500"/><path d="M32 53l-6-21h12z" fill="#F3F5FF"/><circle cx="32" cy="32" r="3" fill="#000E2F"/></svg>
+    <svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="29" fill="#0B1146" stroke="#FF6B1A" stroke-width="3"/><path d="M32 11l6 21H26z" fill="#FF6B1A"/><path d="M32 53l-6-21h12z" fill="#F3F5FF"/><circle cx="32" cy="32" r="3" fill="#0B1146"/></svg>
     CuseCompass
   </button>
   <span class="hnote">AI Creative Summit</span>
@@ -352,6 +400,7 @@ body::before{content:"";display:block;height:5px;background:var(--tang);}
 
 <div class="cam" id="cam" hidden role="dialog" aria-label="Live guide">
   <video id="camVid" playsinline muted autoplay></video>
+  <div class="walkmap" id="walkMap" hidden></div>
   <div class="camtop">
     <button class="cbtn" data-camclose="1" type="button">Close</button>
     <div class="camtarget" id="camTarget" hidden></div>
@@ -360,6 +409,7 @@ body::before{content:"";display:block;height:5px;background:var(--tang);}
   <div class="reticle" id="reticle" hidden aria-hidden="true"><i></i><i></i><i></i><i></i><span class="sweep"></span></div>
   <div class="camdock">
     <div class="camguide" id="camGuide" hidden aria-live="polite"></div>
+    <div class="iglive" id="igLive" hidden aria-live="polite"></div>
     <div class="campanel" id="camPanel"></div>
     <div class="camcard" id="camCard" hidden></div>
     <div class="camstatus" id="camStatus" aria-live="polite"></div>
@@ -533,7 +583,7 @@ const FOOD_SPOTS = [
   {name:'Falk Cafe', where:'MacNaughton Hall', note:''},
   {name:'BBBistro', where:'Brockway Hall, basement', note:''}
 ];
-const ZONES = [['Talk','#D44500'], ['Eat','#FFD84D'], ['Ride','#9CCBFF'], ['Rooms','#F3F5FF'], ['Scan','#FF9E6B']];
+const ZONES = [['Talk','#FF6B1A'], ['Eat','#FFD84D'], ['Ride','#9CCBFF'], ['Rooms','#F3F5FF'], ['Scan','#FF9E6B']];
 const BLD_INFO = {
   nh1:{tag:'The original Newhouse building, dedicated in 1964', use:'Classrooms, lecture halls, a photo studio, computer labs, and faculty offices. It also holds a Special Events Room and the Office of Academic Affairs.', link:'Linked to Newhouse 2 on its lower north side and to Newhouse 3 on its lower west side.', src:'SU campus map'},
   nh2:{tag:'Built in 1974, renovated in 2014', use:'Classrooms, plus the Newhouse Studio and Innovation Center: Dick Clark Studios, the Alan Gerry Center for Media Innovation, and the Diane and Bob Miron Digital News Center. SU IT lists classrooms 340, 345, 350, 355, and 469.', link:'Linked to Newhouse 1 and Newhouse 3.', src:'SU campus map, Wikipedia, and SU IT'},
@@ -545,7 +595,7 @@ const MOVES = {ahead:'Keep going straight', left:'Turn left', right:'Turn right'
 /* ===== state ===== */
 const roomFor = s => s.rooms.map(id => ROOM[id].name).join(' ');
 const sessText = s => `${s.title} ${s.who} ${s.loc || ''} ${roomFor(s)} ${s.time}`;
-const st = {tab:'home', flow:null, bld:null, hiRoom:null, pday:1, ptrack:'all', day:1, track:'all', q:'', mine:false, around:'eat', plan:new Set(), chat:[], busy:false, openB:{}, spin:{rot:0, busy:false, pick:null, fresh:false, did:false}, roll:{busy:false, i:null}, pop:null, speak:false, voice:true, listening:false, found:[], target:null, here:null, stage:'where', evDay:1, today:null, near:null, ig:{from:'', to:'', view:'3d', res:null}, walk:{dest:'nh1', route:null, ri:1, rBusy:false, rFail:false, rAt:0, pos:null, err:'', camErr:false, curCat:'', catSince:0, lastSay:0, lastCat:'', lastDist:0, arrived:false, active:false}, planOut:[], guide:{move:'unknown', head:'', text:'', ts:0, sig:''}};
+const st = {tab:'home', flow:null, bld:null, hiRoom:null, pday:1, ptrack:'all', day:1, track:'all', q:'', mine:false, around:'eat', plan:new Set(), chat:[], busy:false, openB:{}, spin:{rot:0, busy:false, pick:null, fresh:false, did:false}, roll:{busy:false, i:null}, pop:null, speak:false, voice:true, listening:false, found:[], target:null, here:null, stage:'where', evDay:1, today:null, near:null, ig:{from:'', to:'', view:'3d', res:null, here:null}, me:null, walk:{dest:'nh1', fitted:false, fitRoute:null, route:null, ri:1, rBusy:false, rFail:false, rAt:0, pos:null, err:'', camErr:false, curCat:'', catSince:0, lastSay:0, lastCat:'', lastDist:0, arrived:false, active:false}, planOut:[], guide:{move:'unknown', head:'', text:'', ts:0, sig:''}};
 try { const raw = localStorage.getItem('cuse-summit-plan'); if (raw) st.plan = new Set(JSON.parse(raw)); } catch (e) {}
 try { st.speak = !!localStorage.getItem('cuse-speak'); } catch (e) {}
 try { const t = Number(localStorage.getItem('cuse-today')); if (t === 1 || t === 2) { st.today = t; st.evDay = t; st.day = t; st.pday = t; } } catch (e) {}
@@ -571,7 +621,7 @@ function planFor(day, track){
 /* ===== confetti that answers a tap ===== */
 function burst(x, y){
   if (reduce) return;
-  const fx = $('fx'), colors = ['#D44500', '#FFD84D', '#9CCBFF', '#000E2F'];
+  const fx = $('fx'), colors = ['#FF6B1A', '#FFD84D', '#9CCBFF', '#0B1146'];
   for (let i = 0; i < 14; i++) {
     const p = document.createElement('span'); p.className = 'cf'; p.style.left = x + 'px'; p.style.top = y + 'px'; p.style.background = colors[i % 4];
     fx.appendChild(p);
@@ -596,29 +646,29 @@ const DEST = {
   nh23:{name:'Newhouse 2 and 3', side:'Waverly Avenue side', lat:43.04071, lon:-76.13479}
 };
 
-const ROUTE_ART = `<svg viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false"><defs><linearGradient id="hg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2B3B9A"/><stop offset="1" stop-color="#000E2F"/></linearGradient></defs><rect width="400" height="300" fill="url(#hg)"/><rect y="236" width="400" height="64" fill="#fff" fill-opacity=".06"/><rect x="112" y="34" width="262" height="186" rx="16" fill="#fff" fill-opacity=".10" stroke="#fff" stroke-opacity=".5" stroke-width="2"/><g fill="#fff" fill-opacity=".17"><rect x="126" y="48" width="56" height="56" rx="7"/><rect x="190" y="48" width="56" height="56" rx="7"/><rect x="318" y="48" width="42" height="56" rx="7"/><rect x="206" y="138" width="46" height="68" rx="7"/><rect x="260" y="138" width="46" height="68" rx="7"/><rect x="314" y="138" width="46" height="68" rx="7"/></g><rect x="254" y="48" width="56" height="56" rx="7" fill="#FFD84D"/><rect x="126" y="138" width="70" height="68" rx="7" fill="#9CCBFF"/><g fill="#000E2F"><path d="M161 152l-13 15h26z"/><path d="M161 192l13-15h-26z"/></g><rect x="172" y="214" width="34" height="12" rx="3" fill="#000E2F"/><path d="M52 270C84 270 120 246 189 232" fill="none" stroke="#D44500" stroke-width="5" stroke-linecap="round" stroke-dasharray="1 11"/><path d="M189 224V121H282V108" fill="none" stroke="#D44500" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="1 11"/><circle cx="52" cy="270" r="9" fill="#fff"/><circle cx="52" cy="270" r="17" fill="none" stroke="#fff" stroke-opacity=".5" stroke-width="2"/><path d="M282 100c-8-8-13-14-13-20a13 13 0 0126 0c0 6-5 12-13 20z" fill="#D44500"/><circle cx="282" cy="80" r="5" fill="#fff"/></svg>`;
+const ROUTE_ART = `<svg viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false"><defs><linearGradient id="hg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2B3B9A"/><stop offset="1" stop-color="#0B1146"/></linearGradient></defs><rect width="400" height="300" fill="url(#hg)"/><rect y="236" width="400" height="64" fill="#fff" fill-opacity=".06"/><rect x="112" y="34" width="262" height="186" rx="16" fill="#fff" fill-opacity=".10" stroke="#fff" stroke-opacity=".5" stroke-width="2"/><g fill="#fff" fill-opacity=".17"><rect x="126" y="48" width="56" height="56" rx="7"/><rect x="190" y="48" width="56" height="56" rx="7"/><rect x="318" y="48" width="42" height="56" rx="7"/><rect x="206" y="138" width="46" height="68" rx="7"/><rect x="260" y="138" width="46" height="68" rx="7"/><rect x="314" y="138" width="46" height="68" rx="7"/></g><rect x="254" y="48" width="56" height="56" rx="7" fill="#FFD84D"/><rect x="126" y="138" width="70" height="68" rx="7" fill="#9CCBFF"/><g fill="#0B1146"><path d="M161 152l-13 15h26z"/><path d="M161 192l13-15h-26z"/></g><rect x="172" y="214" width="34" height="12" rx="3" fill="#0B1146"/><path d="M52 270C84 270 120 246 189 232" fill="none" stroke="#FF6B1A" stroke-width="5" stroke-linecap="round" stroke-dasharray="1 11"/><path d="M189 224V121H282V108" fill="none" stroke="#FF6B1A" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="1 11"/><circle cx="52" cy="270" r="9" fill="#fff"/><circle cx="52" cy="270" r="17" fill="none" stroke="#fff" stroke-opacity=".5" stroke-width="2"/><path d="M282 100c-8-8-13-14-13-20a13 13 0 0126 0c0 6-5 12-13 20z" fill="#FF6B1A"/><circle cx="282" cy="80" r="5" fill="#fff"/></svg>`;
 /* ===== illustrations (original, drawn in code) ===== */
 const ART = {
   hero(){
     let w1 = '', w2 = '';
     for (let j = 0; j < 3; j++) for (let i = 0; i < 4; i++) w1 += `<rect x="${104 + i*38}" y="${100 + j*32}" width="24" height="18" rx="2" fill="#FFE3D2"/>`;
     for (let j = 0; j < 3; j++) for (let i = 0; i < 6; i++) w2 += `<rect x="${266 + i*35}" y="${126 + j*25}" width="22" height="14" rx="2" fill="#F3F8FF"/>`;
-    return `<svg viewBox="0 0 720 250" role="img" aria-label="Illustration of the three connected Newhouse buildings with a path leading to the entrance"><rect width="720" height="250" rx="26" fill="#DDEBFF"/><circle cx="604" cy="62" r="26" fill="#FFD84D"/><circle cx="604" cy="62" r="40" fill="none" stroke="#FFD84D" stroke-opacity=".55" stroke-width="3"/><path d="M40 70q30-22 60 0q28-18 56 0" fill="none" stroke="#fff" stroke-width="10" stroke-linecap="round" opacity=".85"/><path d="M300 44q24-18 48 0q22-14 44 0" fill="none" stroke="#fff" stroke-width="8" stroke-linecap="round" opacity=".7"/><rect y="206" width="720" height="44" fill="#C9DBF7"/><rect x="250" y="112" width="230" height="94" fill="#9CCBFF"/>${w2}<rect x="86" y="82" width="170" height="124" fill="#D44500"/><rect x="130" y="66" width="82" height="18" fill="#E65A0C"/>${w1}<rect x="157" y="170" width="26" height="36" rx="3" fill="#000E2F"/><path d="M470 206V138C520 84 610 76 668 120V206Z" fill="#000E2F"/><path d="M488 206V150C530 108 604 98 654 128" fill="none" stroke="#9CCBFF" stroke-opacity=".75" stroke-width="3"/><path d="M488 206V170C530 128 604 118 654 148" fill="none" stroke="#9CCBFF" stroke-opacity=".6" stroke-width="3"/><path d="M488 206V190C530 150 604 140 654 168" fill="none" stroke="#9CCBFF" stroke-opacity=".45" stroke-width="3"/><path d="M24 232C92 232 118 216 168 210" fill="none" stroke="#D44500" stroke-width="5" stroke-dasharray="2 11" stroke-linecap="round"/><g transform="translate(170 150)"><path d="M0 0c11 0 19 8 19 19 0 15-19 31-19 31S-19 34-19 19C-19 8-11 0 0 0z" fill="#FFD84D" stroke="#000E2F" stroke-width="3"/><circle cx="0" cy="19" r="6" fill="#fff" stroke="#000E2F" stroke-width="2"/></g></svg>`;
+    return `<svg viewBox="0 0 720 250" role="img" aria-label="Illustration of the three connected Newhouse buildings with a path leading to the entrance"><rect width="720" height="250" rx="26" fill="#DDEBFF"/><circle cx="604" cy="62" r="26" fill="#FFD84D"/><circle cx="604" cy="62" r="40" fill="none" stroke="#FFD84D" stroke-opacity=".55" stroke-width="3"/><path d="M40 70q30-22 60 0q28-18 56 0" fill="none" stroke="#fff" stroke-width="10" stroke-linecap="round" opacity=".85"/><path d="M300 44q24-18 48 0q22-14 44 0" fill="none" stroke="#fff" stroke-width="8" stroke-linecap="round" opacity=".7"/><rect y="206" width="720" height="44" fill="#C9DBF7"/><rect x="250" y="112" width="230" height="94" fill="#9CCBFF"/>${w2}<rect x="86" y="82" width="170" height="124" fill="#FF6B1A"/><rect x="130" y="66" width="82" height="18" fill="#E65A0C"/>${w1}<rect x="157" y="170" width="26" height="36" rx="3" fill="#0B1146"/><path d="M470 206V138C520 84 610 76 668 120V206Z" fill="#0B1146"/><path d="M488 206V150C530 108 604 98 654 128" fill="none" stroke="#9CCBFF" stroke-opacity=".75" stroke-width="3"/><path d="M488 206V170C530 128 604 118 654 148" fill="none" stroke="#9CCBFF" stroke-opacity=".6" stroke-width="3"/><path d="M488 206V190C530 150 604 140 654 168" fill="none" stroke="#9CCBFF" stroke-opacity=".45" stroke-width="3"/><path d="M24 232C92 232 118 216 168 210" fill="none" stroke="#FF6B1A" stroke-width="5" stroke-dasharray="2 11" stroke-linecap="round"/><g transform="translate(170 150)"><path d="M0 0c11 0 19 8 19 19 0 15-19 31-19 31S-19 34-19 19C-19 8-11 0 0 0z" fill="#FFD84D" stroke="#0B1146" stroke-width="3"/><circle cx="0" cy="19" r="6" fill="#fff" stroke="#0B1146" stroke-width="2"/></g></svg>`;
   },
   bld(b){
     const open = bg => `<svg viewBox="0 0 160 100" role="img" aria-label="Illustration of ${BUILDINGS[b]}"><rect width="160" height="100" fill="${bg[0]}"/><rect y="86" width="160" height="14" fill="${bg[1]}"/>`;
-    if (b === 'nh1') { let w = ''; for (let j = 0; j < 2; j++) for (let i = 0; i < 3; i++) w += `<rect x="${44 + i*30}" y="${42 + j*20}" width="18" height="12" rx="1.5" fill="#FFE3D2"/>`; return open(['#FFE9DC', '#F6D2BC']) + `<rect x="34" y="30" width="92" height="56" fill="#D44500"/><rect x="62" y="22" width="36" height="10" fill="#E65A0C"/>${w}<rect x="72" y="66" width="16" height="20" rx="2" fill="#000E2F"/></svg>`; }
-    if (b === 'nh2') { let w = ''; for (let j = 0; j < 2; j++) for (let i = 0; i < 6; i++) w += `<rect x="${22 + i*21}" y="${52 + j*16}" width="13" height="9" rx="1.5" fill="#F3F8FF"/>`; return open(['#E3F0FF', '#C9DBF7']) + `<rect x="12" y="44" width="136" height="42" fill="#9CCBFF"/>${w}<rect x="72" y="70" width="16" height="16" rx="2" fill="#000E2F"/></svg>`; }
-    return open(['#FFF4CC', '#F0E2A8']) + `<path d="M16 86V58C44 22 112 20 144 52V86Z" fill="#000E2F"/><path d="M28 86V64C52 38 102 36 130 60" fill="none" stroke="#9CCBFF" stroke-opacity=".75" stroke-width="2"/><path d="M28 86V74C52 48 102 46 130 70" fill="none" stroke="#9CCBFF" stroke-opacity=".5" stroke-width="2"/></svg>`;
+    if (b === 'nh1') { let w = ''; for (let j = 0; j < 2; j++) for (let i = 0; i < 3; i++) w += `<rect x="${44 + i*30}" y="${42 + j*20}" width="18" height="12" rx="1.5" fill="#FFE3D2"/>`; return open(['#FFE9DC', '#F6D2BC']) + `<rect x="34" y="30" width="92" height="56" fill="#FF6B1A"/><rect x="62" y="22" width="36" height="10" fill="#E65A0C"/>${w}<rect x="72" y="66" width="16" height="20" rx="2" fill="#0B1146"/></svg>`; }
+    if (b === 'nh2') { let w = ''; for (let j = 0; j < 2; j++) for (let i = 0; i < 6; i++) w += `<rect x="${22 + i*21}" y="${52 + j*16}" width="13" height="9" rx="1.5" fill="#F3F8FF"/>`; return open(['#E3F0FF', '#C9DBF7']) + `<rect x="12" y="44" width="136" height="42" fill="#9CCBFF"/>${w}<rect x="72" y="70" width="16" height="16" rx="2" fill="#0B1146"/></svg>`; }
+    return open(['#FFF4CC', '#F0E2A8']) + `<path d="M16 86V58C44 22 112 20 144 52V86Z" fill="#0B1146"/><path d="M28 86V64C52 38 102 36 130 60" fill="none" stroke="#9CCBFF" stroke-opacity=".75" stroke-width="2"/><path d="M28 86V74C52 48 102 46 130 70" fill="none" stroke="#9CCBFF" stroke-opacity=".5" stroke-width="2"/></svg>`;
   }
 };
-const aSvg = deg => `<svg viewBox="0 0 64 64" aria-hidden="true" style="transform:rotate(${deg}deg)"><path d="M32 8L52 30H40V56H24V30H12Z" fill="#000E2F"/></svg>`;
+const aSvg = deg => `<svg viewBox="0 0 64 64" aria-hidden="true" style="transform:rotate(${deg}deg)"><path d="M32 8L52 30H40V56H24V30H12Z" fill="#0B1146"/></svg>`;
 const ARROW = {
   ahead:aSvg(0), left:aSvg(-90), right:aSvg(90), back:aSvg(180),
-  up:'<svg viewBox="0 0 64 64" aria-hidden="true"><path d="M10 52h13V39h13V26h13V13" fill="none" stroke="#000E2F" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/><path d="M40 8h16v16" fill="none" stroke="#000E2F" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/></svg>',
-  down:'<svg viewBox="0 0 64 64" aria-hidden="true"><path d="M10 12h13v13h13v13h13v13" fill="none" stroke="#000E2F" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/><path d="M40 56h16V40" fill="none" stroke="#000E2F" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/></svg>',
-  here:'<svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="26" fill="#000E2F"/><path d="M19 33l9 9 17-20" fill="none" stroke="#FFD84D" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/></svg>',
-  unknown:'<svg class="pulse" viewBox="0 0 64 64" aria-hidden="true"><circle cx="14" cy="32" r="6" fill="#000E2F"/><circle cx="32" cy="32" r="6" fill="#000E2F"/><circle cx="50" cy="32" r="6" fill="#000E2F"/></svg>'
+  up:'<svg viewBox="0 0 64 64" aria-hidden="true"><path d="M10 52h13V39h13V26h13V13" fill="none" stroke="#0B1146" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/><path d="M40 8h16v16" fill="none" stroke="#0B1146" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  down:'<svg viewBox="0 0 64 64" aria-hidden="true"><path d="M10 12h13v13h13v13h13v13" fill="none" stroke="#0B1146" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/><path d="M40 56h16V40" fill="none" stroke="#0B1146" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  here:'<svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="26" fill="#0B1146"/><path d="M19 33l9 9 17-20" fill="none" stroke="#FFD84D" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  unknown:'<svg class="pulse" viewBox="0 0 64 64" aria-hidden="true"><circle cx="14" cy="32" r="6" fill="#0B1146"/><circle cx="32" cy="32" r="6" fill="#0B1146"/><circle cx="50" cy="32" r="6" fill="#0B1146"/></svg>'
 };
 const MIC = '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0014 0M12 18v3"/></svg>';
 
@@ -630,7 +680,7 @@ const ICONS = {
   ask:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v11H9l-5 4z"/></svg>',
   around:'<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="13" rx="3"/><path d="M4 12h16M8 20v-3M16 20v-3M8 14.5h.01M16 14.5h.01"/></svg>'
 };
-const NAV = [['home','Home'], ['scan','Guide'], ['schedule','Schedule'], ['ask','Ask AI'], ['around','Around']];
+const NAV = [['home','Map'], ['scan','Inside'], ['schedule','Schedule'], ['ask','Ask AI'], ['around','Around']];
 const navHTML = () => NAV.map(([id, label]) => `<button type="button" data-tab="${id}" class="${st.tab === id ? 'on' : ''}" aria-current="${st.tab === id ? 'page' : 'false'}">${ICONS[id]}<span>${label}</span>${id === 'schedule' && st.plan.size ? `<em class="cnt">${st.plan.size}</em>` : ''}</button>`).join('');
 const micBtn = (label, attr, cls) => SR ? `<button class="${cls || 'btn ghost sm'} micb" data-label="${label}" ${attr} aria-pressed="false" type="button">${MIC}<span class="mt">${label}</span></button>` : '';
 
@@ -649,7 +699,7 @@ function dialSVG(){
       `<text x="${tx.toFixed(1)}" y="${(ty + 4.5).toFixed(1)}" text-anchor="middle" font-size="13" font-weight="${lit === i ? 600 : 500}" fill="#F3F5FF" style="font-family:var(--f-display)" opacity="${lit === -1 || lit === i ? 1 : .55}">${n}</text>`;
   });
   const idle = !st.spin.did && st.spin.rot === 0;
-  return `<svg id="dial" viewBox="0 0 300 300" role="img" aria-label="Compass with five destinations: Talk, Eat, Ride, Rooms, Scan"><circle cx="150" cy="150" r="141" fill="var(--dial)"/><circle cx="150" cy="150" r="136" fill="none" stroke="#D44500" stroke-opacity=".6" stroke-width="1.2"/>${ticks}${zones}<g id="needle" class="${idle ? 'idle' : ''}" style="transform:rotate(${st.spin.rot}deg)"><polygon points="150,52 157,150 143,150" fill="#D44500"/><polygon points="150,248 157,150 143,150" fill="#F3F5FF" opacity=".9"/></g><circle cx="150" cy="150" r="6.5" fill="#F3F5FF" stroke="#000E2F" stroke-width="2"/></svg>`;
+  return `<svg id="dial" viewBox="0 0 300 300" role="img" aria-label="Compass with five destinations: Talk, Eat, Ride, Rooms, Scan"><circle cx="150" cy="150" r="141" fill="var(--dial)"/><circle cx="150" cy="150" r="136" fill="none" stroke="#FF6B1A" stroke-opacity=".6" stroke-width="1.2"/>${ticks}${zones}<g id="needle" class="${idle ? 'idle' : ''}" style="transform:rotate(${st.spin.rot}deg)"><polygon points="150,52 157,150 143,150" fill="#FF6B1A"/><polygon points="150,248 157,150 143,150" fill="#F3F5FF" opacity=".9"/></g><circle cx="150" cy="150" r="6.5" fill="#F3F5FF" stroke="#0B1146" stroke-width="2"/></svg>`;
 }
 const pickFor = i => [() => pick(SESSIONS.filter(s => s.rooms.length)), () => pick(FOOD_SPOTS), () => pick([...TRANSIT.loops, ...TRANSIT.centro]), () => pick(ROOMS.filter(r => r.b)), () => ({})][i]();
 function spin(){
@@ -694,21 +744,46 @@ function planPanel(){
     <div class="row" role="group" aria-label="Interest" style="margin-bottom:16px">${[['creative', 'Image, video, audio'], ['product', 'Building and coding'], ['all', 'A bit of everything']].map(([id, label]) => `<button class="chip" data-ptrack="${id}" aria-pressed="${st.ptrack === id}" type="button">${label}</button>`).join('')}</div>
     <button class="btn" data-build="1" type="button">Build my day</button></div>`;
 }
+function mapMsg(){
+  if (!st.me) return 'Tap Locate me to see where you are.';
+  let best = null; Object.keys(DEST).forEach(k => { const d = distM(st.me.lat, st.me.lon, DEST[k].lat, DEST[k].lon); if (!best || d < best.d) best = {k, d}; });
+  return best.d < 60 ? `You’re at ${DEST[best.k].name}.` : `You’re ${fmtDist(best.d)} from ${DEST[best.k].name}.`;
+}
 function viewHome(){
   if (st.flow === 'go' && st.bld) return viewBuilding(st.bld);
   const cards = Object.keys(BUILDINGS).map(b => { const n = SESSIONS.filter(s => s.b === b).length; return `<button class="bcard2" data-bld="${b}" type="button"><div class="bart">${photoImg(b, 500)}</div><strong>${BUILDINGS[b]}</strong><em>${n} summit event${n === 1 ? '' : 's'}</em></button>`; }).join('');
   const credits = Object.keys(PHOTOS).map(b => ln(PHOTOS[b].page, BUILDINGS[b])).join(', ');
-  return `<section class="hero3">${ROUTE_ART}<div class="cap"><h1>From the street to the right room.</h1><p>Walk to the building, then follow camera arrows and a voice to your door.</p><div class="row cta"><button class="btn big" data-start="1" type="button">Start at the entrance</button><button class="btn ghost big" data-walk="1" type="button">Walk to the building</button></div></div></section>
-  <form class="askbox" id="goForm" autocomplete="off"><input type="text" id="goIn" placeholder="Say or type where to go" aria-label="Where do you want to go?">${micBtn('Talk', 'data-routemic="1"', 'btn ghost')}<button class="btn" type="submit">Go</button></form>
+  return `<section class="homehead"><h1>From the street to the right room.</h1><p>Search a room, a talk, or a building. I’ll guide you there: outside on the live map, inside on the floor plan.</p></section>
+  <form class="askbox" id="goForm" autocomplete="off"><input type="text" id="goIn" placeholder="Where to? A room, a talk, a building" aria-label="Where do you want to go?">${micBtn('Talk', 'data-routemic="1"', 'btn ghost')}<button class="btn" type="submit">Go</button></form>
   <div class="exs">${['Take me to the keynote', 'Where is Room 206F?'].map(x => `<button class="chip" data-say2="${esc(x)}" type="button">${esc(x)}</button>`).join('')}</div>
+  <section class="mapcard"><div class="lmhost" id="homeMap" aria-label="Live map of Newhouse"></div><div class="mapbar"><span id="mapMsg">${esc(mapMsg())}</span><button class="btn sm" data-locate="1" type="button">Locate me</button></div></section>
+  <div class="acts3"><button class="act" data-walk="1" type="button"><b>Walk to the building</b><span>Live map and voice</span></button><button class="act" data-start="1" type="button"><b>Start at the entrance</b><span>Camera and door signs</span></button><button class="act" data-locatein="1" type="button"><b>Where am I inside?</b><span>Scan a door number</span></button></div>
   <div class="today"><span>Today is</span>${[1, 2].map(d => `<button class="chip" data-today="${d}" aria-pressed="${st.today === d}" type="button">Day ${d}</button>`).join('')}<button class="btn ghost sm" data-flow="plan" aria-pressed="${st.flow === 'plan'}" type="button">Plan my day</button><button class="btn ghost sm" data-tab="scan" type="button">Indoor map</button></div>
   ${st.flow === 'plan' ? planPanel() : ''}
   <h2 class="sech">Buildings ready now</h2><div class="bgrid">${cards}</div>
-  <h2 class="sech">Not sure where to start?</h2>
+  <details class="more"><summary>Not sure where to start? Spin the compass</summary>
   <div class="compass"><div class="dialwrap">${dialSVG()}</div><div><h3>Spin the compass</h3><p>It points at something real from the summit: a talk, a bite, a ride, a room, or the door.</p><button class="btn" data-spin="1" type="button">Spin</button></div></div>
-  <div id="spinOut" aria-live="polite">${spinCard()}</div>
-  <footer class="sufoot"><h3>Built for Newhouse, made to grow</h3><p>CuseCompass works for the three Newhouse buildings today. The same approach can cover every building at Syracuse University as floor plans become available.</p><p class="cr">Photos by Kiran891, ${ln('https://creativecommons.org/licenses/by-sa/4.0/', 'CC BY-SA 4.0')}, via Wikimedia Commons: ${credits}.</p></footer>`;
+  <div id="spinOut" aria-live="polite">${spinCard()}</div></details>
+  <footer class="sufoot"><h3>Built for Newhouse, made to grow</h3><p>CuseCompass works for the three Newhouse buildings today. The same approach can cover every building at Syracuse University as floor plans become available.</p><p class="cr">Photos by Kiran891, ${ln('https://creativecommons.org/licenses/by-sa/4.0/', 'CC BY-SA 4.0')}, via Wikimedia Commons: ${credits}. Map data © OpenStreetMap contributors, tiles © CARTO.</p></footer>`;
 }
+function initHomeMap(){
+  homeMap = makeMap($('homeMap'), {zoom:16, lat:(DEST.nh1.lat + DEST.nh23.lat) / 2, lon:(DEST.nh1.lon + DEST.nh23.lon) / 2});
+  if (!homeMap) return;
+  homeMap.setPins(Object.keys(DEST).map(k => ({id:k, lat:DEST[k].lat, lon:DEST[k].lon, label:DEST[k].name, cls:k === 'nh23' ? 'up' : ''})));
+  if (st.me) { homeMap.setUser(st.me.lat, st.me.lon, st.me.acc); homeMap.fit([[st.me.lat, st.me.lon], [DEST.nh1.lat, DEST.nh1.lon], [DEST.nh23.lat, DEST.nh23.lon]], 50); }
+  if (navigator.permissions && navigator.permissions.query) navigator.permissions.query({name:'geolocation'}).then(p => { if (p.state === 'granted') homeLocate(); }).catch(() => {});
+}
+function homeLocate(){
+  if (!navigator.geolocation) { toast('This browser can’t share your location.'); return; }
+  if (homeWatch != null) { if (homeMap) homeMap.follow(); return; }
+  let first = !st.me; homeWatch = 'home';
+  geoSubscribe('home', p => {
+    st.me = {lat:p.coords.latitude, lon:p.coords.longitude, acc:p.coords.accuracy || 0};
+    const m = $('mapMsg'); if (m) m.textContent = mapMsg();
+    if (homeMap && homeMap.alive()) { homeMap.setUser(st.me.lat, st.me.lon, st.me.acc); if (first) { first = false; homeMap.fit([[st.me.lat, st.me.lon], [DEST.nh1.lat, DEST.nh1.lon], [DEST.nh23.lat, DEST.nh23.lon]], 50); } }
+  }, () => { homeWatch = null; toast('Location is off for this site. Turn it on to see yourself on the map.'); });
+}
+function stopHomeWatch(){ if (homeWatch != null) geoUnsubscribe('home'); homeWatch = null; homeMap = null; }
 const roomCard = r => { const here = SESSIONS.filter(s => s.rooms.includes(r.id)); return `<div class="rc" id="room-${r.id}"><b>${esc(r.name)}</b>${here.length ? `<ul>${here.map(s => `<li>Day ${s.day}, ${esc(s.time)}: ${esc(s.title)}</li>`).join('')}</ul>` : ''}${r.note ? `<p class="src">${esc(r.note)}</p>` : ''}</div>`; };
 const dirRow = r => `<li><strong>${esc(r.name)}</strong>. ${r.floor ? `Floor ${r.floor}. ` : ''}${esc(r.note)} <span class="src">Source: ${r.src.map(k => SRC[k]).join('; ')}.</span></li>`;
 function viewBuilding(b){
@@ -755,8 +830,76 @@ function scanCard(list, target){
   return h;
 }
 const readNums = text => [...String(text).toUpperCase().matchAll(/\d{3}[A-Z]{0,2}/g)].map(m => m[0]);
+/* ===== live map: a tiny tile map (OpenStreetMap data, CARTO tiles). Draws your dot, the route, and pins. No map library needed. ===== */
+const TILE_PX = 256;
+const mapProj = (lat, lon, z) => { const s = TILE_PX * Math.pow(2, z), sn = Math.sin(lat * Math.PI / 180); return [(lon + 180) / 360 * s, (0.5 - Math.log((1 + sn) / (1 - sn)) / (4 * Math.PI)) * s]; };
+const mapUnproj = (x, y, z) => { const s = TILE_PX * Math.pow(2, z), n = Math.PI - 2 * Math.PI * y / s; return [180 / Math.PI * Math.atan(0.5 * (Math.exp(n) - Math.exp(-n))), x / s * 360 - 180]; };
+function makeMap(el, o){
+  if (!el || !el.clientWidth || !el.appendChild || !document.createElementNS) return null;
+  o = o || {};
+  const M = {z:o.zoom || 17, lat:o.lat || 43.0399, lon:o.lon || -76.1352, w:el.clientWidth, h:el.clientHeight || 280, follow:false, user:null, route:null, pins:[], ring:null, heading:null};
+  el.innerHTML = ''; if (el.classList) el.classList.add('lm');
+  const tiles = document.createElement('div'); tiles.className = 'lm-tiles';
+  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg'); svg.setAttribute('class', 'lm-svg');
+  const marks = document.createElement('div'); marks.className = 'lm-marks';
+  const ctl = document.createElement('div'); ctl.className = 'lm-ctl'; ctl.innerHTML = '<button type="button" data-lm="in" aria-label="Zoom in">+</button><button type="button" data-lm="out" aria-label="Zoom out">−</button><button type="button" data-lm="me" aria-label="Follow my location">◎</button>';
+  const attr = document.createElement('div'); attr.className = 'lm-attr'; attr.textContent = '© OpenStreetMap contributors © CARTO';
+  [tiles, svg, marks, ctl, attr].forEach(n => el.appendChild(n));
+  const cache = {}, dpr = (window.devicePixelRatio || 1) > 1.25 ? '@2x' : '';
+  const urlFor = (x, y, z, alt) => alt ? `https://tile.openstreetmap.org/${z}/${x}/${y}.png` : `https://${'abc'[(x + y) % 3]}.basemaps.cartocdn.com/rastertiles/voyager/${z}/${x}/${y}${dpr}.png`;
+  let raf = 0, alive = true;
+  const draw = () => {
+    raf = 0; if (!alive) return; M.w = el.clientWidth || M.w; M.h = el.clientHeight || M.h;
+    const c = mapProj(M.lat, M.lon, M.z), ox = c[0] - M.w / 2, oy = c[1] - M.h / 2, n = Math.pow(2, M.z);
+    const x0 = Math.floor(ox / TILE_PX), x1 = Math.floor((ox + M.w) / TILE_PX), y0 = Math.max(0, Math.floor(oy / TILE_PX)), y1 = Math.min(n - 1, Math.floor((oy + M.h) / TILE_PX)), keep = {};
+    for (let ty = y0; ty <= y1; ty++) for (let tx = x0; tx <= x1; tx++) {
+      const wx = ((tx % n) + n) % n, k = M.z + '/' + wx + '/' + ty; keep[k] = 1; let im = cache[k];
+      if (!im) { im = document.createElement('img'); im.className = 'lm-tile'; im.alt = ''; im.draggable = false; im.onerror = () => { if (!im._alt) { im._alt = 1; im.src = urlFor(wx, ty, M.z, true); } }; im.src = urlFor(wx, ty, M.z); tiles.appendChild(im); cache[k] = im; }
+      im.style.transform = `translate(${(tx * TILE_PX - ox).toFixed(1)}px,${(ty * TILE_PX - oy).toFixed(1)}px)`;
+    }
+    Object.keys(cache).forEach(k => { if (!keep[k]) { const im = cache[k]; if (im.parentNode) im.parentNode.removeChild(im); delete cache[k]; } });
+    const P = (la, lo) => { const p = mapProj(la, lo, M.z); return [p[0] - ox, p[1] - oy]; }, f1 = v => v.toFixed(1);
+    let s = '';
+    if (M.route && M.route.length > 1) { const pts = M.route.map(p => P(p[0], p[1]).map(f1).join(',')).join(' '); s += `<polyline points="${pts}" fill="none" stroke="#fff" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" opacity=".95"/><polyline points="${pts}" fill="none" stroke="#FF6B1A" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round"/>`; }
+    if (M.ring) { const q = P(M.ring[0], M.ring[1]); s += `<circle cx="${f1(q[0])}" cy="${f1(q[1])}" r="12" fill="#fff" fill-opacity=".6" stroke="#FFB800" stroke-width="4"/>`; }
+    svg.setAttribute('viewBox', `0 0 ${M.w} ${M.h}`); svg.innerHTML = s;
+    let m = '';
+    M.pins.forEach(p => { const q = P(p.lat, p.lon); m += `<button type="button" class="lm-pin ${p.cls || ''}" data-pin="${esc(p.id || '')}" style="left:${f1(q[0])}px;top:${f1(q[1])}px" aria-label="${esc(p.label || 'Place')}"><b></b><span>${esc(p.label || '')}</span></button>`; });
+    if (M.user) {
+      const q = P(M.user.lat, M.user.lon), r = Math.max(9, M.user.acc / (40075016.686 * Math.cos(M.user.lat * Math.PI / 180) / (TILE_PX * n)));
+      m += `<div class="lm-acc" style="left:${f1(q[0])}px;top:${f1(q[1])}px;width:${f1(2 * r)}px;height:${f1(2 * r)}px"></div><div class="lm-me" style="left:${f1(q[0])}px;top:${f1(q[1])}px"><i style="transform:rotate(${M.heading == null ? 0 : Math.round(M.heading)}deg);opacity:${M.heading == null ? 0 : 1}"></i><b></b></div>`;
+    }
+    marks.innerHTML = m;
+  };
+  const redraw = () => { if (!raf && alive) raf = (window.requestAnimationFrame ? window.requestAnimationFrame(draw) : setTimeout(draw, 16)); };
+  const pan = (dx, dy) => { const c = mapProj(M.lat, M.lon, M.z), u = mapUnproj(c[0] - dx, c[1] - dy, M.z); M.lat = u[0]; M.lon = u[1]; M.follow = false; redraw(); };
+  let drag = null;
+  el.addEventListener('pointerdown', e => { if (e.target && e.target.closest && e.target.closest('.lm-pin,.lm-ctl')) return; drag = {x:e.clientX, y:e.clientY}; try { el.setPointerCapture(e.pointerId); } catch (x) {} });
+  el.addEventListener('pointermove', e => { if (!drag) return; const dx = e.clientX - drag.x, dy = e.clientY - drag.y; drag = {x:e.clientX, y:e.clientY}; pan(dx, dy); });
+  const end = () => { drag = null; }; el.addEventListener('pointerup', end); el.addEventListener('pointercancel', end);
+  const api = {
+    el, state:M, alive:() => alive && !!el.parentNode,
+    setUser(lat, lon, acc){ M.user = {lat, lon, acc:acc || 0}; if (M.follow) { M.lat = lat; M.lon = lon; } redraw(); },
+    setHeading(h){ M.heading = h; const i = marks.querySelector && marks.querySelector('.lm-me i'); if (i) { i.style.transform = `rotate(${Math.round(h)}deg)`; i.style.opacity = 1; } },
+    setRoute(c){ M.route = c; redraw(); }, setRing(p){ M.ring = p; redraw(); }, setPins(l){ M.pins = l; redraw(); },
+    center(lat, lon, z){ M.lat = lat; M.lon = lon; if (z) M.z = z; redraw(); },
+    zoom(d){ M.z = Math.max(3, Math.min(19, M.z + d)); redraw(); },
+    follow(){ M.follow = true; if (M.user) { M.lat = M.user.lat; M.lon = M.user.lon; if (M.z < 16) M.z = 17; } redraw(); },
+    fit(points, pad){
+      pad = pad || 40; if (!points || !points.length) return; M.w = el.clientWidth || M.w; M.h = el.clientHeight || M.h; let z = 18;
+      for (; z > 3; z--) { const ps = points.map(p => mapProj(p[0], p[1], z)), xs = ps.map(p => p[0]), ys = ps.map(p => p[1]); if (Math.max.apply(null, xs) - Math.min.apply(null, xs) <= M.w - 2 * pad && Math.max.apply(null, ys) - Math.min.apply(null, ys) <= M.h - 2 * pad) break; }
+      const ps = points.map(p => mapProj(p[0], p[1], z)), xs = ps.map(p => p[0]), ys = ps.map(p => p[1]), u = mapUnproj((Math.min.apply(null, xs) + Math.max.apply(null, xs)) / 2, (Math.min.apply(null, ys) + Math.max.apply(null, ys)) / 2, z);
+      M.z = z; M.lat = u[0]; M.lon = u[1]; M.follow = false; redraw();
+    },
+    destroy(){ alive = false; }
+  };
+  ctl.addEventListener('click', e => { const b = e.target && e.target.closest ? e.target.closest('button') : null; if (!b) return; const a = b.dataset.lm; if (a === 'in') api.zoom(1); else if (a === 'out') api.zoom(-1); else if (a === 'me') api.follow(); });
+  redraw(); return api;
+}
+let homeMap = null, homeWatch = null, walkMap = null;
+
 /* ===== indoor router: floors 2 and 3 of Newhouse, traced by hand from SU's floor plans ===== */
-const INDOOR = {"floors":{"2":{"nodes":{"h1":[330,300],"h2":[450,300],"h3":[580,300],"h4":[700,300],"h5":[820,300],"h9":[790,390],"h8":[745,445],"h6":[440,330],"h7":[600,360],"k1":[365,360],"a1":[330,430],"a2":[450,425],"a3":[600,425],"w2":[240,490],"w3":[185,540],"w4":[130,630],"w5":[85,720],"s1":[150,735],"s2":[300,735],"s3":[450,735],"s4":[600,735],"s5":[722,730],"v1":[730,478],"v2":[725,525],"v3":[722,600],"v4":[722,672],"c1":[800,525],"c2":[900,525],"c3":[960,525],"c4":[1050,525],"c5":[1150,520],"c6":[1295,525],"e1":[1295,600],"m1":[800,672],"m2":[950,672],"m3":[1100,672],"m4":[1300,668],"m5":[1400,665],"m6":[1500,660],"m7":[1600,665],"m8":[1640,700],"h4b":[760,295],"q2":[758,250],"q3":[758,190],"q4":[790,140],"t1":[850,125],"t2":[950,125],"t3":[1050,125],"t4":[1130,125],"t5":[1250,125],"t6":[1350,118],"t7":[1450,112],"d1":[1128,170],"d2":[1128,215],"d3":[1200,215],"d4":[1290,215]},"edges":[["h1","h2"],["h2","h3"],["h3","h4"],["h4","h5"],["h5","h9"],["h9","h8"],["h8","v1"],["h2","h6"],["h3","h7"],["h7","a3"],["a1","a2"],["a2","a3"],["a1","w2"],["w2","w3"],["w3","w4"],["w4","w5"],["w5","s1"],["s1","s2"],["s2","s3"],["s3","s4"],["s4","s5"],["h1","k1"],["k1","a1"],["v1","v2"],["v2","v3"],["v3","v4"],["v4","s5"],["v2","c1"],["c1","c2"],["c2","c3"],["c3","c4"],["c4","c5"],["c5","c6"],["c6","e1"],["e1","m4"],["v4","m1"],["m1","m2"],["m2","m3"],["m3","m4"],["m4","m5"],["m5","m6"],["m6","m7"],["m7","m8"],["h4","h4b"],["h4b","q2"],["q2","q3"],["q3","q4"],["q4","t1"],["t1","t2"],["t2","t3"],["t3","t4"],["t4","t5"],["t5","t6"],["t6","t7"],["t4","d1"],["d1","d2"],["d2","d3"],["d3","d4"]],"pois":[["elevator","NH1 elevator",960,497,"c3"],["elevator","NH2 elevator",822,178,"q4"],["elevator","NH3 elevator A",413,352,"h6"],["elevator","NH3 elevator B",326,417,"a1"],["stairs","Stairs",800,483,"c1"],["stairs","Stairs",1346,491,"c6"],["stairs","Stairs",1230,596,"e1"],["stairs","Stairs",746,731,"s5"],["stairs","Stairs",948,719,"m2"],["stairs","Stairs",190,558,"w3"],["stairs","Stairs",228,773,"s2"],["stairs","Stairs",280,323,"h1"],["stairs","Stairs",376,244,"h1"],["stairs","Stairs",722,191,"q3"],["stairs","Stairs",808,197,"q3"],["stairs","Stairs",1197,157,"d3"],["stairs","Stairs",1448,139,"t7"],["stairs","Stairs",1201,272,"d3"],["restroom","Restroom",704,251,"h4"],["restroom","Restroom",800,241,"q2"],["restroom","Restroom",1399,718,"m5"],["restroom","Accessible restroom",380,375,"k1"],["restroom","Accessible restroom",400,396,"k1"]],"rooms":{"201":[868,480,"c2",0],"202":[960,462,"c3",0],"203":[1030,463,"c4",0],"205A":[1130,477,"c5",0],"205B":[1255,456,"c6",0],"205":[1255,500,"c6",0],"205BA":[1337,454,"c6",0],"205E":[1260,538,"c6",0],"205F":[1200,563,"c5",0],"205D":[1290,585,"e1",0],"204":[1060,565,"c4",0],"213":[1060,622,"m3",0],"211":[1200,628,"e1",0],"210":[1320,654,"m4",0],"209":[1375,634,"m5",0],"206A":[1420,633,"m5",0],"206B":[1385,563,"e1",0],"206C":[1480,545,"m6",0],"206":[1480,572,"m6",0],"206CA":[1430,510,"c6",1],"206D":[1605,568,"m7",0],"206E":[1655,657,"m8",0],"206F":[1665,746,"m8",0],"207N":[1530,735,"m6",0],"207":[1170,725,"m3",0],"207C":[1065,740,"m3",0],"297SA":[1090,712,"m3",0],"212":[839,734,"m1",0],"221":[768,617,"v3",0],"223":[779,573,"c1",0],"208":[1325,692,"m4",0],"241":[313,455,"a1",0],"240":[385,455,"a1",0],"239":[437,449,"a2",0],"238":[487,455,"a2",0],"237":[552,455,"a3",0],"236":[615,455,"a3",0],"235":[682,455,"v1",0],"242":[706,419,"h8",0],"244":[623,363,"h7",0],"245":[498,417,"a2",0],"246":[462,347,"h6",0],"243":[692,301,"h4",0],"224":[503,504,"a2",0],"224C":[595,502,"a3",0],"222":[666,504,"v2",0],"222DC":[599,536,"a3",0],"222DA":[464,564,"a2",1],"222D":[588,565,"v3",1],"214C":[457,628,"s3",0],"214":[599,660,"s4",0],"214A":[493,695,"s3",0],"220":[400,698,"s3",0],"250":[325,540,"w2",0],"251":[266,653,"s2",0],"219":[357,769,"s2",0],"218":[438,769,"s3",0],"217":[518,769,"s3",0],"216":[590,769,"s4",0],"215":[663,769,"s5",0],"254":[44,498,"w3",1],"255":[130,458,"w3",0],"255A":[47,446,"w3",1],"256B":[82,420,"w3",1],"256A":[182,422,"w2",0],"256C":[111,393,"w2",1],"256":[211,395,"w2",0],"256E":[203,354,"h1",1],"257":[192,338,"h1",1],"258":[234,307,"h1",0],"259":[170,313,"h1",1],"273":[614,214,"h3",0],"273A":[572,257,"h3",0],"274":[624,176,"h3",1],"275":[631,152,"q3",1],"276":[719,147,"q3",0],"280":[1070,170,"t3",0],"280A":[1062,197,"d2",0],"284":[1094,235,"d2",0],"283":[1174,169,"d1",0],"282A":[1219,169,"d3",0],"282":[1202,187,"d3",0],"285":[1212,231,"d3",0],"284A":[1216,255,"d3",0],"290":[1289,161,"t5",0],"288":[1293,192,"d4",0],"285A":[1314,222,"d4",0]},"box":[-16,52,1745,849]},"3":{"nodes":{"g1":[610,722],"g2":[700,722],"g3":[800,718],"p1":[595,790],"p2":[585,860],"pA":[640,880],"pB":[640,965],"p3":[600,990],"p4":[555,1020],"e1":[530,1070],"e2":[500,1150],"e3":[460,1240],"e4":[430,1330],"e5":[400,1420],"e6":[330,1455],"sx":[420,1480],"w1":[470,1040],"w2":[405,1090],"w3":[350,1150],"w4":[270,1250],"w5":[250,1350],"w6":[243,1440],"w7":[270,1455],"s1":[860,707],"s2":[1000,708],"s3":[1100,708],"s4":[1200,708],"s5":[1380,708],"s6":[1500,708],"s7":[1650,708],"s8":[1800,708],"s9":[1950,708],"m1":[1000,630],"m2":[1110,630],"mE":[1180,630],"m3":[1250,632],"m4":[1380,632],"m5":[1550,632],"m6":[1664,632],"m7":[1800,632],"m8":[1930,632],"b1":[1650,748],"b2":[1689,894],"b3":[1725,1003],"L1":[1725,1060],"L2":[1600,1150],"L3":[1760,1210],"L4":[1700,1320],"L5":[1480,1110],"L6":[1840,1190],"L7":[1850,1330],"L8":[1560,1385],"L9":[1700,1375],"L10":[1990,1385],"L11":[1520,1290]},"edges":[["g1","g2"],["g2","g3"],["g3","s1"],["g1","p1"],["p1","p2"],["p2","pA"],["pA","pB"],["pB","p3"],["p3","p4"],["p4","e1"],["e1","e2"],["e2","e3"],["e3","e4"],["e4","e5"],["e5","e6"],["e5","sx"],["e6","sx"],["p4","w1"],["w1","w2"],["w2","w3"],["w3","w4"],["w4","w5"],["w5","w6"],["w6","w7"],["w7","e6"],["s1","s2"],["s2","s3"],["s3","s4"],["s4","s5"],["s5","s6"],["s6","s7"],["s7","s8"],["s8","s9"],["m1","m2"],["m2","mE"],["mE","m3"],["m3","m4"],["m4","m5"],["m5","m6"],["m6","m7"],["m7","m8"],["m1","s2"],["m2","s3"],["m4","s5"],["m6","s7"],["s7","b1"],["b1","b2"],["b2","b3"],["b3","L1"],["L1","L2"],["L1","L3"],["L2","L3"],["L2","L5"],["L3","L4"],["L3","L6"],["L4","L7"],["L4","L9"],["L2","L11"],["L11","L8"],["L8","L9"],["L7","L10"]],"pois":[["elevator","NH1 elevator",1430,1090,"L5"],["elevator","NH2 elevator",1180,645,"mE"],["elevator","NH3 elevator A",722,880,"pA"],["elevator","NH3 elevator B",697,970,"pB"],["stairs","Stairs",1909,1080,"L6"],["stairs","Stairs",1823,1184,"L6"],["stairs","Stairs",1860,1297,"L7"],["stairs","Stairs",1478,1423,"L8"],["stairs","Stairs",1065,665,"s3"],["stairs","Stairs",1173,668,"mE"],["stairs","Stairs",1616,615,"m6"],["stairs","Stairs",697,853,"pA"],["stairs","Stairs",475,1180,"e2"],["stairs","Stairs",473,1515,"sx"],["restroom","Restroom",1548,651,"m5"],["restroom","Restroom",1566,682,"m5"],["restroom","Accessible restroom",705,908,"pA"],["restroom","Accessible restroom",688,938,"pB"]],"rooms":{"301":[1542,1051,"L5",0],"301A":[1634,1047,"L1",0],"301B":[1634,1096,"L2",0],"303":[2001,1237,"L10",1],"304":[2051,1421,"L10",0],"305":[1782,1448,"L9",0],"305A":[1634,1376,"L9",0],"305B":[1890,1376,"L7",0],"332A":[942,601,"m1",0],"332":[1015,616,"m1",0],"330A":[942,623,"m1",0],"330":[925,678,"s1",0],"330D":[1005,649,"m1",0],"330C":[1005,669,"s2",0],"330B":[1005,691,"s2",0],"334":[1065,607,"m2",0],"335":[1103,607,"m2",0],"336":[1141,607,"m2",0],"337":[1194,607,"mE",0],"338":[1242,607,"m3",0],"339":[1281,607,"m3",0],"341":[1323,607,"m4",0],"342":[1360,607,"m4",0],"348":[1548,599,"m5",0],"351":[1686,607,"m6",0],"352":[1753,607,"m7",0],"353":[1812,607,"m7",0],"360A":[1866,607,"m8",0],"360B":[1946,607,"m8",0],"340":[1275,666,"m3",0],"343":[1364,649,"m4",0],"379":[1371,680,"s5",0],"345":[1462,666,"s6",0],"350":[1714,666,"m6",0],"355":[1837,666,"m7",0],"360":[1927,669,"m8",0],"360H":[2024,728,"s9",0],"378":[1223,730,"s4",0],"377":[1266,730,"s4",0],"376":[1310,730,"s5",0],"375":[1353,730,"s5",0],"374":[1398,730,"s5",0],"373":[1441,730,"s6",0],"372":[1484,730,"s6",0],"371":[1530,730,"s6",0],"370":[1571,730,"s6",0],"366":[1705,730,"b1",0],"365":[1748,730,"s8",0],"364":[1792,730,"s8",0],"363":[1837,730,"s8",0],"362":[1880,730,"s9",0],"360J":[1916,728,"s9",0],"328":[812,707,"g3",0],"318F":[640,640,"g1",0],"318G":[570,652,"g1",0],"318E":[472,667,"g1",1],"318H":[570,678,"g1",0],"318D":[452,694,"g1",1],"318":[510,728,"g1",0],"318C":[437,773,"p1",1],"318B":[432,807,"p2",1],"318A":[418,843,"p2",1],"317B":[546,815,"p1",0],"316B":[405,943,"w1",0],"315B":[323,968,"w2",1],"316A":[445,982,"w1",0],"315A":[278,1012,"w2",1],"315":[387,1027,"w2",0],"314B":[240,1050,"w3",1],"314":[332,1092,"w3",0],"314A":[188,1107,"w4",1],"310":[656,1080,"p3",0],"311":[572,1323,"e3",1],"312":[538,1418,"sx",1],"313":[160,1418,"w6",0],"327":[736,787,"g2",0],"328A":[725,707,"g2",0]},"box":[100,539,2131,1560]}},"links":[["NH1 elevator","2:c3","3:L5"],["NH2 elevator","2:q4","3:mE"],["NH3 elevator A","2:h6","3:pA"],["NH3 elevator B","2:a1","3:pB"]]};
+const INDOOR = {"floors":{"2":{"nodes":{"h1":[330,300],"h2":[450,300],"h3":[580,300],"h4":[700,300],"h5":[820,300],"h9":[790,390],"h8":[745,445],"h6":[440,330],"h7":[600,360],"k1":[365,360],"a1":[330,430],"a2":[450,425],"a3":[600,425],"w2":[240,490],"w3":[185,540],"w4":[130,630],"w5":[85,720],"s1":[150,735],"s2":[300,735],"s3":[450,735],"s4":[600,735],"s5":[722,730],"v1":[730,478],"v2":[725,525],"v3":[722,600],"v4":[722,672],"c1":[800,525],"c2":[900,525],"c3":[960,525],"c4":[1050,525],"c5":[1150,520],"c6":[1295,525],"e1":[1295,600],"m1":[800,672],"m2":[950,672],"m3":[1100,672],"m4":[1300,668],"m5":[1400,665],"m6":[1500,660],"m7":[1600,665],"m8":[1640,700],"h4b":[760,295],"q2":[758,250],"q3":[758,190],"q4":[790,140],"t1":[850,125],"t2":[950,125],"t3":[1050,125],"t4":[1130,125],"t5":[1250,125],"t6":[1350,118],"t7":[1450,112],"d1":[1128,170],"d2":[1128,215],"d3":[1200,215],"d4":[1290,215]},"edges":[["h1","h2"],["h2","h3"],["h3","h4"],["h4","h5"],["h5","h9"],["h9","h8"],["h8","v1"],["h2","h6"],["h3","h7"],["h7","a3"],["a1","a2"],["a2","a3"],["a1","w2"],["w2","w3"],["w3","w4"],["w4","w5"],["w5","s1"],["s1","s2"],["s2","s3"],["s3","s4"],["s4","s5"],["h1","k1"],["k1","a1"],["v1","v2"],["v2","v3"],["v3","v4"],["v4","s5"],["v2","c1"],["c1","c2"],["c2","c3"],["c3","c4"],["c4","c5"],["c5","c6"],["c6","e1"],["e1","m4"],["v4","m1"],["m1","m2"],["m2","m3"],["m3","m4"],["m4","m5"],["m5","m6"],["m6","m7"],["m7","m8"],["h4","h4b"],["h4b","q2"],["q2","q3"],["q3","q4"],["q4","t1"],["t1","t2"],["t2","t3"],["t3","t4"],["t4","t5"],["t5","t6"],["t6","t7"],["t4","d1"],["d1","d2"],["d2","d3"],["d3","d4"]],"pois":[["elevator","NH1 elevator",960,497,"c3"],["elevator","NH2 elevator",822,178,"q4"],["elevator","NH3 elevator A",413,352,"h6"],["elevator","NH3 elevator B",326,417,"a1"],["stairs","Stairs",800,483,"c1"],["stairs","Stairs",1346,491,"c6"],["stairs","Stairs",1230,596,"e1"],["stairs","Stairs",746,731,"s5"],["stairs","Stairs",948,719,"m2"],["stairs","Stairs",190,558,"w3"],["stairs","Stairs",228,773,"s2"],["stairs","Stairs",280,323,"h1"],["stairs","Stairs",376,244,"h1"],["stairs","Stairs",722,191,"q3"],["stairs","Stairs",808,197,"q3"],["stairs","Stairs",1197,157,"d3"],["stairs","Stairs",1448,139,"t7"],["stairs","Stairs",1201,272,"d3"],["restroom","Restroom",704,251,"h4"],["restroom","Restroom",800,241,"q2"],["restroom","Restroom",1399,718,"m5"],["restroom","Accessible restroom",380,375,"k1"],["restroom","Accessible restroom",400,396,"k1"]],"rooms":{"201":[868,480,"c2",0],"202":[960,462,"c3",0],"203":[1030,463,"c4",0],"205A":[1130,477,"c5",0],"205B":[1255,456,"c6",0],"205":[1255,500,"c6",0],"205BA":[1337,454,"c6",0],"205E":[1260,538,"c6",0],"205F":[1200,563,"c5",0],"205D":[1290,585,"e1",0],"204":[1060,565,"c4",0],"213":[1060,622,"m3",0],"211":[1200,628,"e1",0],"210":[1320,654,"m4",0],"209":[1375,634,"m5",0],"206A":[1420,633,"m5",0],"206B":[1385,563,"e1",0],"206C":[1480,545,"m6",0],"206":[1480,572,"m6",0],"206CA":[1430,510,"c6",1],"206D":[1605,568,"m7",0],"206E":[1655,657,"m8",0],"206F":[1665,746,"m8",0],"207N":[1530,735,"m6",0],"207":[1170,725,"m3",0],"207C":[1065,740,"m3",0],"297SA":[1090,712,"m3",0],"212":[839,734,"m1",0],"221":[768,617,"v3",0],"223":[779,573,"c1",0],"208":[1325,692,"m4",0],"241":[313,455,"a1",0],"240":[385,455,"a1",0],"239":[437,449,"a2",0],"238":[487,455,"a2",0],"237":[552,455,"a3",0],"236":[615,455,"a3",0],"235":[682,455,"v1",0],"242":[706,419,"h8",0],"244":[623,363,"h7",0],"245":[498,417,"a2",0],"246":[462,347,"h6",0],"243":[692,301,"h4",0],"224":[503,504,"a2",0],"224C":[595,502,"a3",0],"222":[666,504,"v2",0],"222DC":[599,536,"a3",0],"222DA":[464,564,"a2",1],"222D":[588,565,"v3",1],"214C":[457,628,"s3",0],"214":[599,660,"s4",0],"214A":[493,695,"s3",0],"220":[400,698,"s3",0],"250":[325,540,"w2",0],"251":[266,653,"s2",0],"219":[357,769,"s2",0],"218":[438,769,"s3",0],"217":[518,769,"s3",0],"216":[590,769,"s4",0],"215":[663,769,"s5",0],"254":[44,498,"w3",1],"255":[130,458,"w3",0],"255A":[47,446,"w3",1],"256B":[82,420,"w3",1],"256A":[182,422,"w2",0],"256C":[111,393,"w2",1],"256":[211,395,"w2",0],"256E":[203,354,"h1",1],"257":[192,338,"h1",1],"258":[234,307,"h1",0],"259":[170,313,"h1",1],"273":[614,214,"h3",0],"273A":[572,257,"h3",0],"274":[624,176,"h3",1],"275":[631,152,"q3",1],"276":[719,147,"q3",0],"280":[1070,170,"t3",0],"280A":[1062,197,"d2",0],"284":[1094,235,"d2",0],"283":[1174,169,"d1",0],"282A":[1219,169,"d3",0],"282":[1202,187,"d3",0],"285":[1212,231,"d3",0],"284A":[1216,255,"d3",0],"290":[1289,161,"t5",0],"288":[1293,192,"d4",0],"285A":[1314,222,"d4",0]},"box":[-16,52,1745,849]},"3":{"nodes":{"g1":[610,722],"g2":[700,722],"g3":[800,718],"p1":[595,790],"p2":[585,860],"pA":[640,880],"pB":[640,965],"p3":[600,990],"p4":[555,1020],"e1":[530,1070],"e2":[500,1150],"e3":[460,1240],"e4":[430,1330],"e5":[400,1420],"e6":[330,1455],"sx":[420,1480],"w1":[470,1040],"w2":[405,1090],"w3":[350,1150],"w4":[270,1250],"w5":[250,1350],"w6":[243,1440],"w7":[270,1455],"s1":[860,707],"s2":[1000,708],"s3":[1100,708],"s4":[1200,708],"s5":[1380,708],"s6":[1500,708],"s7":[1650,708],"s8":[1800,708],"s9":[1950,708],"m1":[1000,630],"m2":[1110,630],"mE":[1180,630],"m3":[1250,632],"m4":[1380,632],"m5":[1550,632],"m6":[1664,632],"m7":[1800,632],"m8":[1930,632],"b1":[1650,748],"b2":[1689,894],"b3":[1725,1003],"L1":[1725,1060],"L2":[1600,1150],"L3":[1760,1210],"L4":[1700,1320],"L5":[1480,1110],"L6":[1840,1190],"L7":[1850,1330],"L8":[1560,1385],"L9":[1700,1375],"L10":[1990,1385],"L11":[1520,1290]},"edges":[["g1","g2"],["g2","g3"],["g3","s1"],["g1","p1"],["p1","p2"],["p2","pA"],["pA","pB"],["pB","p3"],["p3","p4"],["p4","e1"],["e1","e2"],["e2","e3"],["e3","e4"],["e4","e5"],["e5","e6"],["e5","sx"],["e6","sx"],["p4","w1"],["w1","w2"],["w2","w3"],["w3","w4"],["w4","w5"],["w5","w6"],["w6","w7"],["w7","e6"],["s1","s2"],["s2","s3"],["s3","s4"],["s4","s5"],["s5","s6"],["s6","s7"],["s7","s8"],["s8","s9"],["m1","m2"],["m2","mE"],["mE","m3"],["m3","m4"],["m4","m5"],["m5","m6"],["m6","m7"],["m7","m8"],["m1","s2"],["m2","s3"],["m4","s5"],["m6","s7"],["s7","b1"],["b1","b2"],["b2","b3"],["b3","L1"],["L1","L2"],["L1","L3"],["L2","L3"],["L2","L5"],["L3","L4"],["L3","L6"],["L4","L7"],["L4","L9"],["L2","L11"],["L11","L8"],["L8","L9"],["L7","L10"]],"pois":[["elevator","NH1 elevator",1430,1090,"L5"],["elevator","NH2 elevator",1180,645,"mE"],["elevator","NH3 elevator A",722,880,"pA"],["elevator","NH3 elevator B",697,970,"pB"],["stairs","Stairs",1909,1080,"L6"],["stairs","Stairs",1823,1184,"L6"],["stairs","Stairs",1860,1297,"L7"],["stairs","Stairs",1478,1423,"L8"],["stairs","Stairs",1065,665,"s3"],["stairs","Stairs",1173,668,"mE"],["stairs","Stairs",1616,615,"m6"],["stairs","Stairs",697,853,"pA"],["stairs","Stairs",475,1180,"e2"],["stairs","Stairs",473,1515,"sx"],["restroom","Restroom",1548,651,"m5"],["restroom","Restroom",1566,682,"m5"],["restroom","Accessible restroom",705,908,"pA"],["restroom","Accessible restroom",688,938,"pB"]],"rooms":{"301":[1542,1051,"L5",0],"301A":[1634,1047,"L1",0],"301B":[1634,1096,"L2",0],"303":[2001,1237,"L10",0],"304":[2051,1421,"L10",0],"305":[1782,1448,"L9",0],"305A":[1634,1376,"L9",0],"305B":[1890,1376,"L7",0],"332A":[942,601,"m1",0],"332":[1015,616,"m1",0],"330A":[942,623,"m1",0],"330":[925,678,"s1",0],"330D":[1005,649,"m1",0],"330C":[1005,669,"s2",0],"330B":[1005,691,"s2",0],"334":[1065,607,"m2",0],"335":[1103,607,"m2",0],"336":[1141,607,"m2",0],"337":[1194,607,"mE",0],"338":[1242,607,"m3",0],"339":[1281,607,"m3",0],"341":[1323,607,"m4",0],"342":[1360,607,"m4",0],"348":[1548,599,"m5",0],"351":[1686,607,"m6",0],"352":[1753,607,"m7",0],"353":[1812,607,"m7",0],"360A":[1866,607,"m8",0],"360B":[1946,607,"m8",0],"340":[1275,666,"m3",0],"343":[1364,649,"m4",0],"379":[1371,680,"s5",0],"345":[1462,666,"s6",0],"350":[1714,666,"m6",0],"355":[1837,666,"m7",0],"360":[1927,669,"m8",0],"360H":[2024,728,"s9",0],"378":[1223,730,"s4",0],"377":[1266,730,"s4",0],"376":[1310,730,"s5",0],"375":[1353,730,"s5",0],"374":[1398,730,"s5",0],"373":[1441,730,"s6",0],"372":[1484,730,"s6",0],"371":[1530,730,"s6",0],"370":[1571,730,"s6",0],"366":[1705,730,"b1",0],"365":[1748,730,"s8",0],"364":[1792,730,"s8",0],"363":[1837,730,"s8",0],"362":[1880,730,"s9",0],"360J":[1916,728,"s9",0],"328":[812,707,"g3",0],"318F":[640,640,"g1",0],"318G":[570,652,"g1",0],"318E":[472,667,"g1",1],"318H":[570,678,"g1",0],"318D":[452,694,"g1",1],"318":[510,728,"g1",0],"318C":[437,773,"p1",1],"318B":[432,807,"p2",1],"318A":[418,843,"p2",1],"317B":[546,815,"p1",0],"316B":[405,943,"w1",0],"315B":[323,968,"w2",1],"316A":[445,982,"w1",0],"315A":[278,1012,"w2",1],"315":[387,1027,"w2",0],"314B":[240,1050,"w3",1],"314":[332,1092,"w3",0],"314A":[188,1107,"w4",1],"310":[656,1080,"p3",0],"311":[572,1323,"e3",0],"312":[538,1418,"sx",0],"313":[160,1418,"w6",0],"327":[736,787,"g2",0],"328A":[725,707,"g2",0]},"box":[100,539,2131,1560]},"4":{"nodes":{"g1":[1905,1050],"g2":[1790,1050],"g3":[1700,1060],"p1":[1660,1120],"p2":[1690,1210],"p3":[1660,1290],"p4":[1600,1345],"w1":[1530,1400],"w2":[1480,1480],"w3":[1440,1560],"w4":[1400,1650],"w5":[1385,1740],"b1":[1420,1770],"b2":[1520,1770],"b3":[1650,1770],"b4":[1740,1765],"e1":[1720,1380],"e2":[1710,1460],"e3":[1650,1700],"e4":[1650,1620],"nw1":[1565,1010],"nw2":[1560,1100],"nw3":[1555,1190],"nw4":[1530,1270],"S0":[1895,1030],"S1":[2000,1028],"S2":[2060,1028],"S3":[2230,1028],"S4":[2400,1028],"S5":[2550,1028],"S6":[2690,1028],"S7":[2850,1028],"S8":[3000,1028],"S9":[3110,1028],"N1":[2060,955],"N2":[2230,953],"N3":[2400,953],"N4":[2550,953],"N5":[2700,953],"N6":[2850,953],"N7":[3000,953],"N8":[3100,953],"r1":[2560,1440],"r2":[2670,1440],"r3":[2800,1440],"r4":[2930,1445],"r5":[3000,1440],"r6":[3005,1500],"r7":[3015,1570],"r8":[3015,1625],"r9":[2900,1655],"r10":[2780,1655],"r11":[2670,1655],"r12":[2560,1655],"r13":[2680,1560],"r14":[2680,1500],"r15":[3080,1690]},"edges":[["g1","g2"],["g2","g3"],["g3","p1"],["p1","p2"],["p2","p3"],["p3","p4"],["p4","w1"],["w1","w2"],["w2","w3"],["w3","w4"],["w4","w5"],["w5","b1"],["b1","b2"],["b2","b3"],["b3","b4"],["b3","e3"],["e3","e4"],["p4","e1"],["e1","e2"],["w1","nw4"],["nw4","nw3"],["nw3","nw2"],["nw2","nw1"],["g1","S0"],["S0","S1"],["S1","S2"],["S2","S3"],["S3","S4"],["S4","S5"],["S5","S6"],["S6","S7"],["S7","S8"],["S8","S9"],["N1","N2"],["N2","N3"],["N3","N4"],["N4","N5"],["N5","N6"],["N6","N7"],["N7","N8"],["N1","S2"],["N3","S4"],["N5","S6"],["N7","S8"],["r1","r2"],["r2","r3"],["r3","r4"],["r4","r5"],["r5","r6"],["r6","r7"],["r7","r8"],["r8","r9"],["r9","r10"],["r10","r11"],["r11","r12"],["r2","r14"],["r14","r13"],["r13","r11"],["r8","r15"]],"pois":[["elevator","NH3 elevator A",1788,1200,"p2"],["elevator","NH2 elevator",2215,972,"N2"],["elevator","NH1 elevator",2505,1405,"r1"],["stairs","Stairs",1760,1175,"p2"],["stairs","Stairs",1602,1817,"b3"],["stairs","Stairs",2105,988,"N1"],["stairs","Stairs",2208,993,"S3"],["stairs","Stairs",2647,946,"N5"],["stairs","Stairs",2972,1397,"r5"],["stairs","Stairs",2898,1498,"r4"],["stairs","Stairs",2943,1607,"r9"],["stairs","Stairs",2578,1728,"r12"],["restroom","Restroom",2270,1007,"S3"],["restroom","Restroom",2645,978,"N5"],["restroom","Restroom",2700,975,"N5"],["restroom","Restroom",3138,1715,"r15"]],"rooms":{"432":[1235,1592,"w4",0],"434":[1285,1490,"w3",0],"433":[1373,1575,"w3",0],"435":[1398,1525,"w3",0],"436":[1343,1398,"w2",0],"437":[1455,1387,"w1",0],"430":[1200,1710,"w5",0],"431":[1307,1725,"w5",0],"430B":[1290,1793,"w5",0],"430A":[1128,1847,"w5",1],"440":[1363,1333,"nw4",1],"441":[1393,1301,"nw4",1],"442":[1425,1266,"nw4",0],"443":[1443,1233,"nw4",0],"444":[1470,1200,"nw3",0],"445":[1483,1168,"nw3",0],"446":[1495,1140,"nw2",0],"447":[1500,1113,"nw2",0],"448":[1500,1087,"nw2",0],"449":[1503,1063,"nw2",0],"450":[1505,1040,"nw1",0],"452":[1508,1017,"nw1",0],"453":[1518,966,"nw1",0],"454":[1618,980,"nw1",0],"455":[1618,1003,"nw1",0],"457":[1615,1088,"p1",0],"463":[1788,1113,"g2",0],"464":[1777,1032,"g2",0],"465":[1826,1032,"g2",0],"466":[1885,1033,"S0",0],"462":[1755,1227,"p2",0],"461":[1760,1257,"p2",0],"420":[1698,1308,"p3",0],"421":[1763,1320,"e1",0],"422":[1780,1390,"e1",0],"422A":[1760,1450,"e2",0],"423":[1660,1408,"e1",0],"424":[1643,1457,"e2",0],"425":[1693,1543,"e2",0],"427":[1592,1640,"e4",0],"426A":[1715,1640,"e4",0],"428":[1575,1703,"e3",0],"426":[1705,1722,"b4",0],"438":[1510,1245,"nw4",0],"469":[1995,950,"N1",0],"470":[2150,928,"N2",0],"468":[1973,1003,"S1",0],"468C":[2035,1003,"S2",0],"468A":[2000,1035,"S1",0],"471":[2268,977,"N2",0],"473":[2325,977,"N3",0],"493":[2330,1005,"S4",0],"490A":[2430,990,"N3",0],"490B":[2565,985,"N4",0],"489":[2665,1002,"S6",0],"496A":[2150,1058,"S3",0],"496":[2215,1058,"S3",0],"494":[2305,1058,"S3",0],"494A":[2385,1060,"S4",0],"491":[2555,1058,"S5",0],"488":[2688,1058,"S6",0],"486":[2800,1058,"S7",0],"482A":[3000,1060,"S8",0],"482":[2980,992,"S8",0],"480":[2790,978,"N6",0],"483":[2870,980,"N6",0],"484":[2885,1005,"S7",0],"487":[2715,1030,"S6",0],"472":[2795,935,"N6",0],"409":[2680,1376,"r2",0],"410":[2834,1359,"r3",0],"411":[2838,1417,"r3",0],"408":[2488,1467,"r1",0],"412":[2601,1482,"r1",0],"407":[2540,1562,"r12",0],"406":[2797,1757,"r10",0],"405":[2957,1692,"r9",0],"404":[3013,1776,"r15",0],"400":[3032,1557,"r7",0],"400C":[3127,1544,"r7",0],"400D":[3097,1467,"r6",0],"400E":[3063,1472,"r6",0],"400A":[3127,1628,"r15",0],"400B":[3192,1630,"r15",0],"415":[2526,1382,"r1",0]},"box":[1068,868,3272,1927]},"5":{"nodes":{"a1":[2150,1425],"a2":[2250,1425],"a3":[2400,1425],"a4":[2520,1425],"a5":[2575,1430],"b1":[2580,1520],"b2":[2585,1620],"b3":[2590,1700],"c1":[2500,1715],"c2":[2380,1715],"c3":[2260,1715],"c4":[2160,1715],"d1":[2210,1520],"d2":[2210,1620]},"edges":[["a1","a2"],["a2","a3"],["a3","a4"],["a4","a5"],["a5","b1"],["b1","b2"],["b2","b3"],["b3","c1"],["c1","c2"],["c2","c3"],["c3","c4"],["a2","d1"],["d1","d2"],["d2","c3"]],"pois":[["elevator","NH1 elevator",2109,1418,"a1"],["stairs","Stairs",2585,1412,"a5"],["stairs","Stairs",2107,1748,"c4"],["restroom","Restroom",2680,1739,"b3"]],"rooms":{"525":[2359,1353,"a3",0],"500":[2250,1393,"a2",0],"501":[2320,1391,"a2",0],"502":[2391,1393,"a3",0],"503":[2456,1393,"a3",0],"518":[2135,1393,"a1",0],"517":[2136,1455,"a1",0],"504":[2595,1455,"a5",0],"505":[2582,1503,"b1",0],"505A":[2655,1503,"b1",0],"516A":[2088,1500,"a1",0],"516B":[2153,1485,"a1",0],"516":[2162,1534,"d1",0],"528":[2018,1556,"a1",1],"515A":[2085,1618,"c4",0],"515":[2150,1614,"d2",0],"514":[2134,1679,"c4",0],"507":[2600,1573,"b2",0],"507C":[2673,1568,"b2",0],"507A":[2606,1625,"b2",0],"507B":[2691,1623,"b2",0],"508":[2652,1679,"b3",0],"526":[2741,1557,"b1",1],"513":[2285,1766,"c3",0],"512":[2364,1766,"c2",0],"511":[2436,1766,"c2",0],"510":[2527,1766,"c1",0],"527":[2416,1832,"c2",0]},"box":[1958,1293,2821,1912]}},"links":[["NH1 elevator","2:c3","3:L5"],["NH1 elevator","3:L5","4:r1"],["NH1 elevator","4:r1","5:a1"],["NH2 elevator","2:q4","3:mE"],["NH2 elevator","3:mE","4:N2"],["NH3 elevator A","2:h6","3:pA"],["NH3 elevator A","3:pA","4:p2"],["NH3 elevator B","2:a1","3:pB"]]};
 const IG = (() => {
   const adj = {}, pos = {}, rooms = {}, pois = [], add = (a, b, w) => { (adj[a] = adj[a] || []).push([b, w]); (adj[b] = adj[b] || []).push([a, w]); };
   Object.keys(INDOOR.floors).forEach(f => {
@@ -784,7 +927,7 @@ function igRoomOf(text){
   return {hit, list};
 }
 const igElevName = k => { const l = INDOOR.links.find(x => x[1] === k || x[2] === k); return l ? l[0] : 'elevator'; };
-const igLenWord = len => len < 140 ? 'a few steps' : len < 380 ? 'a short walk' : 'a long hallway';
+const igLenWord = len => len < 140 ? 'a few steps' : len < 380 ? 'a short walk' : 'a long stretch';
 function igSteps(path, toNum, fromNum){
   const steps = [], legs = []; let cur = [path[0]];
   for (let j = 1; j < path.length; j++) { if (igFloor(path[j]) !== igFloor(path[j - 1])) { legs.push(cur); cur = [path[j]]; } else cur.push(path[j]); }
@@ -804,7 +947,8 @@ function igSteps(path, toNum, fromNum){
   });
   legs.forEach((leg, li) => {
     const f = igFloor(leg[0]), P = leg.map(k => IG.pos[k]);
-    if (li > 0) steps.push({f, text:`Leave the elevator on floor ${f}.`});
+    const pass = li > 0 && li < legs.length - 1 && leg.length === 1; // riding straight through this floor
+    if (li > 0 && !pass) steps.push({f, text:`Leave the elevator on floor ${f}.`});
     if (P.length > 1) {
       const cuts = [0]; for (let j = 1; j < P.length - 1; j++) if (Math.abs(ang(P[j - 1], P[j], P[j + 1])) >= 35) cuts.push(j); cuts.push(P.length - 1);
       for (let k = 0; k < cuts.length - 1; k++) {
@@ -820,7 +964,7 @@ function igSteps(path, toNum, fromNum){
         steps.push({f, text: text + '.'});
       }
     }
-    if (li < legs.length - 1) { const nf = igFloor(legs[li + 1][0]); steps.push({f, text:`Take the ${igElevName(leg[leg.length - 1])} ${nf > f ? 'up' : 'down'} to floor ${nf}.`, elev:true}); }
+    if (li < legs.length - 1 && !pass) { let nj = li + 1; while (nj < legs.length - 1 && legs[nj].length === 1) nj++; const nf = igFloor(legs[nj][0]); steps.push({f, text:`Take the ${igElevName(leg[leg.length - 1])} ${nf > f ? 'up' : 'down'} to floor ${nf}.`, elev:true}); }
   });
   if (toNum && IG.rooms[toNum]) {
     const R = IG.rooms[toNum], last = legs[legs.length - 1], P = last.map(k => IG.pos[k]), n = P.length;
@@ -839,7 +983,7 @@ function igFloorSVG(f, o){
     const w = Math.max(x1 - x0, 620), h = Math.max(y1 - y0, 400), cx = (x0 + x1) / 2, cy = (y0 + y1) / 2; box = [cx - w / 2, cy - h / 2, cx + w / 2, cy + h / 2];
   }
   const W = box[2] - box[0], H = box[3] - box[1], fs = Math.max(11, W / (o.full ? 46 : 30)), inb = (x, y) => x > box[0] && x < box[2] && y > box[1] && y < box[3];
-  let s = `<svg class="igsvg" viewBox="${box[0].toFixed(0)} ${box[1].toFixed(0)} ${W.toFixed(0)} ${H.toFixed(0)}" role="img" aria-label="Floor ${f} map"><rect x="${box[0]}" y="${box[1]}" width="${W}" height="${H}" rx="${fs}" fill="#101A5E"/>`;
+  let s = `<svg class="igsvg" viewBox="${box[0].toFixed(0)} ${box[1].toFixed(0)} ${W.toFixed(0)} ${H.toFixed(0)}" role="img" aria-label="Floor ${f} map"><svg x="${box[0].toFixed(0)}" y="${box[1].toFixed(0)}" width="${W.toFixed(0)}" height="${H.toFixed(0)}" viewBox="${box[0].toFixed(0)} ${box[1].toFixed(0)} ${W.toFixed(0)} ${H.toFixed(0)}" overflow="hidden"><rect x="${box[0]}" y="${box[1]}" width="${W}" height="${H}" fill="#101A5E"/>`;
   F.edges.forEach(e => { const a = F.nodes[e[0]], b = F.nodes[e[1]]; s += `<line x1="${a[0]}" y1="${a[1]}" x2="${b[0]}" y2="${b[1]}" stroke="#E6EBFF" stroke-opacity=".9" stroke-width="${fs * 1.9}" stroke-linecap="round"/>`; });
   Object.keys(F.rooms).forEach(r => { const v = F.rooms[r]; if (!inb(v[0], v[1])) return; const hi = o.hi && o.hi[r]; if (o.full && !hi) return; s += `<text x="${v[0]}" y="${v[1] + fs * (hi ? -1.5 : 0.3)}" text-anchor="middle" font-size="${hi ? fs * 1.05 : fs * 0.78}" font-weight="${hi ? 700 : 500}" fill="${hi ? '#FFD84D' : '#8D9AD0'}" ${hi ? `stroke="#101A5E" stroke-width="${fs * 0.25}" paint-order="stroke"` : ''}>${esc(r)}</text>`; });
   IG.pois.filter(p => p.f === Number(f) && inb(p.x, p.y)).forEach(p => {
@@ -848,9 +992,13 @@ function igFloorSVG(f, o){
     s += p.type === 'elevator' ? `<path d="M${p.x - r * 0.45} ${p.y - r * 0.05}l${r * 0.45} -${r * 0.5}l${r * 0.45} ${r * 0.5}z M${p.x - r * 0.45} ${p.y + r * 0.15}l${r * 0.45} ${r * 0.5}l${r * 0.45} -${r * 0.5}z" fill="#101A5E"/>` : p.type === 'restroom' ? `<circle cx="${p.x}" cy="${p.y - r * 0.4}" r="${r * 0.22}" fill="#101A5E"/><path d="M${p.x - r * 0.3} ${p.y + r * 0.6}v-${r * 0.7}h${r * 0.6}v${r * 0.7}z" fill="#101A5E"/>` : `<path d="M${p.x - r * 0.55} ${p.y + r * 0.5}h${r * 0.35}v-${r * 0.35}h${r * 0.35}v-${r * 0.35}h${r * 0.35}" fill="none" stroke="#101A5E" stroke-width="${r * 0.22}"/>`;
     s += '</g>';
   });
-  if (o.pts && o.pts.length > 1) s += `<polyline points="${o.pts.map(p => p[0] + ',' + p[1]).join(' ')}" fill="none" stroke="#D44500" stroke-width="${fs * 0.75}" stroke-linecap="round" stroke-linejoin="round"/>`;
-  (o.marks || []).forEach(m => { if (m.type === 'start') s += `<circle cx="${m.x}" cy="${m.y}" r="${fs * 1.1}" fill="#fff" stroke="#3B82F6" stroke-width="${fs * 0.4}"/>`; else if (m.type === 'end') s += `<circle cx="${m.x}" cy="${m.y}" r="${fs * 1.25}" fill="#FFD84D" stroke="#101A5E" stroke-width="${fs * 0.3}"/>`; else s += `<circle cx="${m.x}" cy="${m.y}" r="${fs * 1.8}" fill="none" stroke="#D44500" stroke-width="${fs * 0.35}" stroke-dasharray="${fs * 0.6} ${fs * 0.6}"/>`; });
-  return s + '</svg>';
+  { const em = (o.marks || []).find(m => m.type === 'end'), sm = (o.marks || []).find(m => m.type === 'start');
+    if (o.pts && o.pts.length > 1) { const L = o.pts[o.pts.length - 1], F0 = o.pts[0];
+      if (em && Math.hypot(em.x - L[0], em.y - L[1]) > fs * 2) s += `<line x1="${L[0]}" y1="${L[1]}" x2="${em.x}" y2="${em.y}" stroke="#FF6B1A" stroke-width="${fs * 0.45}" stroke-dasharray="${fs * 0.7} ${fs * 0.7}" stroke-linecap="round"/>`;
+      if (sm && Math.hypot(sm.x - F0[0], sm.y - F0[1]) > fs * 2) s += `<line x1="${F0[0]}" y1="${F0[1]}" x2="${sm.x}" y2="${sm.y}" stroke="#FF6B1A" stroke-width="${fs * 0.45}" stroke-dasharray="${fs * 0.7} ${fs * 0.7}" stroke-linecap="round"/>`; } }
+  if (o.pts && o.pts.length > 1) s += `<polyline points="${o.pts.map(p => p[0] + ',' + p[1]).join(' ')}" fill="none" stroke="#FF6B1A" stroke-width="${fs * 0.75}" stroke-linecap="round" stroke-linejoin="round"/>`;
+  (o.marks || []).forEach(m => { if (m.type === 'start') s += `<circle cx="${m.x}" cy="${m.y}" r="${fs * 1.1}" fill="#fff" stroke="#3B82F6" stroke-width="${fs * 0.4}"/>`; else if (m.type === 'end') s += `<circle cx="${m.x}" cy="${m.y}" r="${fs * 1.25}" fill="#FFD84D" stroke="#101A5E" stroke-width="${fs * 0.3}"/>`; else s += `<circle cx="${m.x}" cy="${m.y}" r="${fs * 1.8}" fill="none" stroke="#FF6B1A" stroke-width="${fs * 0.35}" stroke-dasharray="${fs * 0.6} ${fs * 0.6}"/>`; });
+  return s + '</svg></svg>';
 }
 function igPlan(path, fromNum, toNum){
   const floors = []; path.forEach(k => { const f = igFloor(k); if (!floors.includes(f)) floors.push(f); });
@@ -867,8 +1015,9 @@ function igMapHTML(plan, view){
   const fl = Object.keys(INDOOR.floors).map(Number).sort((a, b) => b - a);
   const one = f => igFloorSVG(f, {pts:plan.per[f] || [], hi:plan.hi, marks:plan.marks[f] || [], full:false});
   if (view === '3d') {
-    const plates = fl.map((f, i) => `<div class="igplate" data-f="${f}" style="--z:${(fl.length - 1 - i * 2) * 70}px">${igFloorSVG(f, {pts:plan.per[f] || [], hi:plan.hi, marks:plan.marks[f] || [], full:true})}<span class="igtag">Floor ${f}</span></div>`).join('');
-    return `<div class="ig3d" aria-label="3D view of floors ${fl.join(' and ')}"><div class="igstack">${plates}</div></div>`;
+    const fl3 = plan.floors.slice().sort((a, b) => b - a);
+    const plates = fl3.map((f, i) => `<div class="igplate" data-f="${f}" style="--z:${(fl3.length - 1 - i * 2) * 70}px">${igFloorSVG(f, {pts:plan.per[f] || [], hi:plan.hi, marks:plan.marks[f] || [], full:true})}<span class="igtag">Floor ${f}</span></div>`).join('');
+    return `<div class="ig3d" aria-label="3D view of floors ${fl3.join(' and ')}"><div class="igstack">${plates}</div></div>`;
   }
   const f = Number(view); return `<div class="ig2d">${one(INDOOR.floors[f] ? f : plan.floors[0])}</div>`;
 }
@@ -876,20 +1025,21 @@ function igResultHTML(r){
   if (r.error) return `<p class="empty">${esc(r.error)}</p>`;
   const tabs = ['3d'].concat(Object.keys(INDOOR.floors).sort((a, b) => b - a)).map(v => `<button class="chip" data-igview="${v}" aria-pressed="${st.ig.view === v}" type="button">${v === '3d' ? '3D' : 'Floor ' + v}</button>`).join('');
   const steps = r.steps.map(s => `<li${s.elev ? ' class="elv"' : ''}><span class="fl">F${s.f}</span>${esc(s.text)}</li>`).join('');
-  return `<div class="igsum"><b>${esc(r.title)}</b><span>${esc(r.sub)}</span></div><ol class="igsteps">${steps}</ol><div class="igtabs" role="group" aria-label="Map view">${tabs}</div><div id="igMap">${igMapHTML(r.plan, st.ig.view)}</div><p class="note">Traced by hand from SU’s floor plans (floors 2 and 3 so far), so distances and sides are approximate. Always confirm with the door signs. Rides use the elevators only, because we couldn’t match stairs between floors.</p>`;
+  return `<div class="igsum"><b>${esc(r.title)}</b><span>${esc(r.sub)}</span></div><ol class="igsteps">${steps}</ol><div class="igtabs" role="group" aria-label="Map view">${tabs}</div><div id="igMap">${igMapHTML(r.plan, st.ig.view)}</div><p class="note">Traced by hand from SU’s floor plans (floors 2 to 5 so far), so distances and sides are approximate. Always confirm with the door signs. Rides use the elevators only, because we couldn’t match stairs between floors.</p>`;
 }
 function igRoute(fromT, toT){
   const a = igRoomOf(fromT), b = igRoomOf(toT);
-  const unmapped = (list, hit, label) => { if (hit) return ''; if (!list.length) return `Type ${label} as a room number, like 206F.`; const f = list[0][0]; return `Room ${list[0]} isn’t on a mapped floor yet. Floors 2 and 3 are traced so far${/^[14]$/.test(f) ? `, and floor ${f} is next` : ''}.`; };
+  const unmapped = (list, hit, label) => { if (hit) return ''; if (!list.length) return `Type ${label} as a room number, like 206F.`; const f = list[0][0]; return `Room ${list[0]} isn’t on a mapped floor yet. Floors 2 to 5 are traced so far${f === '1' ? ', and floor 1 is next' : ''}.`; };
   const e = unmapped(a.list, a.hit, 'where you are') || unmapped(b.list, b.hit, 'where you’re going');
   if (e) return {error:e};
   const A = IG.rooms[a.hit], B = IG.rooms[b.hit], res = igDijkstra(A.node), path = igPathTo(res, B.node);
   if (!path) return {error:'I couldn’t find a connected route between those rooms on the traced floors.'};
   const plan = igPlan(path, a.hit, b.hit), steps = igSteps(path, b.hit, a.hit), fl = plan.floors;
-  return {title:`Room ${a.hit} to Room ${b.hit}`, sub:fl.length > 1 ? `Floor ${A.f} to floor ${B.f}, by elevator` : `Floor ${A.f}, same floor`, steps, plan};
+  const walked = []; for (let i = 1; i < path.length; i++) if (igFloor(path[i]) === igFloor(path[i - 1]) && !walked.includes(igFloor(path[i]))) walked.push(igFloor(path[i]));
+  return {title:`Room ${a.hit} to Room ${b.hit}`, sub:A.f !== B.f ? `Floor ${A.f} to floor ${B.f}, by elevator` : (walked.length > 1 ? `Floor ${A.f}, by elevator via floor ${walked.filter(x => x !== A.f).join(' and ')}` : `Floor ${A.f}, same floor`), steps, plan};
 }
 function igNearest(fromT, type){
-  const a = igRoomOf(fromT); if (!a.hit) return {error:a.list.length ? `Room ${a.list[0]} isn’t on a mapped floor yet. Floors 2 and 3 are traced so far.` : 'Type the room you’re near first, like 206F.'};
+  const a = igRoomOf(fromT); if (!a.hit) return {error:a.list.length ? `Room ${a.list[0]} isn’t on a mapped floor yet. Floors 2 to 5 are traced so far.` : 'Type the room you’re near first, like 206F.'};
   const A = IG.rooms[a.hit], res = igDijkstra(A.node);
   let best = null; IG.pois.filter(p => p.type === type).forEach(p => { const d = res.dist[p.node]; if (d !== undefined && (!best || d < best.d)) best = {p, d}; });
   if (!best) return {error:'No ' + type + ' found on the traced floors.'};
@@ -898,11 +1048,42 @@ function igNearest(fromT, type){
   return {title:`${type === 'elevator' ? 'Nearest elevator' : 'Nearest restroom'} from Room ${a.hit}`, sub:`${best.p.name}, floor ${best.p.f}`, steps, plan};
 }
 function viewIndoor(){
-  const ex = [['206F', '305'], ['305', '206F'], ['201', '312'], ['240', '350']].map(p => `<button class="chip" data-igpair="${p[0]}>${p[1]}" type="button">${p[0]} to ${p[1]}</button>`).join('');
-  return `<section class="igbox"><h2 class="sech">Route inside Newhouse</h2><p class="sub">Hallways, elevators, and restrooms on floors 2 and 3, traced from SU’s floor plans. Floors 1 and 4 are next.</p>
+  const ex = [['206F', '432'], ['432', '469'], ['305', '206F'], ['240', '350']].map(p => `<button class="chip" data-igpair="${p[0]}>${p[1]}" type="button">${p[0]} to ${p[1]}</button>`).join('');
+  return `<section class="igbox"><h2 class="sech">Route inside Newhouse</h2><p class="sub">Hallways, elevators, and restrooms on floors 2 to 5, traced from SU’s floor plans. Floor 1 is next.</p>
   <form id="igForm" autocomplete="off"><div class="igrow"><input id="igFrom" type="text" placeholder="Where you are, like 206F" aria-label="Where you are" value="${esc(st.ig.from)}"><input id="igTo" type="text" placeholder="Where to, like 305" aria-label="Where to" value="${esc(st.ig.to)}"></div>
   <div class="row"><button class="btn" type="submit">Show route</button><button class="btn ghost" data-igrest="1" type="button">Nearest restroom</button><button class="btn ghost" data-igelev="1" type="button">Nearest elevator</button></div></form>
   <div class="exs">${ex}</div><div id="igOut" aria-live="polite">${st.ig.res ? igResultHTML(st.ig.res) : ''}</div></section>`;
+}
+function startLocate(){
+  st.target = null; st.guide = {move:'unknown', head:'Where am I?', text:'Point the camera at a door number. I’ll place you on the floor plan.', ts:Date.now(), sig:''};
+  unlockAudio(); if ($('cam').hidden) openCam('locate'); else setStage('locate');
+}
+function igLiveRender(){
+  const box = $('igLive'); if (!box) return;
+  const t = st.target, tn = t && t.nums && t.nums.find(n => IG.rooms[n]), here = st.ig.here;
+  if ($('cam').hidden || (st.stage !== 'guide' && st.stage !== 'locate') || (!tn && st.stage !== 'locate')) { box.hidden = true; box.innerHTML = ''; return; }
+  box.hidden = false;
+  if (!here) { box.innerHTML = `<p class="igl-hint">${tn ? 'Point the camera at any door number and I’ll place you on the map.' : 'Point the camera at a door number.'}</p>`; return; }
+  const R = IG.rooms[here];
+  if (tn && tn === here) { box.innerHTML = `<div class="igl-head"><b>You’re at Room ${esc(here)}</b><span>Floor ${R.f}</span></div>`; return; }
+  if (tn) {
+    const r = igRoute(here, tn);
+    if (!r.error) {
+      const f = R.f, plan = r.plan, svg = igFloorSVG(f, {pts:plan.per[f] || [], hi:plan.hi, marks:plan.marks[f] || [], full:false});
+      box.innerHTML = `<div class="igl-head"><b>You’re near Room ${esc(here)}</b><span>Floor ${f} · to Room ${esc(tn)}</span></div><p class="igl-next">${esc(r.steps[0].text)}</p><div class="igl-map">${svg}</div>`; return;
+    }
+  }
+  const hi = {}; hi[here] = 1;
+  box.innerHTML = `<div class="igl-head"><b>You’re near Room ${esc(here)}</b><span>Floor ${R.f}</span></div><div class="igl-map">${igFloorSVG(R.f, {pts:[[R.x, R.y]], hi, marks:[{type:'start', x:R.x, y:R.y}], full:false})}</div><div class="row"><button class="btn ghost sm" data-igl="restroom" type="button">Nearest restroom</button><button class="btn ghost sm" data-igl="elevator" type="button">Nearest elevator</button></div>`;
+}
+function igLocated(room){
+  const changed = st.ig.here !== room; st.ig.here = room; igLiveRender();
+  if (changed && st.voice) {
+    const R = IG.rooms[room], t = st.target, tn = t && t.nums && t.nums.find(n => IG.rooms[n]); let line = `You’re near room ${room}, on floor ${R.f}.`;
+    if (tn === room) line = `You’re at room ${room}. You’ve arrived.`;
+    else if (tn) { const r = igRoute(room, tn); if (!r.error && r.steps[0]) line += ' ' + r.steps[0].text; }
+    speak(line);
+  }
 }
 function igAlign(){
   const st3 = document.querySelectorAll ? document.querySelectorAll('.igplate') : []; if (!st3 || st3.length < 2 || !st.ig.res || !st.ig.res.plan) return;
@@ -926,7 +1107,7 @@ function viewScan(){
   <li><span class="n">2</span><div><b>Say where you’re headed</b><span>Plan your day, see what’s happening in this building, or name a room.</span></div></li>
   <li><span class="n">3</span><div><b>Follow the arrow</b><span>I read the door numbers and signs you pass. Each door pops up with what it’s used for.</span></div></li></ol>
   <div class="row" style="margin-top:18px"><button class="btn big" data-start="1" type="button">Start at the entrance</button></div>
-  <p class="note">How the camera directions work: I read the building’s own door numbers and directional signs. Floors 2 and 3 also have the hand-traced map above; other floors rely on the signs. Always confirm with your own eyes.</p>
+  <p class="note">How the camera directions work: I read the building’s own door numbers and directional signs. Floors 2 to 5 also have the hand-traced map above; floor 1 relies on the signs. Always confirm with your own eyes.</p>
   <form class="lookup" id="lookForm" autocomplete="off"><input id="lookNum" type="text" placeholder="Or look up a room number, like 206F" aria-label="Look up a room number"><button class="btn" type="submit">Look up</button></form>
   <div id="lookOut" aria-live="polite"></div>
   ${st.found.length ? `<h2 class="sec2">Rooms you’ve passed</h2><div class="found">${st.found.map(f => `<span class="chip">${esc(f.name)}</span>`).join('')}</div>` : ''}`;
@@ -941,26 +1122,7 @@ function wireScan(){
 }
 
 /* ===== voice ===== */
-let voicePlayer = null, ttsRemote = true, synthVoice = null, wakeLock = null;
-const ttsCache = new Map();
-fetch('/api/speak').then(r => r.ok ? r.json() : null).then(d => { if (d && d.ready === false) ttsRemote = false; }).catch(() => {});
-async function keepScreenAwake(on){
-  try {
-    if (on && 'wakeLock' in navigator && !wakeLock) {
-      wakeLock = await navigator.wakeLock.request('screen');
-      wakeLock.addEventListener('release', () => { wakeLock = null; });
-    } else if (!on && wakeLock) {
-      await wakeLock.release();
-      wakeLock = null;
-    }
-  } catch (e) {}
-}
-document.addEventListener('visibilitychange', () => {
-  if (document.visibilityState === 'visible' && !$('cam').hidden) keepScreenAwake(true);
-});
-['touchstart', 'pointerdown', 'keydown'].forEach(ev => {
-  document.addEventListener(ev, () => { if (!voicePlayer) unlockAudio(); }, { once: true, passive: true });
-});
+let voicePlayer = null, ttsRemote = true, synthVoice = null;
 const utts = []; // keep references so the browser doesn't drop utterances mid-speech
 const SILENT = 'data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQAAAAA=';
 function toast(msg){
@@ -1014,28 +1176,37 @@ function browserSpeak(text){
     setTimeout(next, 150); // Chrome drops a speak() that comes right after cancel()
   });
 }
+const ttsCache = new Map();
+let voiceMode = 'checking';
+function updateVoiceBadge(){ const b = $('vbadge'); if (b) b.textContent = voiceMode === 'elevenlabs' ? 'Voice: ElevenLabs' : voiceMode === 'browser' ? 'Voice: this device' : 'Voice: checking…'; }
+async function checkVoice(){
+  try { const r = await fetch('/api/speak'); const j = r && r.ok ? await r.json() : null; ttsRemote = !!(j && j.ready); voiceMode = ttsRemote ? 'elevenlabs' : 'browser'; }
+  catch (e) { ttsRemote = false; voiceMode = 'browser'; }
+  updateVoiceBadge();
+}
 async function speak(text){
   if (!text) return; stopSpeak();
-  const clean = String(text).slice(0, 600).trim();
-  if (!clean) return;
-  if (ttsRemote) {
+  const t = String(text).trim();
+  if (ttsRemote && t.length <= 320) { // short lines use the ElevenLabs voice; long answers use the device voice to save credits
     try {
-      let url = ttsCache.get(clean);
+      let url = ttsCache.get(t);
       if (!url) {
-        const r = await fetch('/api/speak', {method:'POST', headers:{'content-type':'application/json'}, body:JSON.stringify({text:clean})});
-        if (!r.ok) { ttsRemote = false; throw new Error('HTTP ' + r.status); }
-        url = URL.createObjectURL(await r.blob());
-        if (ttsCache.size > 40) { const firstKey = ttsCache.keys().next().value; URL.revokeObjectURL(ttsCache.get(firstKey)); ttsCache.delete(firstKey); }
-        ttsCache.set(clean, url);
+        const r = await fetch('/api/speak', {method:'POST', headers:{'content-type':'application/json'}, body:JSON.stringify({text:t})});
+        if (!r.ok) {
+          let msg = ''; try { msg = (await r.json()).error || ''; } catch (e) {}
+          if (r.status === 501) { ttsRemote = false; voiceMode = 'browser'; updateVoiceBadge(); }
+          else if (r.status === 502 && /key|credits/i.test(msg)) { ttsRemote = false; voiceMode = 'browser'; updateVoiceBadge(); toast(msg + ' Using this device’s voice instead.'); }
+          throw new Error('HTTP ' + r.status);
+        }
+        url = URL.createObjectURL(await r.blob()); ttsCache.set(t, url); if (ttsCache.size > 40) ttsCache.delete(ttsCache.keys().next().value);
       }
       if (!voicePlayer) voicePlayer = new Audio();
-      voicePlayer.setAttribute('playsinline', '');
       voicePlayer.src = url;
       await new Promise((res, rej) => { voicePlayer.onended = res; voicePlayer.onerror = rej; const p = voicePlayer.play(); if (p && p.catch) p.catch(rej); });
       return;
     } catch (e) {}
   }
-  await browserSpeak(text);
+  await browserSpeak(t);
 }
 const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
 function updateMics(){ document.querySelectorAll('.micb').forEach(b => { b.setAttribute('aria-pressed', String(st.listening)); const t = b.querySelector('.mt'); if (t) t.textContent = st.listening ? 'Listening… tap to send' : (b.dataset.label || 'Talk'); }); }
@@ -1104,6 +1275,7 @@ function routeUtterance(q){
   st.tab = 'ask'; render(); window.scrollTo(0, 0); askAI(text);
 }
 function wireHome(){
+  initHomeMap();
   const gf = $('goForm'); if (gf) gf.onsubmit = e => { e.preventDefault(); const i = $('goIn'), q = i.value.trim(); if (!q) return; i.value = ''; routeUtterance(q); };
 }
 
@@ -1136,7 +1308,7 @@ function detectHere(){
 function stageHTML(s){
   const b = st.here;
   if (s === 'where') return nearBanner() + `<h3>Welcome. Which building are you at?</h3><p class="csub">Stand still at the entrance. Tap the building you’re in.</p><div class="cpills">${Object.keys(BUILDINGS).map(k => `<button class="cpill" data-here="${k}" type="button">${BUILDINGS[k]}</button>`).join('')}<button class="cpill" data-here="none" type="button">Not sure</button></div><div class="cpills"><button class="cpill" data-walk="1" type="button">Not here yet? Walk me to Newhouse</button></div>`;
-  if (s === 'walk') { const w = st.walk; return `<div id="routeBox" aria-live="polite"></div><h3>Walk to Newhouse</h3><p class="csub">Follow the arrow on the camera. Pick the entrance closest to where you’re going.</p><div class="cpills">${Object.keys(DEST).map(k => `<button class="cpill" data-walkdest="${k}" aria-pressed="${w.dest === k}" type="button">${esc(DEST[k].name)}, ${esc(DEST[k].side)}</button>`).join('')}</div><div class="cpills"><button class="cpill pri" data-mapsdir="1" type="button">Open walking directions in Maps</button><button class="cpill" data-stage="where" type="button">I’m at the entrance</button></div><p class="cinfo"><small>Entrance points are approximate, taken from photo locations on Wikimedia Commons.</small></p>`; }
+  if (s === 'walk') { const w = st.walk, d = DEST[w.dest]; return `<div id="routeBox" aria-live="polite"></div><div class="cpills"><button class="cpill pri" data-mapsdir="1" type="button">Open walking directions in Maps</button><button class="cpill" data-walkcam="1" type="button">${w.camView ? 'Show map' : 'Show camera'}</button><button class="cpill" data-stage="where" type="button">I’m at the entrance</button></div><details class="wdest"><summary>Going to ${esc(d.name)}, ${esc(d.side)}. Change entrance</summary><div class="cpills">${Object.keys(DEST).map(k => `<button class="cpill" data-walkdest="${k}" aria-pressed="${w.dest === k}" type="button">${esc(DEST[k].name)}, ${esc(DEST[k].side)}</button>`).join('')}</div><p class="cinfo"><small>Entrance points are approximate, taken from photo locations on Wikimedia Commons.</small></p></details>`; }
   if (s === 'ask') { const info = b ? BLD_INFO[b] : BLD_INFO.all; return `<h3>${b ? BUILDINGS[b] : 'Newhouse'}</h3><p class="cinfo"><strong>${esc(info.tag)}.</strong> ${esc(info.use)}<small>Source: ${esc(info.src)}</small></p><p class="cinfo" style="margin-top:12px"><strong>What would you like to do?</strong></p><div class="cpills"><button class="cpill pri" data-stage="plan" type="button">Plan my day</button><button class="cpill pri" data-stage="events" type="button">What’s happening here</button><button class="cpill pri" data-stage="room" type="button">Take me to a room</button></div>${SR ? `<div class="cpills">${micBtn('Say where you want to go', 'data-routemic="1"', 'cpill')}</div>` : ''}`; }
   if (s === 'events') {
     const list = SESSIONS.filter(x => x.day === st.evDay && x.rooms.length && (!b || x.b === b)).sort((a, c) => a.s - c.s);
@@ -1153,13 +1325,15 @@ function stageHTML(s){
   return '';
 }
 function renderStage(){
-  const s = st.stage, g = s === 'guide', wk = s === 'walk', panel = $('camPanel');
+  const s = st.stage, g = s === 'guide' || s === 'locate', wk = s === 'walk', panel = $('camPanel');
   $('camGuide').hidden = !(g || wk); $('camForm').hidden = !g; $('camCtl').hidden = !g; $('reticle').hidden = !g;
   panel.hidden = g;
   if (!g) { $('camCard').hidden = true; panel.innerHTML = stageHTML(s); }
   const rf = $('roomForm'); if (rf) rf.onsubmit = e => { e.preventDefault(); const l = readNums($('roomIn').value); if (!l.length) { setStatus('Enter a three-digit room number, like 206F.'); return; } startGuideTo(targetFromNum(l[0])); };
   if (g) renderGuide();
-  if (wk) { updateWalk(); renderRouteBox(); }
+  { const cl = $('cam').classList; if (cl && cl.toggle) cl.toggle('walking', wk); }
+  if (wk) { ensureWalkMap(); updateWalk(); renderRouteBox(); } else hideWalkMap();
+  igLiveRender();
 }
 function setStage(s){
   if (s !== 'walk') stopWalk();
@@ -1199,7 +1373,8 @@ function startEntrance(here){
   openCam(here ? 'ask' : 'where');
 }
 async function openCam(stage){
-  st.stage = stage || 'where'; $('cam').hidden = false; document.body.style.overflow = 'hidden'; keepScreenAwake(true);
+  st.ig.here = null; // a new camera session starts without a stale position
+  st.stage = stage || 'where'; $('cam').hidden = false; document.body.style.overflow = 'hidden';
   camAuto = true; camScans = 0; camLast = ''; camBusy = false; updateAutoBtn(); updateVoiceBtn();
   $('camCard').hidden = true; $('camCard').innerHTML = '';
   if (st.stage !== 'walk') stopWalk();
@@ -1213,17 +1388,17 @@ async function openCam(stage){
     camStream = await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'}}, audio:false});
     const v = $('camVid'); v.srcObject = camStream; await v.play();
     setStatus(''); if (st.stage === 'walk') updateWalk();
-    camTimer = setInterval(() => { if (st.stage === 'guide' && camAuto && !camBusy) scanOnce(true); }, 3500);
+    camTimer = setInterval(() => { if ((st.stage === 'guide' || st.stage === 'locate') && camAuto && !camBusy) scanOnce(true); }, 3500);
   } catch (e) {
     if (st.stage === 'walk') { st.walk.camErr = true; updateWalk(); }
     else setStatus('The camera isn’t available. You can still use the guide: allow camera access, or type room numbers.');
   }
 }
 function closeCam(){
-  keepScreenAwake(false); stopWalk();
+  stopWalk(); hideWalkMap(); st.walk.camView = false;
   if (camTimer) { clearInterval(camTimer); camTimer = null; }
   if (camStream) { camStream.getTracks().forEach(t => t.stop()); camStream = null; }
-  stopSpeak(); $('cam').hidden = true; document.body.style.overflow = ''; st.target = null;
+  stopSpeak(); $('cam').hidden = true; document.body.style.overflow = ''; st.target = null; igLiveRender();
 }
 function grabFrame(){
   const v = $('camVid'); if (!v.videoWidth) return null;
@@ -1266,6 +1441,7 @@ function applyMove(move, why){
 }
 function handleScan(res, auto){
   const list = res.numbers;
+  const mapped = list.find(n => IG.rooms[n]); if (mapped) igLocated(mapped);
   if (list.length) showFound(list);
   const t = st.target;
   if (t) {
@@ -1293,7 +1469,7 @@ async function scanOnce(auto){
 }
 
 /* ===== outdoors: walk to Newhouse with an arrow on the camera view ===== */
-let compassOn = false, compassH = null, compassF = null, gotAbs = false, geoWatch = null;
+let compassOn = false, compassH = null, compassF = null, gotAbs = false;
 function compassHeading(alpha, beta, gamma){ // direction the back of the phone points
   const x = beta*Math.PI/180, y = gamma*Math.PI/180, z = alpha*Math.PI/180;
   const cY = Math.cos(y), cZ = Math.cos(z), sX = Math.sin(x), sY = Math.sin(y), sZ = Math.sin(z);
@@ -1311,7 +1487,8 @@ function pushCompass(h){
   const r = h*Math.PI/180, v = {x:Math.cos(r), y:Math.sin(r)};
   compassF = compassF ? {x:compassF.x*0.8 + v.x*0.2, y:compassF.y*0.8 + v.y*0.2} : v;
   compassH = (Math.atan2(compassF.y, compassF.x)*180/Math.PI + 360) % 360;
-  if (st.stage === 'walk' && !$('cam').hidden) updateWalk();
+  if (walkMap && st.stage === 'walk') walkMap.setHeading(compassH);
+  if (st.stage === 'walk' && !$('cam').hidden) updateWalk(true);
 }
 async function startCompass(){
   if (compassOn) return true;
@@ -1346,7 +1523,7 @@ async function loadRoute(){
     const r = await fetch(`/api/route?from=${w.pos.lat.toFixed(5)},${w.pos.lon.toFixed(5)}&to=${d.lat},${d.lon}`);
     if (!r.ok) throw new Error('HTTP ' + r.status);
     const j = await r.json(); if (!j || !Array.isArray(j.coords) || !Array.isArray(j.steps) || j.steps.length < 2) throw new Error('bad route');
-    w.route = {coords:j.coords, steps:j.steps, dist:j.distance, dur:j.duration, dest:w.dest}; w.ri = 1; w.rFail = false; w.lastCat = '';
+    w.route = {coords:j.coords, steps:j.steps, dist:j.distance, dur:j.duration, dest:w.dest}; w.ri = 1; w.rFail = false; w.lastCat = ''; w.fitted = false;
   } catch (e) { w.rFail = true; }
   w.rBusy = false; renderRouteBox(); updateWalk();
 }
@@ -1379,19 +1556,35 @@ function routeSVG(){
   const X = lon => (ox + sc * (lon * kx - x0)).toFixed(1), Y = lat => (oy + sc * (-lat - y0)).toFixed(1);
   const line = r.coords.map(c => `${X(c[1])},${Y(c[0])}`).join(' ');
   const nx = r.steps[Math.min(w.ri, r.steps.length - 1)];
-  return `<svg class="rsvg" viewBox="0 0 ${W} ${H}" role="img" aria-label="Your walking route, north at the top"><rect width="${W}" height="${H}" rx="14" fill="#fff" fill-opacity=".07"/><polyline points="${line}" fill="none" stroke="#D44500" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="${X(nx.lon)}" cy="${Y(nx.lat)}" r="6" fill="none" stroke="#FFD84D" stroke-width="2.5"/><circle cx="${X(d.lon)}" cy="${Y(d.lat)}" r="7" fill="#FFD84D" stroke="#000E2F" stroke-width="2"/>${w.pos ? `<circle cx="${X(w.pos.lon)}" cy="${Y(w.pos.lat)}" r="7" fill="#fff" stroke="#3B82F6" stroke-width="3"/>` : ''}</svg>`;
+  return `<svg class="rsvg" viewBox="0 0 ${W} ${H}" role="img" aria-label="Your walking route, north at the top"><rect width="${W}" height="${H}" rx="14" fill="#fff" fill-opacity=".07"/><polyline points="${line}" fill="none" stroke="#FF6B1A" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="${X(nx.lon)}" cy="${Y(nx.lat)}" r="6" fill="none" stroke="#FFD84D" stroke-width="2.5"/><circle cx="${X(d.lon)}" cy="${Y(d.lat)}" r="7" fill="#FFD84D" stroke="#0B1146" stroke-width="2"/>${w.pos ? `<circle cx="${X(w.pos.lon)}" cy="${Y(w.pos.lat)}" r="7" fill="#fff" stroke="#3B82F6" stroke-width="3"/>` : ''}</svg>`;
 }
 function routeBoxHTML(){
   const w = st.walk, r = w.route; if (w.arrived) return '';
   if (r && r.dest === w.dest && !w.rFail) {
-    const list = r.steps.slice(Math.max(1, w.ri), Math.max(1, w.ri) + 3).map(s => `<li>${esc(s.text)}${s.type !== 'arrive' ? ` <small>${esc(fmtDist(s.distance))}</small>` : ''}</li>`).join('');
-    return `<div class="rsum"><b>${esc(fmtDist(r.dist))} on foot, about ${Math.max(1, Math.round(r.dur / 60))} min</b></div>${routeSVG()}<ol class="rsteps">${list}</ol><p class="cinfo"><small>Route: OpenStreetMap contributors, via routing.openstreetmap.de. Blue dot is you, yellow is the entrance.</small></p>`;
+    const list = r.steps.slice(Math.max(1, w.ri), Math.max(1, w.ri) + 2).map(s => `<li>${esc(s.text)}${s.type !== 'arrive' ? ` <small>${esc(fmtDist(s.distance))}</small>` : ''}</li>`).join('');
+    return `<div class="rsum"><b>${esc(fmtDist(r.dist))} on foot, about ${Math.max(1, Math.round(r.dur / 60))} min</b></div>${walkMap ? '' : routeSVG()}<ol class="rsteps">${list}</ol><p class="cinfo"><small>Route: OpenStreetMap contributors, via routing.openstreetmap.de. Blue dot is you, yellow is the entrance.</small></p>`;
   }
   if (w.rBusy) return '<p class="csub">Finding the street route…</p>';
   if (w.rFail && w.pos) return '<p class="csub">Couldn’t load the street route, so the arrow points straight at the entrance. Use the Maps button for turn-by-turn directions.</p>';
   return '';
 }
 function renderRouteBox(){ const b = $('routeBox'); if (b) b.innerHTML = routeBoxHTML(); }
+function ensureWalkMap(){
+  const el = $('walkMap'); if (!el) return; el.hidden = !!st.walk.camView;
+  if (walkMap && walkMap.el === el && walkMap.alive()) return;
+  const d = DEST[st.walk.dest]; walkMap = makeMap(el, {zoom:16, lat:d.lat, lon:d.lon}); st.walk.fitted = false;
+}
+function hideWalkMap(){ const el = $('walkMap'); if (el) el.hidden = true; if (walkMap) walkMap.destroy(); walkMap = null; }
+function syncWalkMap(){
+  const w = st.walk; if (!walkMap || !w.active) return; const d = DEST[w.dest];
+  walkMap.setPins([{id:w.dest, lat:d.lat, lon:d.lon, label:d.name, cls:'dest'}]);
+  if (w.pos) walkMap.setUser(w.pos.lat, w.pos.lon, w.pos.acc);
+  if (compassH != null) walkMap.setHeading(compassH);
+  const r = w.route && w.route.dest === w.dest && !w.rFail ? w.route : null;
+  walkMap.setRoute(r ? r.coords : null);
+  const nx = r ? r.steps[Math.min(w.ri, r.steps.length - 1)] : null; walkMap.setRing(nx ? [nx.lat, nx.lon] : null);
+  if (w.pos && (!w.fitted || (r && w.fitRoute !== r))) { w.fitted = true; w.fitRoute = r; walkMap.fit((r ? r.coords : []).concat([[w.pos.lat, w.pos.lon], [d.lat, d.lon]]), 70); }
+}
 function walkState(){
   const w = st.walk, d = DEST[w.dest];
   if (!w.pos) return {head:'Finding your location…', text:'Allow location access, then hold your phone upright and look around.', rot:0, cat:'wait', dm:0};
@@ -1413,10 +1606,11 @@ function walkState(){
   else { head = 'Turn around'; cat = 'back'; }
   return {head, text:`${d.name}, ${d.side}: ${dist}, about ${mins} min.`, rot:diff, cat, dm, brg};
 }
-function updateWalk(){
+function updateWalk(fromCompass){
   if (st.stage !== 'walk') return;
+  if (!fromCompass) syncWalkMap();
   const s = walkState(), w = st.walk;
-  $('camGuide').innerHTML = `<div class="gicon"><svg viewBox="0 0 64 64" aria-hidden="true" style="transform:rotate(${Math.round(s.rot)}deg)"><path d="M32 8L52 30H40V56H24V30H12Z" fill="#000E2F"/></svg></div><div class="gtext"><b>${esc(s.head)}</b><span>${esc(s.text)}</span></div>`;
+  $('camGuide').innerHTML = `<div class="gicon"><svg viewBox="0 0 64 64" aria-hidden="true" style="transform:rotate(${Math.round(s.rot)}deg)"><path d="M32 8L52 30H40V56H24V30H12Z" fill="#0B1146"/></svg></div><div class="gtext"><b>${esc(s.head)}</b><span>${esc(s.text)}</span></div>`;
   const pre = w.camErr ? 'The camera isn’t available, but the arrow still works. ' : '';
   if (w.pos) setStatus(pre + `GPS accuracy is about ${Math.round(w.pos.acc)} meters. It can be off near buildings.`);
   else if (w.err) setStatus(pre + w.err);
@@ -1434,14 +1628,29 @@ function updateWalk(){
     speak(s.route ? `${s.head}. ${s.text}` : `${s.head}. ${fmtDist(s.dm)} to ${DEST[w.dest].name}.`);
   }
 }
+/* ----- one shared location watcher: every screen subscribes, and a new screen gets the latest fix right away ----- */
+const geoSubs = {}; let geoHubId = null, geoLast = null;
+function geoStartHub(){
+  geoHubId = navigator.geolocation.watchPosition(p => { geoLast = p; Object.keys(geoSubs).forEach(k => { try { geoSubs[k].cb(p); } catch (e) { console.error(e); } }); },
+    err => { if (geoHubId != null && navigator.geolocation.clearWatch) navigator.geolocation.clearWatch(geoHubId); geoHubId = null; geoLast = null; Object.keys(geoSubs).forEach(k => { if (geoSubs[k].onErr) geoSubs[k].onErr(err); }); },
+    {enableHighAccuracy:true, maximumAge:2000, timeout:20000});
+}
+function geoSubscribe(name, cb, onErr){
+  geoSubs[name] = {cb, onErr};
+  const fresh = geoLast && (!geoLast.timestamp || Date.now() - geoLast.timestamp < 20000);
+  if (fresh) cb(geoLast);
+  if (geoHubId == null) geoStartHub();
+}
+function geoUnsubscribe(name){
+  delete geoSubs[name];
+  if (!Object.keys(geoSubs).length && geoHubId != null) { if (navigator.geolocation && navigator.geolocation.clearWatch) navigator.geolocation.clearWatch(geoHubId); geoHubId = null; geoLast = null; }
+}
 function startGeo(){
   if (!navigator.geolocation) { st.walk.err = 'This browser can’t share your location. Use the Maps button for walking directions.'; return; }
-  geoWatch = navigator.geolocation.watchPosition(p => { st.walk.err = ''; st.walk.pos = {lat:p.coords.latitude, lon:p.coords.longitude, acc:p.coords.accuracy || 0}; maybeRoute(); updateWalk(); renderRouteBox(); }, () => { st.walk.err = 'Location is off for this site. Turn it on to see the arrow, or use the Maps button.'; updateWalk(); }, {enableHighAccuracy:true, maximumAge:2000, timeout:20000});
+  geoSubscribe('walk', p => { st.walk.err = ''; st.walk.pos = {lat:p.coords.latitude, lon:p.coords.longitude, acc:p.coords.accuracy || 0}; maybeRoute(); updateWalk(); renderRouteBox(); },
+    () => { st.walk.err = 'Location is off for this site. Turn it on to see the arrow, or use the Maps button.'; updateWalk(); });
 }
-function stopWalk(){
-  if (geoWatch != null && navigator.geolocation && navigator.geolocation.clearWatch) navigator.geolocation.clearWatch(geoWatch);
-  geoWatch = null; st.walk.active = false;
-}
+function stopWalk(){ geoUnsubscribe('walk'); st.walk.active = false; }
 function startWalk(dest){
   const w = st.walk; if (dest) w.dest = dest;
   w.pos = null; w.route = null; w.ri = 1; w.rBusy = false; w.rFail = false; w.rAt = 0; w.err = ''; w.camErr = false; w.curCat = ''; w.catSince = 0; w.lastSay = 0; w.lastCat = ''; w.lastDist = 0; w.arrived = false; w.active = true; st.target = null;
@@ -1494,7 +1703,7 @@ function viewAsk(){
   return `<section class="askhead"><h2>Ask anything</h2><p>Type or talk. I answer from the verified summit info and say so when I don’t know. I can build your day, too. Please don’t type personal information.</p></section>
   <div class="chips">${chips.map(c => `<button class="chip" data-q="${esc(c)}" type="button">${esc(c)}</button>`).join('')}</div>
   <div class="chat" id="chatLog" aria-live="polite"></div>
-  <div class="tools">${micBtn('Talk', 'data-mic="1"')}<label class="ck2"><input type="checkbox" id="speakT"> Read answers aloud</label><button class="btn ghost sm" data-testvoice="1" type="button">Test voice</button></div>
+  <div class="tools">${micBtn('Talk', 'data-mic="1"')}<label class="ck2"><input type="checkbox" id="speakT"> Read answers aloud</label><button class="btn ghost sm" data-testvoice="1" type="button">Test voice</button><span class="vbadge" id="vbadge">Voice: checking…</span></div>
   <form class="askrow" id="askForm" autocomplete="off"><input type="search" id="askIn" placeholder="Ask CuseCompass…" aria-label="Ask CuseCompass"><button class="btn" type="submit">Ask</button></form>`;
 }
 function wireAsk(){
@@ -1602,8 +1811,9 @@ function render(){
   $('view').innerHTML = views[st.tab]();
   if (st.tab === 'ask') wireAsk();
   if (st.tab === 'scan') wireScan();
+  if (st.tab !== 'home' && homeWatch != null) stopHomeWatch();
   if (st.tab === 'home') wireHome();
-  document.querySelectorAll('img[data-b]').forEach(im => { im.onerror = () => { const par = im.parentNode; if (par && par.classList && par.classList.contains('hero3')) { par.style.background = 'linear-gradient(160deg,#000E2F,#26358F 62%,#D44500)'; par.removeChild(im); return; } const w = document.createElement('div'); w.innerHTML = ART.bld(im.dataset.b); const sv = w.firstChild; if (sv && sv.setAttribute) sv.setAttribute('preserveAspectRatio', 'xMidYMid slice'); if (sv && im.parentNode) im.parentNode.replaceChild(sv, im); }; });
+  document.querySelectorAll('img[data-b]').forEach(im => { im.onerror = () => { const par = im.parentNode; if (par && par.classList && par.classList.contains('hero3')) { par.style.background = 'linear-gradient(160deg,#0B1146,#26358F 62%,#FF6B1A)'; par.removeChild(im); return; } const w = document.createElement('div'); w.innerHTML = ART.bld(im.dataset.b); const sv = w.firstChild; if (sv && sv.setAttribute) sv.setAttribute('preserveAspectRatio', 'xMidYMid slice'); if (sv && im.parentNode) im.parentNode.replaceChild(sv, im); }; });
   const q = $('q');
   if (q) q.oninput = e => { st.q = e.target.value; const pos = e.target.selectionStart; render(); const n = $('q'); if (n) { n.focus(); try { n.setSelectionRange(pos, pos); } catch (err) {} } };
 }
@@ -1625,6 +1835,7 @@ document.addEventListener('click', e => {
   else if (d.optrack) { st.ptrack = d.optrack; st.planOut = []; renderStage(); }
   else if (d.opbuild) { st.planOut = planFor(st.pday, st.ptrack).map(s => s.id); renderStage(); if (st.voice) speak(`Here’s your Day ${st.pday}. Tap Guide me on any event.`); }
   else if (d.opsave) { st.planOut.forEach(id => st.plan.add(id)); persist(); const r = t.getBoundingClientRect(); burst(r.left + r.width / 2, r.top + r.height / 2); t.textContent = 'Saved to My plan'; render(); }
+  else if (d.igl) { const r = igNearest(st.ig.here, d.igl); if (r.error) toast(r.error); else { const o = $('igLive'); if (o) o.innerHTML = `<div class="igl-head"><b>${esc(r.title)}</b><span>${esc(r.sub)}</span></div><p class="igl-next">${esc(r.steps[0].text)}</p><div class="igl-map">${igFloorSVG(IG.rooms[st.ig.here].f, {pts:r.plan.per[IG.rooms[st.ig.here].f] || [], hi:r.plan.hi, marks:r.plan.marks[IG.rooms[st.ig.here].f] || [], full:false})}</div>`; if (st.voice) speak(r.title + '. ' + r.steps[0].text); } }
   else if (d.igrest) { igVal(); igRun(igNearest(st.ig.from, 'restroom')); }
   else if (d.igelev) { igVal(); igRun(igNearest(st.ig.from, 'elevator')); }
   else if (d.igview) { st.ig.view = d.igview; const o = $('igOut'); if (o && st.ig.res) o.innerHTML = igResultHTML(st.ig.res); igAlign(); }
@@ -1633,6 +1844,10 @@ document.addEventListener('click', e => {
   else if (d.testvoice) { unlockAudio(); toast('Playing a test sentence…'); speak('Voice is working. I can read answers and directions out loud.'); }
   else if (d.dir) openDirections(d.dir, d.mode);
   else if (d.walk) startWalk(null);
+  else if (d.pin) startWalk(d.pin);
+  else if (d.locate) homeLocate();
+  else if (d.locatein) startLocate();
+  else if (d.walkcam) { st.walk.camView = !st.walk.camView; const el = $('walkMap'); if (el) el.hidden = st.walk.camView; renderStage(); }
   else if (d.walkdest) { const w = st.walk; w.dest = d.walkdest; w.lastCat = ''; w.arrived = false; w.lastSay = 0; w.route = null; w.ri = 1; w.rFail = false; w.rAt = 0; renderStage(); maybeRoute(); }
   else if (d.mapsdir) window.open(mapsUrl(st.walk.dest), '_blank', 'noopener');
   else if (d.today) { st.today = st.today === +d.today ? null : +d.today; try { localStorage.setItem('cuse-today', st.today ? String(st.today) : ''); } catch (e) {} if (st.today) { st.evDay = st.today; st.day = st.today; st.pday = st.today; st.mine = false; } render(); }
@@ -1684,6 +1899,7 @@ $('camForm').onsubmit = e => {
 };
 $('logo').onclick = () => go('home');
 render();
+checkVoice();
 </script>
 </body>
 </html>
