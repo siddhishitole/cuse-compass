@@ -4,12 +4,12 @@
   "description": "From the street to the right room at Syracuse University Newhouse.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#0B1146",
-  "theme_color": "#0B1146",
+  "background_color": "#000E2F",
+  "theme_color": "#000E2F",
   "orientation": "portrait",
   "icons": [
     {
-      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='112' fill='%230B1146'/%3E%3Cpath d='M256 80l48 176h-96z' fill='%23FF6B1A'/%3E%3Cpath d='M256 432l-48-176h96z' fill='%23F3F5FF'/%3E%3C/svg%3E",
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='112' fill='%23000E2F'/%3E%3Cpath d='M256 80l48 176h-96z' fill='%23D44500'/%3E%3Cpath d='M256 432l-48-176h96z' fill='%23FFFFFF'/%3E%3C/svg%3E",
       "sizes": "512x512",
       "type": "image/svg+xml",
       "purpose": "any maskable"
