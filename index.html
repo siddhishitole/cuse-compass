@@ -4,6 +4,14 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="color-scheme" content="light">
+<meta name="theme-color" content="#0B1146">
+<meta name="format-detection" content="telephone=no">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="CuseCompass">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
 <title>CuseCompass</title>
 <meta name="description" content="Find the room, not just the building. Stand at the entrance, open the camera, and get directions you can see and hear.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='30' fill='%230B1146'/%3E%3Cpath d='M32 10l6 22H26z' fill='%23FF6B1A'/%3E%3Cpath d='M32 54l-6-22h12z' fill='%23F3F5FF'/%3E%3C/svg%3E">
@@ -381,6 +389,30 @@ body::before{content:"";display:block;height:5px;background:var(--tang);}
 .cam.walking .campanel{padding:12px 14px;}
 .wdest{margin-top:8px;color:#DDE3FF;font-size:14px;}
 .wdest summary{cursor:pointer;padding:6px 0;}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;}
+button,.chip,.act,.bcard2{touch-action:manipulation;}
+.phonecard{display:grid;grid-template-columns:132px 1fr;gap:16px;align-items:center;margin:24px 0 0;padding:16px;border:1px solid var(--line);border-radius:20px;background:var(--surface);}
+.phonecard .qrbox svg{display:block;width:132px;height:132px;border-radius:12px;border:1px solid var(--line);}
+.phonecard h3{margin:0 0 4px;font-size:19px;}
+.phonecard p{margin:0 0 6px;color:var(--muted);font-size:14.5px;}
+.phonecard ol{margin:0;padding-left:18px;font-size:14px;line-height:1.5;}
+@media(max-width:430px){.phonecard{grid-template-columns:1fr;}.phonecard .qrbox{display:none;}}
+.voicebar{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:8px 2px 0;}
+.voicebar .vbadge{margin:0;}
+.nav-head{display:flex;justify-content:space-between;gap:10px;color:#B9C4F0;font-size:13.5px;}
+.nav-main{display:flex;gap:14px;align-items:center;margin:8px 0;}
+.nav-ico{flex:none;width:78px;height:78px;}
+.nav-txt b{display:block;font:600 19px var(--f-display);line-height:1.25;color:#fff;}
+.nav-txt em{display:block;font-style:normal;color:#DDE3FF;font-size:14px;margin-top:5px;}
+.nav-btns{display:grid;grid-template-columns:1fr 1.7fr 1fr;gap:8px;margin:8px 0;}
+.nav-btns .btn{width:100%;padding:13px 8px;justify-content:center;}
+.nav-row{display:flex;gap:8px;flex-wrap:wrap;}
+.iglive .chip{background:rgba(255,255,255,.1);color:#fff;border-color:rgba(255,255,255,.35);}
+.iglive .chip[aria-pressed=true]{background:var(--tang);border-color:var(--tang);color:#1A0A00;}
+.navchips{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0;}
+.navfrom{display:flex;gap:8px;margin:6px 0;}
+.navfrom input{flex:1;min-width:0;font:400 16px var(--f-body);padding:11px 14px;border:1px solid #C5D0EC;border-radius:999px;background:#fff;color:var(--ink);}
+.voiceon{margin:4px 0 2px;}
 @media (prefers-reduced-motion: reduce){
   *,*::before,*::after{animation:none !important;transition:none !important;}
 }
@@ -749,6 +781,12 @@ function mapMsg(){
   let best = null; Object.keys(DEST).forEach(k => { const d = distM(st.me.lat, st.me.lon, DEST[k].lat, DEST[k].lon); if (!best || d < best.d) best = {k, d}; });
   return best.d < 60 ? `You’re at ${DEST[best.k].name}.` : `You’re ${fmtDist(best.d)} from ${DEST[best.k].name}.`;
 }
+const QR_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 37 37" role="img" aria-label="QR code for cuse-compass.vercel.app" shape-rendering="crispEdges"><rect width="37" height="37" fill="#fff"/><path d="M4 4h7v1h-7zM12 4h1v1h-1zM14 4h3v1h-3zM19 4h2v1h-2zM22 4h3v1h-3zM26 4h7v1h-7zM4 5h1v1h-1zM10 5h1v1h-1zM12 5h1v1h-1zM14 5h1v1h-1zM16 5h1v1h-1zM18 5h2v1h-2zM21 5h2v1h-2zM24 5h1v1h-1zM26 5h1v1h-1zM32 5h1v1h-1zM4 6h1v1h-1zM6 6h3v1h-3zM10 6h1v1h-1zM15 6h1v1h-1zM17 6h3v1h-3zM22 6h1v1h-1zM24 6h1v1h-1zM26 6h1v1h-1zM28 6h3v1h-3zM32 6h1v1h-1zM4 7h1v1h-1zM6 7h3v1h-3zM10 7h1v1h-1zM12 7h1v1h-1zM20 7h2v1h-2zM24 7h1v1h-1zM26 7h1v1h-1zM28 7h3v1h-3zM32 7h1v1h-1zM4 8h1v1h-1zM6 8h3v1h-3zM10 8h1v1h-1zM13 8h2v1h-2zM16 8h2v1h-2zM21 8h3v1h-3zM26 8h1v1h-1zM28 8h3v1h-3zM32 8h1v1h-1zM4 9h1v1h-1zM10 9h1v1h-1zM14 9h3v1h-3zM18 9h1v1h-1zM21 9h1v1h-1zM23 9h1v1h-1zM26 9h1v1h-1zM32 9h1v1h-1zM4 10h7v1h-7zM12 10h1v1h-1zM14 10h1v1h-1zM16 10h1v1h-1zM18 10h1v1h-1zM20 10h1v1h-1zM22 10h1v1h-1zM24 10h1v1h-1zM26 10h7v1h-7zM12 11h3v1h-3zM17 11h2v1h-2zM21 11h1v1h-1zM23 11h1v1h-1zM4 12h1v1h-1zM6 12h2v1h-2zM9 12h3v1h-3zM14 12h1v1h-1zM17 12h2v1h-2zM20 12h3v1h-3zM26 12h1v1h-1zM29 12h1v1h-1zM31 12h2v1h-2zM4 13h1v1h-1zM7 13h2v1h-2zM16 13h1v1h-1zM19 13h2v1h-2zM22 13h2v1h-2zM25 13h2v1h-2zM28 13h1v1h-1zM32 13h1v1h-1zM4 14h3v1h-3zM8 14h3v1h-3zM12 14h1v1h-1zM14 14h1v1h-1zM18 14h2v1h-2zM25 14h2v1h-2zM30 14h2v1h-2zM5 15h5v1h-5zM12 15h2v1h-2zM15 15h5v1h-5zM22 15h1v1h-1zM25 15h3v1h-3zM32 15h1v1h-1zM6 16h1v1h-1zM8 16h1v1h-1zM10 16h1v1h-1zM12 16h1v1h-1zM16 16h1v1h-1zM20 16h2v1h-2zM24 16h1v1h-1zM29 16h2v1h-2zM4 17h1v1h-1zM9 17h1v1h-1zM11 17h1v1h-1zM13 17h1v1h-1zM17 17h1v1h-1zM21 17h1v1h-1zM23 17h1v1h-1zM26 17h1v1h-1zM30 17h3v1h-3zM5 18h1v1h-1zM7 18h1v1h-1zM9 18h2v1h-2zM15 18h1v1h-1zM18 18h1v1h-1zM22 18h3v1h-3zM26 18h3v1h-3zM30 18h3v1h-3zM4 19h2v1h-2zM7 19h2v1h-2zM12 19h1v1h-1zM15 19h1v1h-1zM17 19h1v1h-1zM19 19h1v1h-1zM23 19h1v1h-1zM26 19h1v1h-1zM28 19h1v1h-1zM31 19h1v1h-1zM5 20h1v1h-1zM10 20h2v1h-2zM14 20h3v1h-3zM22 20h1v1h-1zM25 20h1v1h-1zM28 20h2v1h-2zM31 20h1v1h-1zM5 21h4v1h-4zM15 21h3v1h-3zM21 21h1v1h-1zM24 21h1v1h-1zM27 21h1v1h-1zM29 21h3v1h-3zM4 22h1v1h-1zM6 22h3v1h-3zM10 22h2v1h-2zM14 22h1v1h-1zM16 22h1v1h-1zM24 22h1v1h-1zM26 22h3v1h-3zM30 22h1v1h-1zM8 23h2v1h-2zM12 23h2v1h-2zM19 23h3v1h-3zM24 23h3v1h-3zM30 23h1v1h-1zM5 24h1v1h-1zM7 24h1v1h-1zM9 24h2v1h-2zM12 24h2v1h-2zM17 24h1v1h-1zM19 24h3v1h-3zM23 24h8v1h-8zM12 25h2v1h-2zM15 25h5v1h-5zM21 25h2v1h-2zM24 25h1v1h-1zM28 25h5v1h-5zM4 26h7v1h-7zM12 26h3v1h-3zM17 26h1v1h-1zM22 26h3v1h-3zM26 26h1v1h-1zM28 26h2v1h-2zM31 26h1v1h-1zM4 27h1v1h-1zM10 27h1v1h-1zM12 27h1v1h-1zM16 27h1v1h-1zM20 27h1v1h-1zM24 27h1v1h-1zM28 27h2v1h-2zM31 27h1v1h-1zM4 28h1v1h-1zM6 28h3v1h-3zM10 28h1v1h-1zM13 28h1v1h-1zM15 28h2v1h-2zM18 28h4v1h-4zM24 28h5v1h-5zM30 28h1v1h-1zM32 28h1v1h-1zM4 29h1v1h-1zM6 29h3v1h-3zM10 29h1v1h-1zM12 29h1v1h-1zM15 29h1v1h-1zM17 29h5v1h-5zM24 29h2v1h-2zM28 29h2v1h-2zM31 29h1v1h-1zM4 30h1v1h-1zM6 30h3v1h-3zM10 30h1v1h-1zM12 30h1v1h-1zM14 30h2v1h-2zM17 30h2v1h-2zM20 30h1v1h-1zM23 30h1v1h-1zM27 30h1v1h-1zM30 30h1v1h-1zM32 30h1v1h-1zM4 31h1v1h-1zM10 31h1v1h-1zM13 31h2v1h-2zM17 31h1v1h-1zM19 31h1v1h-1zM23 31h2v1h-2zM26 31h2v1h-2zM29 31h1v1h-1zM31 31h1v1h-1zM4 32h7v1h-7zM12 32h1v1h-1zM18 32h1v1h-1zM20 32h1v1h-1zM22 32h4v1h-4zM27 32h1v1h-1zM31 32h1v1h-1z" fill="#0B1146"/></svg>`;
+function phoneCard(){
+  const installed = (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) || navigator.standalone;
+  if (installed) return '';
+  return `<section class="phonecard"><div class="qrbox">${QR_SVG}</div><div><h3>Open it on your phone</h3><p>Open <b>cuse-compass.vercel.app</b> on any phone (on a laptop, scan the code). Works on iPhone and Android.</p><ol><li><b>iPhone (Safari):</b> tap Share, then <b>Add to Home Screen</b>.</li><li><b>Android (Chrome):</b> tap the ⋮ menu, then <b>Install app</b> or <b>Add to Home screen</b>.</li><li>Allow <b>camera</b>, <b>location</b>, and <b>motion</b> when asked.</li></ol></div></section>`;
+}
 function viewHome(){
   if (st.flow === 'go' && st.bld) return viewBuilding(st.bld);
   const cards = Object.keys(BUILDINGS).map(b => { const n = SESSIONS.filter(s => s.b === b).length; return `<button class="bcard2" data-bld="${b}" type="button"><div class="bart">${photoImg(b, 500)}</div><strong>${BUILDINGS[b]}</strong><em>${n} summit event${n === 1 ? '' : 's'}</em></button>`; }).join('');
@@ -757,6 +795,7 @@ function viewHome(){
   <form class="askbox" id="goForm" autocomplete="off"><input type="text" id="goIn" placeholder="Where to? A room, a talk, a building" aria-label="Where do you want to go?">${micBtn('Talk', 'data-routemic="1"', 'btn ghost')}<button class="btn" type="submit">Go</button></form>
   <div class="exs">${['Take me to the keynote', 'Where is Room 206F?'].map(x => `<button class="chip" data-say2="${esc(x)}" type="button">${esc(x)}</button>`).join('')}</div>
   <section class="mapcard"><div class="lmhost" id="homeMap" aria-label="Live map of Newhouse"></div><div class="mapbar"><span id="mapMsg">${esc(mapMsg())}</span><button class="btn sm" data-locate="1" type="button">Locate me</button></div></section>
+  <div class="voicebar"><span class="vbadge" id="vbadge2">${voiceBadgeText()}</span><button class="btn ghost sm" data-testvoice="1" type="button">Test voice</button></div>
   <div class="acts3"><button class="act" data-walk="1" type="button"><b>Walk to the building</b><span>Live map and voice</span></button><button class="act" data-start="1" type="button"><b>Start at the entrance</b><span>Camera and door signs</span></button><button class="act" data-locatein="1" type="button"><b>Where am I inside?</b><span>Scan a door number</span></button></div>
   <div class="today"><span>Today is</span>${[1, 2].map(d => `<button class="chip" data-today="${d}" aria-pressed="${st.today === d}" type="button">Day ${d}</button>`).join('')}<button class="btn ghost sm" data-flow="plan" aria-pressed="${st.flow === 'plan'}" type="button">Plan my day</button><button class="btn ghost sm" data-tab="scan" type="button">Indoor map</button></div>
   ${st.flow === 'plan' ? planPanel() : ''}
@@ -764,6 +803,7 @@ function viewHome(){
   <details class="more"><summary>Not sure where to start? Spin the compass</summary>
   <div class="compass"><div class="dialwrap">${dialSVG()}</div><div><h3>Spin the compass</h3><p>It points at something real from the summit: a talk, a bite, a ride, a room, or the door.</p><button class="btn" data-spin="1" type="button">Spin</button></div></div>
   <div id="spinOut" aria-live="polite">${spinCard()}</div></details>
+  ${phoneCard()}
   <footer class="sufoot"><h3>Built for Newhouse, made to grow</h3><p>CuseCompass works for the three Newhouse buildings today. The same approach can cover every building at Syracuse University as floor plans become available.</p><p class="cr">Photos by Kiran891, ${ln('https://creativecommons.org/licenses/by-sa/4.0/', 'CC BY-SA 4.0')}, via Wikimedia Commons: ${credits}. Map data and tiles © OpenStreetMap contributors.</p></footer>`;
 }
 function initHomeMap(){
@@ -807,14 +847,15 @@ function openBuilding(b, room){
 }
 
 /* ===== scan results: shared by the guide and the room lookup ===== */
+function igBld(r){ const R = IG.rooms[r]; if (!R) return null; const f = R.f, x = R.x, y = R.y; if (f === 5) return 'nh1'; if (f === 2) return (x >= 715 && y >= 440) ? 'nh1' : (y <= 300 && x >= 540) ? 'nh2' : 'nh3'; if (f === 3) return (y >= 1000 && x >= 1330) ? 'nh1' : (y <= 760 && x >= 800) ? 'nh2' : 'nh3'; if (f === 4) return (x >= 2380 && y >= 1280) ? 'nh1' : (y <= 1130 && x >= 1850) ? 'nh2' : 'nh3'; return null; }
 function scanCard(list, target){
-  const n = list.find(x => INDEX[x]) || list[0], es = INDEX[n] || [];
-  const fl = es[0] && es[0].floor ? es[0].floor : Number(n[0]);
+  const n = list.find(x => INDEX[x]) || list.find(x => IG.rooms[x]) || list[0], es = INDEX[n] || [];
+  const fl = es[0] && es[0].floor ? es[0].floor : (IG.rooms[n] ? IG.rooms[n].f : Number(n[0]));
   let h = '';
   if (target) {
     if (target.nums.includes(n)) h += `<div class="banner ok">You found it. ${esc(target.title)} is in this room.</div>`;
     else {
-      const tf = Number(target.nums[0][0]), b0 = es[0] && es[0].b;
+      const tf = Number(target.nums[0][0]), b0 = es[0] ? es[0].b : igBld(n);
       let msg = `You’re looking for ${esc(target.name)}${target.b ? ' in ' + BUILDINGS[target.b] : ''}, floor ${tf}.`;
       if (b0 && target.b && b0 !== target.b) msg += ` This one is in ${BUILDINGS[b0]}. The Newhouse buildings connect indoors.`;
       else if (fl !== tf) msg += ` This is floor ${fl}, so go ${tf > fl ? 'up' : 'down'} ${Math.abs(tf - fl)} floor${Math.abs(tf - fl) > 1 ? 's' : ''}.`;
@@ -822,6 +863,8 @@ function scanCard(list, target){
       h += `<div class="banner">${msg}</div>`;
     }
   }
+  if (!es.length && IG.rooms[n]) return h + `<h3>Room ${esc(n)}</h3><div class="tags"><span class="tag">${esc(BUILDINGS[igBld(n)] || 'Newhouse')}</span><span class="tag">Floor ${fl}</span></div><p class="sub">Found on SU’s floor plan. No summit session is listed here.</p>`;
+  if (!es.length && IG.rooms[n]) return h + `<h3>Room ${esc(n)}</h3><div class="tags"><span class="tag">Floor ${fl}</span><span class="tag">On the hand-traced map</span></div><p class="sub">I know where this room is on floor ${fl}, but I don’t have a verified description of what it’s used for. Tell me where you’re going and I’ll route you from here.</p>`;
   if (!es.length) return h + `<h3>Room ${esc(n)}</h3><div class="tags"><span class="tag">Floor ${fl}, going by its number</span></div><p class="sub">That room isn’t in our verified list yet. In Newhouse, the first digit of a room number is its floor.</p>`;
   const evs = es.flatMap(x => x.sessions), note = es.flatMap(x => x.notes)[0];
   h += `<h3>${esc(es[0].name)}</h3><div class="tags">${[...new Set(es.map(x => x.b ? BUILDINGS[x.b] : 'Building not listed'))].map(t => `<span class="tag">${esc(t)}</span>`).join('')}<span class="tag">Floor ${fl}</span></div>`;
@@ -948,7 +991,7 @@ function igSteps(path, toNum, fromNum){
   legs.forEach((leg, li) => {
     const f = igFloor(leg[0]), P = leg.map(k => IG.pos[k]);
     const pass = li > 0 && li < legs.length - 1 && leg.length === 1; // riding straight through this floor
-    if (li > 0 && !pass) steps.push({f, text:`Leave the elevator on floor ${f}.`});
+    if (li > 0 && !pass) steps.push({f, text:`Leave the elevator on floor ${f}.`, kind:'exit', x:P[0][0], y:P[0][1]});
     if (P.length > 1) {
       const cuts = [0]; for (let j = 1; j < P.length - 1; j++) if (Math.abs(ang(P[j - 1], P[j], P[j + 1])) >= 35) cuts.push(j); cuts.push(P.length - 1);
       for (let k = 0; k < cuts.length - 1; k++) {
@@ -961,24 +1004,26 @@ function igSteps(path, toNum, fromNum){
         let text = (k === 0 ? 'Head along the hallway' : turn + ' and continue') + ` for ${igLenWord(len)}`;
         const bits = []; if (passL) bits.push(`${passL} on your left`); if (passR) bits.push(`${passR} on your right`);
         if (bits.length) text += `, passing ${bits.join(' and ')}`;
-        steps.push({f, text: text + '.'});
+        const tt = k > 0 ? ang(P[a - 1], P[a], P[a + 1]) : 0;
+        steps.push({f, text: text + '.', kind: k === 0 ? 'straight' : (Math.abs(tt) < 65 ? (tt > 0 ? 'slight-right' : 'slight-left') : (tt > 0 ? 'right' : 'left')), sx:A[0], sy:A[1], ex:B[0], ey:B[1]});
       }
     }
-    if (li < legs.length - 1 && !pass) { let nj = li + 1; while (nj < legs.length - 1 && legs[nj].length === 1) nj++; const nf = igFloor(legs[nj][0]); steps.push({f, text:`Take the ${igElevName(leg[leg.length - 1])} ${nf > f ? 'up' : 'down'} to floor ${nf}.`, elev:true}); }
+    if (li < legs.length - 1 && !pass) { let nj = li + 1; while (nj < legs.length - 1 && legs[nj].length === 1) nj++; const nf = igFloor(legs[nj][0]); steps.push({f, text:`Take the ${igElevName(leg[leg.length - 1])} ${nf > f ? 'up' : 'down'} to floor ${nf}.`, elev:true, kind:nf > f ? 'up' : 'down', x:P[P.length - 1][0], y:P[P.length - 1][1]}); }
   });
   if (toNum && IG.rooms[toNum]) {
     const R = IG.rooms[toNum], last = legs[legs.length - 1], P = last.map(k => IG.pos[k]), n = P.length;
-    if (R.approx) steps.push({f:R.f, text:`Room ${toNum} is in this area. Check the door signs.`});
-    else if (n < 2) steps.push({f:R.f, text:`Room ${toNum} is right here. Check the door signs.`});
-    else { const A = P[n - 2], B = P[n - 1], cr = (B[0] - A[0]) * (R.y - B[1]) - (B[1] - A[1]) * (R.x - B[0]); steps.push({f:R.f, text:`Room ${toNum} is on your ${cr > 0 ? 'right' : 'left'}.`}); }
+    if (R.approx) steps.push({f:R.f, text:`Room ${toNum} is in this area. Check the door signs.`, kind:'arrive', x:R.x, y:R.y});
+    else if (n < 2) steps.push({f:R.f, text:`Room ${toNum} is right here. Check the door signs.`, kind:'arrive', x:R.x, y:R.y});
+    else { const A = P[n - 2], B = P[n - 1], cr = (B[0] - A[0]) * (R.y - B[1]) - (B[1] - A[1]) * (R.x - B[0]); steps.push({f:R.f, text:`Room ${toNum} is on your ${cr > 0 ? 'right' : 'left'}.`, kind:'arrive', x:R.x, y:R.y}); }
   }
   return steps;
 }
 /* ----- drawing: flat floor plates, shown one at a time or stacked in 3D ----- */
 function igFloorSVG(f, o){
   const F = INDOOR.floors[f]; let box = F.box;
-  if (!o.full && o.pts && o.pts.length) {
-    let x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9; o.pts.forEach(p => { x0 = Math.min(x0, p[0]); y0 = Math.min(y0, p[1]); x1 = Math.max(x1, p[0]); y1 = Math.max(y1, p[1]); });
+  const bp = o.boxPts || o.pts;
+  if (!o.full && bp && bp.length) {
+    let x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9; bp.forEach(p => { x0 = Math.min(x0, p[0]); y0 = Math.min(y0, p[1]); x1 = Math.max(x1, p[0]); y1 = Math.max(y1, p[1]); });
     const pad = 150; x0 -= pad; y0 -= pad; x1 += pad; y1 += pad;
     const w = Math.max(x1 - x0, 620), h = Math.max(y1 - y0, 400), cx = (x0 + x1) / 2, cy = (y0 + y1) / 2; box = [cx - w / 2, cy - h / 2, cx + w / 2, cy + h / 2];
   }
@@ -997,6 +1042,8 @@ function igFloorSVG(f, o){
       if (em && Math.hypot(em.x - L[0], em.y - L[1]) > fs * 2) s += `<line x1="${L[0]}" y1="${L[1]}" x2="${em.x}" y2="${em.y}" stroke="#FF6B1A" stroke-width="${fs * 0.45}" stroke-dasharray="${fs * 0.7} ${fs * 0.7}" stroke-linecap="round"/>`;
       if (sm && Math.hypot(sm.x - F0[0], sm.y - F0[1]) > fs * 2) s += `<line x1="${F0[0]}" y1="${F0[1]}" x2="${sm.x}" y2="${sm.y}" stroke="#FF6B1A" stroke-width="${fs * 0.45}" stroke-dasharray="${fs * 0.7} ${fs * 0.7}" stroke-linecap="round"/>`; } }
   if (o.pts && o.pts.length > 1) s += `<polyline points="${o.pts.map(p => p[0] + ',' + p[1]).join(' ')}" fill="none" stroke="#FF6B1A" stroke-width="${fs * 0.75}" stroke-linecap="round" stroke-linejoin="round"/>`;
+  if (o.seg) s += `<polyline points="${o.seg.map(p => p[0] + ',' + p[1]).join(' ')}" fill="none" stroke="#FFD84D" stroke-width="${fs * 0.5}" stroke-linecap="round"/>`;
+  if (o.you) s += `<circle cx="${o.you[0]}" cy="${o.you[1]}" r="${fs * 1.15}" fill="#2F6BFF" stroke="#fff" stroke-width="${fs * 0.4}"/>`;
   (o.marks || []).forEach(m => { if (m.type === 'start') s += `<circle cx="${m.x}" cy="${m.y}" r="${fs * 1.1}" fill="#fff" stroke="#3B82F6" stroke-width="${fs * 0.4}"/>`; else if (m.type === 'end') s += `<circle cx="${m.x}" cy="${m.y}" r="${fs * 1.25}" fill="#FFD84D" stroke="#101A5E" stroke-width="${fs * 0.3}"/>`; else s += `<circle cx="${m.x}" cy="${m.y}" r="${fs * 1.8}" fill="none" stroke="#FF6B1A" stroke-width="${fs * 0.35}" stroke-dasharray="${fs * 0.6} ${fs * 0.6}"/>`; });
   return s + '</svg></svg>';
 }
@@ -1025,18 +1072,39 @@ function igResultHTML(r){
   if (r.error) return `<p class="empty">${esc(r.error)}</p>`;
   const tabs = ['3d'].concat(Object.keys(INDOOR.floors).sort((a, b) => b - a)).map(v => `<button class="chip" data-igview="${v}" aria-pressed="${st.ig.view === v}" type="button">${v === '3d' ? '3D' : 'Floor ' + v}</button>`).join('');
   const steps = r.steps.map(s => `<li${s.elev ? ' class="elv"' : ''}><span class="fl">F${s.f}</span>${esc(s.text)}</li>`).join('');
-  return `<div class="igsum"><b>${esc(r.title)}</b><span>${esc(r.sub)}</span></div><ol class="igsteps">${steps}</ol><div class="igtabs" role="group" aria-label="Map view">${tabs}</div><div id="igMap">${igMapHTML(r.plan, st.ig.view)}</div><p class="note">Traced by hand from SU’s floor plans (floors 2 to 5 so far), so distances and sides are approximate. Always confirm with the door signs. Rides use the elevators only, because we couldn’t match stairs between floors.</p>`;
+  return `<div class="igsum"><b>${esc(r.title)}</b><span>${esc(r.sub)}</span></div>${(r.nav || (r.from && r.to)) ? '<button class="btn big" data-navgo="1" type="button">Start navigation</button>' : ''}<ol class="igsteps">${steps}</ol><div class="igtabs" role="group" aria-label="Map view">${tabs}</div><div id="igMap">${igMapHTML(r.plan, st.ig.view)}</div><p class="note">Traced by hand from SU’s floor plans (floors 2 to 5 so far), so distances and sides are approximate. Always confirm with the door signs. Rides use the elevators only, because we couldn’t match stairs between floors.</p>`;
+}
+const FLOOR1 = {'101':'Newhouse 1', '102':'Newhouse 1'};
+function igRouteToFloor1(fromNum, num){
+  const A = IG.rooms[fromNum], res = igDijkstra(A.node); let best = null;
+  IG.pois.filter(p => p.type === 'elevator' && p.name === 'NH1 elevator').forEach(p => { const d = res.dist[p.node]; if (d !== undefined && (!best || d < best.d)) best = {p, d}; });
+  if (!best) return {error:'I couldn’t find the Newhouse 1 elevator from there.'};
+  const path = igPathTo(res, best.p.node), plan = igPlan(path, fromNum, ''); plan.marks[best.p.f].push({type:'end', x:best.p.x, y:best.p.y});
+  const steps = igSteps(path, '', fromNum);
+  steps.push({f:best.p.f, text:`Take the NH1 elevator down to floor 1.`, elev:true, kind:'down', x:best.p.x, y:best.p.y}, {f:1, text:'Leave the elevator on floor 1.', kind:'exit'},
+    {f:1, kind:'arrive', text:`Room ${num} is in ${FLOOR1[num]}, on floor 1. Floor 1 isn’t on the hand-traced map yet, so follow the door signs from here.`});
+  return {nav:{from:fromNum, to:num}, title:`Room ${fromNum} to Room ${num}`, sub:`Floor ${A.f} to floor 1, by the Newhouse 1 elevator`, steps, plan, partial:true};
 }
 function igRoute(fromT, toT){
   const a = igRoomOf(fromT), b = igRoomOf(toT);
+  if (a.hit && !b.hit && b.list.length && FLOOR1[b.list[0]]) return igRouteToFloor1(a.hit, b.list[0]);
   const unmapped = (list, hit, label) => { if (hit) return ''; if (!list.length) return `Type ${label} as a room number, like 206F.`; const f = list[0][0]; return `Room ${list[0]} isn’t on a mapped floor yet. Floors 2 to 5 are traced so far${f === '1' ? ', and floor 1 is next' : ''}.`; };
+  if (a.hit && !b.hit && b.list.length && b.list[0][0] === '1') { // floor 1 isn't traced yet: get to the nearest elevator on this floor, then go down
+    const A0 = IG.rooms[a.hit], res0 = igDijkstra(A0.node); let best = null;
+    IG.pois.filter(p => p.type === 'elevator' && p.f === A0.f).forEach(p => { const d = res0.dist[p.node]; if (d !== undefined && (!best || d < best.d)) best = {p, d}; });
+    if (best) {
+      const path0 = igPathTo(res0, best.p.node), plan0 = igPlan(path0, a.hit, ''); plan0.marks[best.p.f].push({type:'end', x:best.p.x, y:best.p.y});
+      const steps0 = igSteps(path0, '', a.hit); steps0.push({f:A0.f, elev:true, text:`Take the ${best.p.name} down to floor 1.`}); steps0.push({f:1, text:`On floor 1, follow the door signs to Room ${b.list[0]}. Floor 1 isn’t on the map yet.`});
+      return {title:`Room ${a.hit} to Room ${b.list[0]}`, sub:`Floor ${A0.f} to floor 1, by elevator (floor 1 isn’t mapped yet)`, steps:steps0, plan:plan0, from:a.hit, to:b.list[0], partial:true};
+    }
+  }
   const e = unmapped(a.list, a.hit, 'where you are') || unmapped(b.list, b.hit, 'where you’re going');
   if (e) return {error:e};
   const A = IG.rooms[a.hit], B = IG.rooms[b.hit], res = igDijkstra(A.node), path = igPathTo(res, B.node);
   if (!path) return {error:'I couldn’t find a connected route between those rooms on the traced floors.'};
   const plan = igPlan(path, a.hit, b.hit), steps = igSteps(path, b.hit, a.hit), fl = plan.floors;
   const walked = []; for (let i = 1; i < path.length; i++) if (igFloor(path[i]) === igFloor(path[i - 1]) && !walked.includes(igFloor(path[i]))) walked.push(igFloor(path[i]));
-  return {title:`Room ${a.hit} to Room ${b.hit}`, sub:A.f !== B.f ? `Floor ${A.f} to floor ${B.f}, by elevator` : (walked.length > 1 ? `Floor ${A.f}, by elevator via floor ${walked.filter(x => x !== A.f).join(' and ')}` : `Floor ${A.f}, same floor`), steps, plan};
+  return {nav:{from:a.hit, to:b.hit}, title:`Room ${a.hit} to Room ${b.hit}`, sub:A.f !== B.f ? `Floor ${A.f} to floor ${B.f}, by elevator` : (walked.length > 1 ? `Floor ${A.f}, by elevator via floor ${walked.filter(x => x !== A.f).join(' and ')}` : `Floor ${A.f}, same floor`), steps, plan, from:a.hit, to:b.hit};
 }
 function igNearest(fromT, type){
   const a = igRoomOf(fromT); if (!a.hit) return {error:a.list.length ? `Room ${a.list[0]} isn’t on a mapped floor yet. Floors 2 to 5 are traced so far.` : 'Type the room you’re near first, like 206F.'};
@@ -1044,7 +1112,7 @@ function igNearest(fromT, type){
   let best = null; IG.pois.filter(p => p.type === type).forEach(p => { const d = res.dist[p.node]; if (d !== undefined && (!best || d < best.d)) best = {p, d}; });
   if (!best) return {error:'No ' + type + ' found on the traced floors.'};
   const path = igPathTo(res, best.p.node), plan = igPlan(path, a.hit, ''); plan.marks[best.p.f].push({type:'end', x:best.p.x, y:best.p.y});
-  const steps = igSteps(path, '', a.hit); steps.push({f:best.p.f, text:`The ${best.p.name.toLowerCase()} is here, on floor ${best.p.f}.`});
+  const steps = igSteps(path, '', a.hit); steps.push({f:best.p.f, kind:'arrive', x:best.p.x, y:best.p.y, text:`The ${best.p.name.toLowerCase()} is here, on floor ${best.p.f}.`});
   return {title:`${type === 'elevator' ? 'Nearest elevator' : 'Nearest restroom'} from Room ${a.hit}`, sub:`${best.p.name}, floor ${best.p.f}`, steps, plan};
 }
 function viewIndoor(){
@@ -1058,33 +1126,103 @@ function startLocate(){
   st.target = null; st.guide = {move:'unknown', head:'Where am I?', text:'Point the camera at a door number. I’ll place you on the floor plan.', ts:Date.now(), sig:''};
   unlockAudio(); if ($('cam').hidden) openCam('locate'); else setStage('locate');
 }
+const mappedNum = t => t && t.nums && t.nums.find(n => IG.rooms[n] || /^1\d\d[A-Z]{0,2}$/.test(n));
+const NAV_STARTS = [['244', 'Food.com café'], ['432', 'Keynote rooms'], ['469', 'Room 469'], ['206F', 'Room 206F']];
+function navArrow(kind){
+  if (kind === 'slight-left' || kind === 'slight-right') return `<span style="display:inline-block;transform:rotate(${kind === 'slight-left' ? -40 : 40}deg)">${ARROW.ahead}</span>`;
+  return ARROW[{straight:'ahead', left:'left', right:'right', up:'up', down:'down', arrive:'here', exit:'here'}[kind] || 'ahead'];
+}
+const navSecs = s => /a few steps/.test(s.text) ? 7 : /a short walk/.test(s.text) ? 14 : /a long stretch/.test(s.text) ? 24 : s.elev ? 12 : 7;
+function navSpeak(){ const n = st.nav; if (n && st.voice && !n.done) speak(n.route.steps[n.i].text); }
+function navSchedule(){ const n = st.nav; if (!n) return; clearTimeout(n.timer); if (n.auto && !n.done) n.timer = setTimeout(() => navGo(1), navSecs(n.route.steps[n.i]) * 1000); }
+function navStart(from, to, intro){
+  const r = igRoute(from, to); if (r.error) { toast(r.error); return false; }
+  if (st.nav) clearTimeout(st.nav.timer);
+  st.nav = {from, to, route:r, i:0, auto:false, done:false, timer:null}; st.ig.here = igRoomOf(from).hit || from;
+  igLiveRender(); if (st.voice) speak((intro ? intro + ' ' : '') + r.steps[0].text);
+  return true;
+}
+function navGo(d){
+  const n = st.nav; if (!n) return; clearTimeout(n.timer); st.voiceOk = true;
+  const j = n.i + d; if (j < 0) return;
+  if (j >= n.route.steps.length) { n.done = true; igLiveRender(); burst(window.innerWidth / 2, window.innerHeight * 0.35); if (st.voice) speak(`You’ve arrived at room ${n.to}.`); return; }
+  n.done = false; n.i = j; igLiveRender(); navSpeak(); navSchedule();
+}
+function navFromRoom(v){
+  const t = st.target, tn = mappedNum(t), hit = igRoomOf(v).hit;
+  if (!hit) { toast('Type a room number from floors 2 to 5, like 244.'); return; }
+  if (!tn || hit === tn) { igLocated(hit); return; }
+  navStart(hit, tn, `Starting from room ${hit}.`);
+}
+function navStepHTML(){
+  const n = st.nav, R = n.route, N = R.steps.length;
+  if (n.done) return `<div class="igl-head"><b>You’ve arrived</b><span>Room ${esc(n.to)}</span></div><div class="nav-btns"><button class="btn ghost" data-navprev="1" type="button">Back</button><button class="btn" data-navchange="1" type="button">New route</button></div>`;
+  const s = R.steps[n.i], nx = R.steps[n.i + 1], last = n.i === N - 1, f = s.f;
+  const seg = s.sx != null ? [[s.sx, s.sy], [s.ex, s.ey]] : null, you = seg ? seg[0] : (s.x != null ? [s.x, s.y] : null);
+  const svg = INDOOR.floors[f] && (you || R.plan.per[f]) ? igFloorSVG(f, {pts:R.plan.per[f] || [], boxPts:seg || (you ? [you] : R.plan.per[f]), hi:R.plan.hi, marks:(R.plan.marks[f] || []).filter(m => m.type === 'end'), seg, you}) : '<p class="igl-hint">Floor 1 isn’t on the hand-traced map yet. Follow the door signs from here.</p>';
+  return `<div class="nav-head"><span>Step ${n.i + 1} of ${N}</span><span>Floor ${f} · to Room ${esc(n.to)}</span></div>
+  <div class="nav-main"><div class="gicon nav-ico">${navArrow(s.kind)}</div><div class="nav-txt"><b>${esc(s.text)}</b>${nx ? `<em>Then: ${esc(nx.text)}</em>` : ''}</div></div>
+  ${st.voiceOk ? '' : '<button class="btn sm voiceon" data-voiceon="1" type="button">Tap to turn on voice</button>'}
+  <div class="igl-map">${svg}</div>
+  <div class="nav-btns"><button class="btn ghost" data-navprev="1" type="button">Back</button><button class="btn" data-navnext="1" type="button">${last ? 'I’m here' : 'Next step'}</button><button class="btn ghost" data-navrep="1" type="button">Repeat</button></div>
+  <div class="nav-row"><button class="chip" data-navauto="1" aria-pressed="${n.auto}" type="button">Hands-free: ${n.auto ? 'on' : 'off'}</button><button class="chip" data-navchange="1" type="button">Change start</button></div>`;
+}
 function igLiveRender(){
   const box = $('igLive'); if (!box) return;
-  const t = st.target, tn = t && t.nums && t.nums.find(n => IG.rooms[n]), here = st.ig.here;
+  const t = st.target, tn = mappedNum(t), here = st.ig.here, n = st.nav, cg = $('camGuide');
   if ($('cam').hidden || (st.stage !== 'guide' && st.stage !== 'locate') || (!tn && st.stage !== 'locate')) { box.hidden = true; box.innerHTML = ''; return; }
   box.hidden = false;
-  if (!here) { box.innerHTML = `<p class="igl-hint">${tn ? 'Point the camera at any door number and I’ll place you on the map.' : 'Point the camera at a door number.'}</p>`; return; }
-  const R = IG.rooms[here];
-  if (tn && tn === here) { box.innerHTML = `<div class="igl-head"><b>You’re at Room ${esc(here)}</b><span>Floor ${R.f}</span></div>`; return; }
+  if (cg && st.stage === 'guide') cg.hidden = !!(n && tn);
+  if (tn && here && here === tn) { st.nav = null; box.innerHTML = `<div class="igl-head"><b>You’re at Room ${esc(here)}</b><span>Floor ${IG.rooms[here] ? IG.rooms[here].f : ''}</span></div>`; return; }
+  if (n && tn) { box.innerHTML = navStepHTML(); return; }
   if (tn) {
-    const r = igRoute(here, tn);
-    if (!r.error) {
-      const f = R.f, plan = r.plan, svg = igFloorSVG(f, {pts:plan.per[f] || [], hi:plan.hi, marks:plan.marks[f] || [], full:false});
-      box.innerHTML = `<div class="igl-head"><b>You’re near Room ${esc(here)}</b><span>Floor ${f} · to Room ${esc(tn)}</span></div><p class="igl-next">${esc(r.steps[0].text)}</p><div class="igl-map">${svg}</div>`; return;
-    }
+    box.innerHTML = `<div class="igl-head"><b>Where are you now?</b><span>Tell me once, then I’ll give you turn-by-turn steps to Room ${esc(tn)}.</span></div><div class="row navchips">${NAV_STARTS.map(x => `<button class="chip" data-navfrom="${x[0]}" type="button">${esc(x[1])} · ${x[0]}</button>`).join('')}</div><div class="navfrom"><input id="navFrom" type="text" placeholder="A room number you can see, like 244" aria-label="Room number near you"><button class="btn sm" data-navfromgo="1" type="button">Start</button></div><p class="igl-hint">Or point the camera at any door number. You only need to do this once.</p>`;
+    return;
   }
-  const hi = {}; hi[here] = 1;
+  if (!here) { box.innerHTML = '<p class="igl-hint">Point the camera at a door number.</p>'; return; }
+  const R = IG.rooms[here], hi = {}; hi[here] = 1;
   box.innerHTML = `<div class="igl-head"><b>You’re near Room ${esc(here)}</b><span>Floor ${R.f}</span></div><div class="igl-map">${igFloorSVG(R.f, {pts:[[R.x, R.y]], hi, marks:[{type:'start', x:R.x, y:R.y}], full:false})}</div><div class="row"><button class="btn ghost sm" data-igl="restroom" type="button">Nearest restroom</button><button class="btn ghost sm" data-igl="elevator" type="button">Nearest elevator</button></div>`;
 }
 function igLocated(room){
-  const changed = st.ig.here !== room; st.ig.here = room; igLiveRender();
-  if (changed && st.voice) {
-    const R = IG.rooms[room], t = st.target, tn = t && t.nums && t.nums.find(n => IG.rooms[n]); let line = `You’re near room ${room}, on floor ${R.f}.`;
-    if (tn === room) line = `You’re at room ${room}. You’ve arrived.`;
-    else if (tn) { const r = igRoute(room, tn); if (!r.error && r.steps[0]) line += ' ' + r.steps[0].text; }
-    speak(line);
-  }
+  const changed = st.ig.here !== room; st.ig.here = room;
+  if (FW.active) { fwResync(room); return; }
+  const t = st.target, tn = mappedNum(t), R = IG.rooms[room];
+  if (tn === room) { st.nav = null; igLiveRender(); if (changed && st.voice) speak(`You’re at room ${room}. You’ve arrived.`); return; }
+  if (tn) { if (changed || !st.nav) navStart(room, tn, `You’re near room ${room}, on floor ${R.f}.`); else igLiveRender(); return; }
+  igLiveRender(); if (changed && st.voice) speak(`You’re near room ${room}, on floor ${R.f}.`);
 }
+/* ----- timed hands-free walk (kept for compatibility; the navigator above is the main way) ----- */
+const FW = {steps:[], i:0, timer:null, paused:false, active:false, route:null, from:'', to:''};
+const fwSeconds = s => s.elev ? 14 : /few steps/.test(s.text) ? 7 : /short walk/.test(s.text) ? 15 : /long stretch/.test(s.text) ? 28 : 9;
+const fwMove = s => /^(Turn|Bear) left/.test(s.text) ? 'left' : /^(Turn|Bear) right/.test(s.text) ? 'right' : / up to floor/.test(s.text) ? 'up' : / down to floor/.test(s.text) ? 'down' : /^Room .* is (on your|right here)/.test(s.text) ? 'here' : 'ahead';
+function fwStart(fromRoom, toNum){
+  const r = igRoute(fromRoom, toNum); if (r.error) { toast(r.error); return; }
+  clearTimeout(FW.timer); FW.route = r; FW.steps = r.steps.slice(); FW.i = 0; FW.paused = false; FW.active = true; FW.from = fromRoom; FW.to = toNum;
+  unlockAudio(); if ($('cam').hidden) openCam('follow'); else setStage('follow');
+  st.ig.here = fromRoom; fwSay();
+}
+function renderFollow(){
+  const g = $('camGuide'); if (!g || !FW.steps.length) return; const s = FW.steps[FW.i], n = FW.steps.length;
+  g.innerHTML = `<div class="gicon">${ARROW[fwMove(s)]}</div><div class="gtext"><b>Step ${FW.i + 1} of ${n} · Floor ${s.f}${FW.paused ? ' · Paused' : ''}</b><span>${esc(s.text)}</span></div>`;
+  const p = $('camPanel'); if (p && st.stage === 'follow') p.innerHTML = stageHTML('follow');
+  igLiveRender();
+}
+function fwSay(){
+  clearTimeout(FW.timer); renderFollow(); const s = FW.steps[FW.i]; if (!s) return;
+  if (st.voice) speak(s.text);
+  if (!FW.paused && FW.i < FW.steps.length - 1) FW.timer = setTimeout(fwNext, fwSeconds(s) * 1000);
+}
+function fwNext(){ if (FW.i < FW.steps.length - 1) { FW.i++; fwSay(); } else { clearTimeout(FW.timer); FW.active = false; renderFollow(); if (st.voice) speak('You’ve arrived.'); } }
+function fwBack(){ if (FW.i > 0) { FW.i--; fwSay(); } }
+function fwPause(){ FW.paused = !FW.paused; clearTimeout(FW.timer); if (FW.paused) renderFollow(); else fwSay(); }
+function fwStop(){ clearTimeout(FW.timer); FW.active = false; }
+function fwResync(room){ // a door number was read: continue from here
+  if (!FW.active || room === FW.from) return;
+  if (room === FW.to) { FW.i = FW.steps.length - 1; FW.from = room; fwSay(); return; }
+  const r = igRoute(room, FW.to); if (r.error) return;
+  FW.route = r; FW.steps = r.steps.slice(); FW.i = 0; FW.from = room; if (st.voice) speak(`You’re near room ${room}.`); fwSay();
+}
+
 function igAlign(){
   const st3 = document.querySelectorAll ? document.querySelectorAll('.igplate') : []; if (!st3 || st3.length < 2 || !st.ig.res || !st.ig.res.plan) return;
   const plan = st.ig.res.plan, plates = Array.prototype.slice.call(st3), w = plates[0].clientWidth; if (!w) return;
@@ -1163,7 +1301,7 @@ function browserSpeak(text){
       let started = false, done = false;
       const adv = () => { if (done) return; done = true; clearTimeout(wd); clearTimeout(rt); next(); };
       const rt = setTimeout(() => { if (!started && !done && !synth.speaking) { try { synth.cancel(); synth.speak(u); } catch (e) {} } }, 700); // some browsers drop the first utterance: try once more
-      const wd = setTimeout(() => { if (!started && !done) { toast('No sound started. Check your volume, the silent switch, and that this tab isn’t muted.'); adv(); } }, 3500);
+      const wd = setTimeout(() => { if (!started && !done) { { const nv = (synth.getVoices && synth.getVoices().length) || 0; toast(`No sound started (${nv} voice${nv === 1 ? '' : 's'} found in this browser). Check your volume, the silent switch, and that this tab isn’t muted. The ElevenLabs voice avoids this.`); } adv(); } }, 3500);
       u.onstart = () => { started = true; clearTimeout(wd); clearTimeout(rt); };
       u.onend = adv;
       u.onerror = e => {
@@ -1181,33 +1319,40 @@ function browserSpeak(text){
 const ttsCache = new Map();
 let voiceMode = 'checking';
 const voiceBadgeText = () => voiceMode === 'elevenlabs' ? 'Voice: ElevenLabs' : voiceMode === 'browser' ? 'Voice: this device' : 'Voice: checking…';
-function updateVoiceBadge(){ const b = $('vbadge'); if (b) b.textContent = voiceBadgeText(); }
+function updateVoiceBadge(){ ['vbadge', 'vbadge2'].forEach(id => { const b = $(id); if (b) b.textContent = voiceBadgeText(); }); }
 async function checkVoice(){
   try { const r = await fetch('/api/speak'); const j = r && r.ok ? await r.json() : null; ttsRemote = !!(j && j.ready); voiceMode = ttsRemote ? 'elevenlabs' : 'browser'; }
   catch (e) { ttsRemote = false; voiceMode = 'browser'; }
   updateVoiceBadge();
 }
+function splitForVoice(t, max){ // sentence-aware chunks for the voice service
+  const sents = String(t).replace(/\s+/g, ' ').trim().match(/[^.!?]+[.!?]*\s*/g) || [String(t)], out = []; let cur = '';
+  sents.forEach(s => { s = s.trim(); if (!s) return; if ((cur + ' ' + s).trim().length <= max) cur = (cur + ' ' + s).trim(); else { if (cur) out.push(cur); cur = s.slice(0, max); } });
+  if (cur) out.push(cur); return out;
+}
+async function remoteVoiceUrl(t){
+  let url = ttsCache.get(t); if (url) return url;
+  const r = await fetch('/api/speak', {method:'POST', headers:{'content-type':'application/json'}, body:JSON.stringify({text:t})});
+  if (!r.ok) {
+    let msg = ''; try { msg = (await r.json()).error || ''; } catch (e) {}
+    if (r.status === 501) { ttsRemote = false; voiceMode = 'browser'; updateVoiceBadge(); }
+    else if (r.status === 502 && /key|credits/i.test(msg)) { ttsRemote = false; voiceMode = 'browser'; updateVoiceBadge(); toast(msg + ' Using this device’s voice instead.'); }
+    throw new Error('HTTP ' + r.status);
+  }
+  url = URL.createObjectURL(await r.blob()); ttsCache.set(t, url); if (ttsCache.size > 40) ttsCache.delete(ttsCache.keys().next().value);
+  return url;
+}
+function playVoiceUrl(url){
+  if (!voicePlayer) voicePlayer = new Audio();
+  voicePlayer.src = url;
+  return new Promise((res, rej) => { voicePlayer.onended = res; voicePlayer.onerror = rej; const p = voicePlayer.play(); if (p && p.catch) p.catch(rej); });
+}
 async function speak(text){
   if (!text) return; stopSpeak();
   const t = String(text).trim();
-  if (ttsRemote && t.length <= 320) { // short lines use the ElevenLabs voice; long answers use the device voice to save credits
-    try {
-      let url = ttsCache.get(t);
-      if (!url) {
-        const r = await fetch('/api/speak', {method:'POST', headers:{'content-type':'application/json'}, body:JSON.stringify({text:t})});
-        if (!r.ok) {
-          let msg = ''; try { msg = (await r.json()).error || ''; } catch (e) {}
-          if (r.status === 501) { ttsRemote = false; voiceMode = 'browser'; updateVoiceBadge(); }
-          else if (r.status === 502 && /key|credits/i.test(msg)) { ttsRemote = false; voiceMode = 'browser'; updateVoiceBadge(); toast(msg + ' Using this device’s voice instead.'); }
-          throw new Error('HTTP ' + r.status);
-        }
-        url = URL.createObjectURL(await r.blob()); ttsCache.set(t, url); if (ttsCache.size > 40) ttsCache.delete(ttsCache.keys().next().value);
-      }
-      if (!voicePlayer) voicePlayer = new Audio();
-      voicePlayer.src = url;
-      await new Promise((res, rej) => { voicePlayer.onended = res; voicePlayer.onerror = rej; const p = voicePlayer.play(); if (p && p.catch) p.catch(rej); });
-      return;
-    } catch (e) {}
+  if (ttsRemote) { // the ElevenLabs voice reads every answer (the first two chunks, about 1,000 characters, to protect credits)
+    const chunks = splitForVoice(t, 520).slice(0, 2); let played = 0;
+    try { for (const c of chunks) { await playVoiceUrl(await remoteVoiceUrl(c)); played++; } return; } catch (e) { if (played > 0) return; }
   }
   await browserSpeak(t);
 }
@@ -1318,6 +1463,7 @@ function detectHere(){
 function stageHTML(s){
   const b = st.here;
   if (s === 'where') return nearBanner() + `<h3>Welcome. Which building are you at?</h3><p class="csub">Stand still at the entrance. Tap the building you’re in.</p><div class="cpills">${Object.keys(BUILDINGS).map(k => `<button class="cpill" data-here="${k}" type="button">${BUILDINGS[k]}</button>`).join('')}<button class="cpill" data-here="none" type="button">Not sure</button></div><div class="cpills"><button class="cpill" data-walk="1" type="button">Not here yet? Walk me to Newhouse</button></div>`;
+  if (s === 'follow') return `<div class="cpills"><button class="cpill" data-fw="back" type="button">Back</button><button class="cpill" data-fw="pause" type="button">${FW.paused ? 'Resume' : 'Pause'}</button><button class="cpill pri" data-fw="next" type="button">${FW.i >= FW.steps.length - 1 ? 'Done' : 'Next'}</button></div><p class="cinfo"><small>I’m walking you through on my own. Keep the camera on: when it reads any door number I’ll re-sync.</small></p>`;
   if (s === 'walk') { const w = st.walk, d = DEST[w.dest]; return `<div id="routeBox" aria-live="polite"></div><div class="cpills"><button class="cpill pri" data-mapsdir="1" type="button">Open walking directions in Maps</button><button class="cpill" data-walkcam="1" type="button">${w.camView ? 'Show map' : 'Show camera'}</button><button class="cpill" data-stage="where" type="button">I’m at the entrance</button></div><details class="wdest"><summary>Going to ${esc(d.name)}, ${esc(d.side)}. Change entrance</summary><div class="cpills">${Object.keys(DEST).map(k => `<button class="cpill" data-walkdest="${k}" aria-pressed="${w.dest === k}" type="button">${esc(DEST[k].name)}, ${esc(DEST[k].side)}</button>`).join('')}</div><p class="cinfo"><small>Entrance points are approximate, taken from photo locations on Wikimedia Commons.</small></p></details>`; }
   if (s === 'ask') { const info = b ? BLD_INFO[b] : BLD_INFO.all; return `<h3>${b ? BUILDINGS[b] : 'Newhouse'}</h3><p class="cinfo"><strong>${esc(info.tag)}.</strong> ${esc(info.use)}<small>Source: ${esc(info.src)}</small></p><p class="cinfo" style="margin-top:12px"><strong>What would you like to do?</strong></p><div class="cpills"><button class="cpill pri" data-stage="plan" type="button">Plan my day</button><button class="cpill pri" data-stage="events" type="button">What’s happening here</button><button class="cpill pri" data-stage="room" type="button">Take me to a room</button></div>${SR ? `<div class="cpills">${micBtn('Say where you want to go', 'data-routemic="1"', 'cpill')}</div>` : ''}`; }
   if (s === 'events') {
@@ -1335,12 +1481,13 @@ function stageHTML(s){
   return '';
 }
 function renderStage(){
-  const s = st.stage, g = s === 'guide' || s === 'locate', wk = s === 'walk', panel = $('camPanel');
-  $('camGuide').hidden = !(g || wk); $('camForm').hidden = !g; $('camCtl').hidden = !g; $('reticle').hidden = !g;
+  const s = st.stage, g = s === 'guide' || s === 'locate', wk = s === 'walk', fwd = s === 'follow', panel = $('camPanel');
+  $('camGuide').hidden = !(g || wk || fwd); $('camForm').hidden = !g; $('camCtl').hidden = !g; $('reticle').hidden = !(g || fwd);
   panel.hidden = g;
   if (!g) { $('camCard').hidden = true; panel.innerHTML = stageHTML(s); }
   const rf = $('roomForm'); if (rf) rf.onsubmit = e => { e.preventDefault(); const l = readNums($('roomIn').value); if (!l.length) { setStatus('Enter a three-digit room number, like 206F.'); return; } startGuideTo(targetFromNum(l[0])); };
   if (g) renderGuide();
+  if (fwd) renderFollow();
   { const cl = $('cam').classList; if (cl && cl.toggle) cl.toggle('walking', wk); }
   if (wk) { ensureWalkMap(); updateWalk(); renderRouteBox(); } else hideWalkMap();
   igLiveRender();
@@ -1383,13 +1530,14 @@ function startEntrance(here){
   openCam(here ? 'ask' : 'where');
 }
 async function openCam(stage){
-  st.ig.here = null; // a new camera session starts without a stale position
+  st.ig.here = null; if (st.nav) clearTimeout(st.nav.timer); st.nav = null; // a new camera session starts without a stale position
   st.stage = stage || 'where'; $('cam').hidden = false; document.body.style.overflow = 'hidden';
   camAuto = true; camScans = 0; camLast = ''; camBusy = false; updateAutoBtn(); updateVoiceBtn();
   $('camCard').hidden = true; $('camCard').innerHTML = '';
   if (st.stage !== 'walk') stopWalk();
   renderTarget(); renderStage();
   if (st.stage === 'where') { st.near = null; detectHere(); }
+  if (st.pendingNav) { const pn = st.pendingNav; st.pendingNav = null; setTimeout(() => navStart(pn.from, pn.to), 0); }
   if (st.stage === 'guide') startLine();
   else if (st.stage === 'walk') { /* guidance speaks once GPS locks */ }
   else if (st.voice) speak(st.stage === 'where' ? 'Welcome. Which building are you at?' : 'What would you like to do?');
@@ -1398,14 +1546,14 @@ async function openCam(stage){
     camStream = await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'}}, audio:false});
     const v = $('camVid'); v.srcObject = camStream; await v.play();
     setStatus(''); if (st.stage === 'walk') updateWalk();
-    camTimer = setInterval(() => { if ((st.stage === 'guide' || st.stage === 'locate') && camAuto && !camBusy) scanOnce(true); }, 3500);
+    camTimer = setInterval(() => { if ((st.stage === 'guide' || st.stage === 'locate' || st.stage === 'follow') && camAuto && !camBusy) scanOnce(true); }, 3500);
   } catch (e) {
     if (st.stage === 'walk') { st.walk.camErr = true; updateWalk(); }
     else setStatus('The camera isn’t available. You can still use the guide: allow camera access, or type room numbers.');
   }
 }
 function closeCam(){
-  stopWalk(); hideWalkMap(); st.walk.camView = false;
+  stopWalk(); hideWalkMap(); fwStop(); st.walk.camView = false; if (st.nav) { clearTimeout(st.nav.timer); st.nav = null; }
   if (camTimer) { clearInterval(camTimer); camTimer = null; }
   if (camStream) { camStream.getTracks().forEach(t => t.stop()); camStream = null; }
   stopSpeak(); $('cam').hidden = true; document.body.style.overflow = ''; st.target = null; igLiveRender();
@@ -1834,6 +1982,7 @@ function go(tab, sub){
   if (tab === 'home') { st.flow = null; st.bld = null; st.hiRoom = null; }
   render(); window.scrollTo(0, 0);
 }
+document.addEventListener('keydown', e => { if (e.key === 'Enter' && e.target && e.target.id === 'navFrom') { if (e.preventDefault) e.preventDefault(); navFromRoom(e.target.value || ''); } });
 document.addEventListener('click', e => {
   const t = e.target.closest('button'); if (!t) return;
   const d = t.dataset;
@@ -1847,13 +1996,25 @@ document.addEventListener('click', e => {
   else if (d.optrack) { st.ptrack = d.optrack; st.planOut = []; renderStage(); }
   else if (d.opbuild) { st.planOut = planFor(st.pday, st.ptrack).map(s => s.id); renderStage(); if (st.voice) speak(`Here’s your Day ${st.pday}. Tap Guide me on any event.`); }
   else if (d.opsave) { st.planOut.forEach(id => st.plan.add(id)); persist(); const r = t.getBoundingClientRect(); burst(r.left + r.width / 2, r.top + r.height / 2); t.textContent = 'Saved to My plan'; render(); }
+  else if (d.fw) { if (d.fw === 'next') fwNext(); else if (d.fw === 'back') fwBack(); else fwPause(); }
+  else if (d.igwalk) { const nv = st.ig.res && st.ig.res.nav; if (nv) { st.pendingNav = {from:nv.from, to:nv.to}; startGuideTo(targetFromNum(nv.to)); } }
+  else if (d.igwalk2) { if (st.ig.here && st.ig.liveTo) fwStart(st.ig.here, st.ig.liveTo); }
+  else if (d.navnext) navGo(1);
+  else if (d.navprev) navGo(-1);
+  else if (d.navrep) { st.voiceOk = true; navSpeak(); }
+  else if (d.navauto) { const n = st.nav; if (n) { n.auto = !n.auto; st.voiceOk = true; igLiveRender(); navSchedule(); } }
+  else if (d.navchange) { if (st.nav) clearTimeout(st.nav.timer); st.nav = null; st.ig.here = null; igLiveRender(); }
+  else if (d.navfrom) navFromRoom(d.navfrom);
+  else if (d.navfromgo) navFromRoom(($('navFrom') || {}).value || '');
+  else if (d.voiceon) { st.voiceOk = true; st.voice = true; unlockAudio(); updateVoiceBtn(); speak('Voice is on.'); toast(voiceMode === 'elevenlabs' ? 'Voice: ElevenLabs' : 'Voice: this device'); igLiveRender(); }
+  else if (d.navgo) { const rs = st.ig.res, nv = rs && (rs.nav || (rs.from && rs.to ? {from:rs.from, to:rs.to} : null)); if (nv) { st.pendingNav = {from:nv.from, to:nv.to}; startGuideTo(targetFromNum(nv.to)); } }
   else if (d.igl) { const r = igNearest(st.ig.here, d.igl); if (r.error) toast(r.error); else { const o = $('igLive'); if (o) o.innerHTML = `<div class="igl-head"><b>${esc(r.title)}</b><span>${esc(r.sub)}</span></div><p class="igl-next">${esc(r.steps[0].text)}</p><div class="igl-map">${igFloorSVG(IG.rooms[st.ig.here].f, {pts:r.plan.per[IG.rooms[st.ig.here].f] || [], hi:r.plan.hi, marks:r.plan.marks[IG.rooms[st.ig.here].f] || [], full:false})}</div>`; if (st.voice) speak(r.title + '. ' + r.steps[0].text); } }
   else if (d.igrest) { igVal(); igRun(igNearest(st.ig.from, 'restroom')); }
   else if (d.igelev) { igVal(); igRun(igNearest(st.ig.from, 'elevator')); }
   else if (d.igview) { st.ig.view = d.igview; const o = $('igOut'); if (o && st.ig.res) o.innerHTML = igResultHTML(st.ig.res); igAlign(); }
   else if (d.igpair) { const p = d.igpair.split('>'); st.ig.from = p[0]; st.ig.to = p[1]; if ($('igFrom')) $('igFrom').value = p[0]; if ($('igTo')) $('igTo').value = p[1]; igRun(igRoute(p[0], p[1])); }
   else if (d.routemap) { if (st.target && st.target.nums[0]) st.ig.to = st.target.nums[0]; closeCam(); go('scan'); }
-  else if (d.testvoice) { unlockAudio(); toast('Playing a test sentence…'); speak('Voice is working. I can read answers and directions out loud.'); }
+  else if (d.testvoice) { unlockAudio(); toast(voiceMode === 'elevenlabs' ? 'Playing a test sentence with the ElevenLabs voice…' : 'Playing a test sentence with this device’s voice…'); speak('Voice is working. I can read answers and directions out loud.'); }
   else if (d.dir) openDirections(d.dir, d.mode);
   else if (d.walk) startWalk(null);
   else if (d.pin) startWalk(d.pin);

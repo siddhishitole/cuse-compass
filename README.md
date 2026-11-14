@@ -1,5 +1,12 @@
 # CuseCompass
 
+<p align="center">
+  <img src="cusecompass-qr.png" alt="QR code for https://cuse-compass.vercel.app" width="220"><br>
+  <b>Scan to open CuseCompass on your phone</b><br>
+  <a href="https://cuse-compass.vercel.app">https://cuse-compass.vercel.app</a><br>
+  Works on iPhone (Safari) and Android (Chrome). No app store, no sign-up.
+</p>
+
 **From the street to the right room.**
 
 Gen Jam · Product Dev · Option 1: Campus, Upgraded
@@ -102,6 +109,21 @@ It's also where teams are supposed to be formed for the Gen Jam, so the app show
 The camera scans automatically every few seconds, and you can tap **Scan now** any time. No camera, or the AI is down? Type a room number and get the same popup.
 
 ---
+
+## Turn-by-turn inside (Google Maps style)
+
+Ask for a room (say or type "take me to room 432", or use **Start navigation** on the Inside tab). Tell the app where you are **once**: tap a quick start such as the food.com café, or type a room number you can see. You then get numbered steps with a big arrow (straight, left, right, up or down an elevator, arrive), plain words ("Turn left and continue for a short walk, passing 246 on your left"), a preview of the next step, a zoomed floor plan with your spot, and a voice line for each step. Tap **Next step** as you go, or turn on **Hands-free** for timed steps. Scanning a door number is optional and only re-locates you. Floor 1 rooms are reached by the Newhouse 1 elevator, with an honest note that floor 1 is not on the hand-traced map yet.
+
+## On your phone (iPhone and Android)
+
+CuseCompass is a web app: open **https://cuse-compass.vercel.app** on any phone. It is also installable, so it runs full screen from the home screen with its own icon:
+
+- **iPhone (Safari):** tap Share, then **Add to Home Screen**.
+- **Android (Chrome):** tap the menu (three dots), then **Install app** or **Add to Home screen**.
+- Allow **camera**, **location**, and **motion** when asked (motion makes the arrow follow the way you face).
+- A QR code for the link is at the top of this README, in `cusecompass-qr.png`, and on the Map tab for people on a laptop. A printable one-page card with install steps is in `cusecompass-share-card.png`.
+
+Checked in iPhone 13 and Pixel 7 emulation: the install manifest and icons load, Chrome reports no installability errors, and nothing scrolls sideways. Real-device testing of the camera, GPS, compass, and voice is still on you before judging.
 
 ## Live map, locate-me, and voice
 
