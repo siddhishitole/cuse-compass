@@ -4,7 +4,7 @@
 
 Gen Jam · Product Dev · Option 1: Campus, Upgraded
 
-Try it live: https://YOUR-SITE.vercel.app *(replace with your Vercel link)*
+Try it live: https://cuse-compass.vercel.app
 
 ---
 
@@ -15,35 +15,36 @@ Google Maps gets you to the front doors. Then the real trip starts.
 Picture a first-time visitor walking into Newhouse for the summit. They know the building. They don't know the answers to the questions that decide whether they're on time:
 
 - Which of the three connected buildings is my session in?
-- Which floor? Which hallway? Where are the stairs?
+- Which room, and which floor?
+- Am I standing outside the right door?
 - Do I have time to get from the keynote to the next talk?
-- Where do I eat, and which bus gets me home?
 
-**The part of student life we picked:** the minutes between arriving at a campus building and sitting down in the right room. CuseCompass answers every question on that list.
+**The part of student life we picked:** the minutes between arriving at a campus building and sitting down in the right room.
 
 ---
 
-## Plan your day: built for first-time visitors
+## How it works: a short conversation
 
-Open the app and ask, in your own words:
+CuseCompass opens by asking one question: **plan your day, or head somewhere?**
 
-> "Plan my Day 1. I like image generation."
+**Take me somewhere**
+1. Pick a building: Newhouse 1, 2, or 3.
+2. See what's happening there, and tap the event you want.
+3. Your camera opens. Point it at a door number, and CuseCompass reads it live.
+4. A card pops up over the camera: the room, the building, the floor, and what's happening inside. If it isn't your room, it tells you which way to go ("your room is on floor 4, this is floor 2, go up 2 floors"). When you reach the right door, you get a "You found it."
 
-1. **The AI builds a day** from the real summit schedule and adds a one-tap button to save it.
-2. **Your plan shows what the schedule won't tell you:**
-   - which building each stop is in (NH1, NH2, NH3)
-   - a heads-up when you have to **change buildings**, with the minutes you have between sessions
-   - a warning when two sessions **overlap**
-3. **Tap any room** to see its building, its floor, and a link to SU's official floor plan.
-4. **Not sure where you are?** Point the **live camera** at the room sign. The answer appears right over the camera view.
+**Plan my day** (made for first-time visitors)
+1. Pick a day and what you're into: image, video, and audio; building and coding; or a bit of everything.
+2. The AI builds a day from the real schedule, with a one-tap button to save it.
+3. Your plan shows what the schedule won't tell you: the building for each stop, a heads-up when you have to **change buildings** with the minutes you have, and a warning when two sessions **overlap**.
 
-It never makes up a room. If the answer isn't in our verified data, it says "I don't know" and points you to an organizer.
+It never makes up a room. If the answer isn't in our verified data, it says "I don't know."
 
 ---
 
 ## Which session is happening where
 
-Every talk is a ticket with its time, its building, and its room. A few from Day 1:
+Every talk is a ticket with its time, building, and room. A few from Day 1:
 
 | Time | Session | Where |
 |---|---|---|
@@ -62,25 +63,25 @@ It's also where teams are supposed to be formed for the Gen Jam, so the app show
 
 ---
 
-## The camera is your pointer
-
-- **Live camera:** tap it, point your phone at a door sign, and tap **Read the sign**. Claude's vision reads the number and answers from our verified directory, including the floor (in Newhouse, the first digit of a room number is its floor). The answer shows up over the live view.
-- **Snap a sign:** prefer a photo? Same result from a picture.
-- **Talk to it:** ask by voice and hear the answer read aloud.
-
-**Judges, try this anywhere:** write "Room 206F" on a piece of paper, open the live camera, and point it at the paper.
-
----
-
 ## Gen AI inside
 
 | What you do | Model |
 |---|---|
-| Ask, plan a day, brainstorm Gen Jam ideas | Claude (text) |
-| Live camera and Snap a sign | Claude (vision) |
+| Ask anything, plan a day, brainstorm Gen Jam ideas | Claude (text) |
+| Point the live camera at a door number | Claude (vision) reads the number. The popup content comes from our verified data, not from the AI's imagination. |
 | Talk and hear answers | Your phone's speech input and voice, with an optional ElevenLabs voice |
 
-You can swap in ChatGPT or an open-weight model with a few settings (see below).
+The camera scans automatically every few seconds, and you can tap **Scan now** any time. No camera, or the AI is down? Type a room number and get the same popup.
+
+---
+
+## Also in the app
+
+- **Scan:** the camera, plus a room lookup and the rooms you've found
+- **Schedule:** both days, filter by track, save talks to **My plan**
+- **Ask AI:** chat and voice
+- **Around:** a dice roll for lunch, nearby restaurants, and bus stops with SU's trolley loops and Centro routes
+- **Surprise me:** spin the compass for something real to do
 
 ---
 
@@ -99,12 +100,12 @@ What we don't have: a verified location for the Welcome session, the two 3:45 PM
 
 ## Try it in 60 seconds
 
-1. Home: spin the compass for something real to do.
-2. Ask AI: "Plan my Day 1. I like image generation." Tap **Add to my plan**.
-3. Schedule, My plan: see the building-change heads-up.
-4. Rooms: open Newhouse 1, then SU's floor plan.
-5. Ask AI: tap **Live camera** and point it at a room number.
-6. Around: roll the dice for lunch, or find the nearest bus stop.
+1. Home: tap **Take me somewhere**, then **Newhouse 2**, then **Find it** next to an event.
+2. Allow the camera. Write "Room 469" on a piece of paper and point the camera at it. A card pops up with the building, the floor, and the event.
+3. Try "Room 206F" or "Room 305" too. Each pops up something different.
+4. Home: tap **Plan my day**, pick Day 1, and tap **Build my day**. Tap **Add to my plan**.
+5. Schedule, My plan: see the building-change heads-up.
+6. Around: roll the dice for lunch.
 
 ---
 
@@ -125,15 +126,15 @@ Everyone contributes equally.
 ## Files
 
 - `index.html`: the whole app
-- `api/ask.js`: chat, plan building, and sign reading (Claude, or any OpenAI-compatible model)
+- `api/ask.js`: chat, plan building, and reading door numbers from the camera (Claude, or any OpenAI-compatible model)
 - `api/speak.js`: optional ElevenLabs voice. Skip it and the app uses the phone's own voice.
 - `vercel.json`: gives the functions up to 60 seconds
 
 ## Deploy on Vercel
 
-1. Make a GitHub repo and upload these files, keeping the `api` folder and `vercel.json`. Upload only what is listed above.
-2. At vercel.com, sign in with GitHub, Add New Project, import the repo, and leave build settings empty.
-3. Add this Environment Variable before deploying:
+1. Put these files in a GitHub repo, keeping the `api` folder and `vercel.json`.
+2. At vercel.com, import the repo and leave build settings empty.
+3. Add this Environment Variable:
 
 | Variable | Needed for | Notes |
 |---|---|---|
@@ -141,6 +142,7 @@ Everyone contributes equally.
 | `ELEVENLABS_API_KEY` | optional voice | Skip it and nothing breaks. |
 
 4. Deploy and open the URL on your phone. The camera needs https, which Vercel provides.
+5. After changing a variable, redeploy so it takes effect.
 
 **ChatGPT or open-weight models:** set `AI_PROVIDER=openai-compatible`, `AI_API_KEY`, `AI_MODEL`, and `AI_BASE_URL` for any host with an OpenAI-style API. Camera reading needs a vision-capable model.
 
@@ -153,12 +155,13 @@ You should get JSON with a `text` field. A 502 with a message means the key or m
 ## Costs and safety
 
 - Keys live only in Vercel's environment variables. Never put them in the repo or the page.
-- Set a low spend limit in the Claude Console. The functions cap answer length and rate-limit each visitor, and each camera read is one request.
+- Each camera scan is one small request. Auto-scan runs every few seconds and pauses after 24 scans. Set a low spend limit in the Claude Console.
+- The functions rate-limit each visitor address (150 requests per 10 minutes, high enough for a room of judges on one Wi-Fi).
 - Camera frames are resized on the phone, sent only to your own function and the AI provider, and not stored. Keep people out of frame.
 - Rotate or delete the key after the summit.
 
 ## Before you submit
 
 - Fill the gaps in `SESSIONS` and `ROOMS` inside `index.html` and compare against the Participant Guide.
-- Put your real link at the top of this README.
+- Fill in the team table.
 - Submit your Vercel link at https://aicreativesummit.flywheelsites.com before 3:00 PM on Day 2.

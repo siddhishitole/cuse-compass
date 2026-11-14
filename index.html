@@ -4,15 +4,16 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>CuseCompass</title>
-<meta name="description" content="Your pocket guide to the Syracuse AI Creative Summit: sessions, rooms, food, buses, and an AI assistant.">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='30' fill='%230B1146'/%3E%3Cpath d='M32 10l8 22H24z' fill='%23FF6B1A'/%3E%3Cpath d='M32 54l-8-22h16z' fill='%23F3F5FF'/%3E%3C/svg%3E">
+<meta name="description" content="Find the room, not just the building. Plan your day, pick an event, and point your camera at a door number to see what's happening inside.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='30' fill='%230B1146'/%3E%3Cpath d='M32 10l6 22H26z' fill='%23FF6B1A'/%3E%3Cpath d='M32 54l-6-22h12z' fill='%23F3F5FF'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{
-  --paper:#F3F5FF; --surface:#FFFFFF; --ink:#0B1146; --muted:#4B5485; --line:#CBD1EE; --edge:#0B1146;
+  --paper:#F3F5FF; --surface:#FFFFFF; --ink:#0B1146; --muted:#5A6396; --line:#DADFF3;
   --tang:#FF6B1A; --lemon:#FFD84D; --sky:#9CCBFF; --on-tang:#1A0A00; --dial:#0B1146;
+  --c-creative:rgba(255,107,26,.16); --c-product:rgba(156,203,255,.34); --c-all:rgba(255,216,77,.30);
   --f-display:"Bricolage Grotesque","Trebuchet MS",system-ui,sans-serif;
   --f-body:"Instrument Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
   box-sizing:border-box;
@@ -22,177 +23,217 @@
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
     color-scheme:dark;
-    --paper:#080C33; --surface:#131A58; --ink:#F3F5FF; --muted:#AEB7EC; --line:#2B3586; --edge:#6C79D6; --dial:#05082B;
+    --paper:#080C33; --surface:#0F1654; --ink:#F3F5FF; --muted:#A5AFE6; --line:#252E7A; --dial:#05082B;
+    --c-creative:rgba(255,107,26,.20); --c-product:rgba(156,203,255,.18); --c-all:rgba(255,216,77,.16);
   }
 }
 :root[data-theme="dark"]{
   color-scheme:dark;
-  --paper:#080C33; --surface:#131A58; --ink:#F3F5FF; --muted:#AEB7EC; --line:#2B3586; --edge:#6C79D6; --dial:#05082B;
+  --paper:#080C33; --surface:#0F1654; --ink:#F3F5FF; --muted:#A5AFE6; --line:#252E7A; --dial:#05082B;
+  --c-creative:rgba(255,107,26,.20); --c-product:rgba(156,203,255,.18); --c-all:rgba(255,216,77,.16);
 }
 html{scroll-padding-top:env(safe-area-inset-top,0px);}
 *,*::before,*::after{box-sizing:inherit;}
-body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.5;-webkit-tap-highlight-color:transparent;}
-h1,h2,h3{font-family:var(--f-display);letter-spacing:-0.02em;line-height:1.05;margin:0;}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.55;-webkit-tap-highlight-color:transparent;}
+h1,h2,h3{font-family:var(--f-display);font-weight:500;letter-spacing:-0.02em;line-height:1.1;margin:0;}
 p{margin:0;}
-:focus-visible{outline:3px solid var(--tang);outline-offset:3px;}
-.ln{color:inherit;font-weight:600;text-decoration:underline;text-decoration-color:var(--tang);text-decoration-thickness:2px;text-underline-offset:3px;}
+:focus-visible{outline:2px solid var(--tang);outline-offset:3px;}
+.ln{color:inherit;font-weight:500;text-decoration:underline;text-decoration-color:var(--tang);text-decoration-thickness:1.5px;text-underline-offset:3px;}
 
 /* shell */
-.top{display:flex;align-items:center;justify-content:space-between;gap:12px;max-width:760px;margin:0 auto;padding:14px 16px 4px;}
-.logo{display:flex;align-items:center;gap:10px;background:none;border:0;padding:0;color:var(--ink);cursor:pointer;font:800 24px var(--f-display);letter-spacing:-0.03em;}
-.logo svg{width:36px;height:36px;transition:transform .6s cubic-bezier(.3,1.6,.5,1);}
-.logo:hover svg,.logo:focus-visible svg{transform:rotate(70deg);}
-.hnote{color:var(--muted);font-size:14px;text-align:right;}
-main{max-width:760px;margin:0 auto;padding:6px 16px 130px;}
-.nav{position:fixed;left:0;right:0;bottom:0;z-index:40;display:flex;justify-content:center;gap:4px;padding:8px 8px calc(8px + env(safe-area-inset-bottom,0px));background:var(--paper);border-top:2px solid var(--edge);}
-.nav button{position:relative;flex:1;max-width:124px;display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 4px;border:0;border-radius:16px;background:transparent;color:var(--muted);font:700 12.5px var(--f-body);cursor:pointer;}
-.nav button svg{width:26px;height:26px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
-.nav button.on{background:var(--tang);color:var(--on-tang);}
-.cnt{position:absolute;top:-2px;right:10px;min-width:22px;height:22px;padding:0 5px;border-radius:99px;background:var(--lemon);color:#0B1146;font:800 12px/18px var(--f-display);font-style:normal;border:2px solid var(--edge);text-align:center;}
-#fx{position:fixed;inset:0;pointer-events:none;z-index:60;overflow:hidden;}
-.cf{position:absolute;width:9px;height:9px;border-radius:2px;}
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;max-width:720px;margin:0 auto;padding:16px 20px 0;}
+.logo{display:flex;align-items:center;gap:10px;background:none;border:0;padding:0;color:var(--ink);cursor:pointer;font:600 19px var(--f-display);letter-spacing:-0.02em;}
+.logo svg{width:30px;height:30px;transition:transform .6s cubic-bezier(.3,1.5,.5,1);}
+.logo:hover svg,.logo:focus-visible svg{transform:rotate(60deg);}
+.hnote{color:var(--muted);font-size:13.5px;}
+main{max-width:720px;margin:0 auto;padding:8px 20px 130px;}
+.nav{position:fixed;left:0;right:0;bottom:0;z-index:40;display:flex;justify-content:center;gap:2px;padding:8px 8px calc(8px + env(safe-area-inset-bottom,0px));background:var(--paper);background:color-mix(in srgb,var(--paper) 88%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-top:1px solid var(--line);}
+.nav button{position:relative;flex:1;max-width:116px;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 4px;border:0;border-radius:14px;background:transparent;color:var(--muted);font:500 12px var(--f-body);cursor:pointer;transition:color .2s;}
+.nav button svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;}
+.nav button.on{color:var(--tang);}
+.nav button.on::after{content:"";position:absolute;bottom:-2px;width:5px;height:5px;border-radius:50%;background:var(--tang);}
+.cnt{position:absolute;top:-1px;right:16px;min-width:18px;height:18px;padding:0 5px;border-radius:99px;background:var(--tang);color:var(--on-tang);font:600 11px/18px var(--f-body);font-style:normal;text-align:center;}
+#fx{position:fixed;inset:0;pointer-events:none;z-index:80;overflow:hidden;}
+.cf{position:absolute;width:8px;height:8px;border-radius:2px;}
 
-/* buttons, chips, controls */
-.btn{display:inline-block;text-decoration:none;font:700 16px var(--f-body);cursor:pointer;padding:11px 18px;border:2px solid var(--edge);border-radius:14px;background:var(--tang);color:var(--on-tang);box-shadow:0 4px 0 var(--edge);transition:transform .08s,box-shadow .08s;}
-.btn:active{transform:translateY(3px);box-shadow:0 1px 0 var(--edge);}
-.btn.ghost{background:transparent;color:var(--ink);}
-.btn.big{font-size:19px;padding:14px 30px;border-radius:999px;}
-.btn.sm{padding:7px 14px;font-size:14px;border-radius:12px;box-shadow:0 3px 0 var(--edge);}
-.btn[aria-pressed=true]{background:var(--lemon);color:#0B1146;}
-.btn.pop{animation:stampin .45s cubic-bezier(.3,1.7,.5,1);}
-@keyframes stampin{0%{transform:scale(1.5) rotate(-8deg);}100%{transform:scale(1) rotate(0);}}
+/* buttons and controls */
+.btn{display:inline-block;text-decoration:none;font:600 15px var(--f-body);cursor:pointer;padding:11px 22px;border:1px solid var(--tang);border-radius:999px;background:var(--tang);color:var(--on-tang);transition:transform .12s,background .2s;}
+.btn:active{transform:scale(.97);}
+.btn.ghost{background:transparent;color:var(--ink);border-color:var(--line);}
+.btn.ghost:hover{border-color:var(--tang);}
+.btn.sm{padding:7px 15px;font-size:14px;}
+.btn.big{padding:14px 30px;font-size:16.5px;}
+.btn[disabled]{opacity:.45;cursor:default;}
+.btn[aria-pressed=true]{background:rgba(255,107,26,.16);color:var(--ink);border-color:var(--tang);}
+.btn.pop{animation:stampin .4s cubic-bezier(.3,1.6,.5,1);}
+@keyframes stampin{0%{transform:scale(1.35);}100%{transform:scale(1);}}
 .row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;}
-.chip{font:600 14.5px var(--f-body);cursor:pointer;padding:7px 14px;border:2px solid var(--edge);border-radius:999px;background:var(--surface);color:var(--ink);}
-.chip[aria-pressed=true]{background:var(--ink);color:var(--paper);}
-.chip .dot{display:inline-block;width:11px;height:11px;border-radius:50%;margin-right:7px;border:2px solid #0B1146;vertical-align:-1px;}
+.chip{font:500 14px var(--f-body);cursor:pointer;padding:7px 15px;border:1px solid var(--line);border-radius:999px;background:var(--surface);color:var(--ink);transition:border-color .2s,background .2s;}
+.chip:hover{border-color:var(--tang);}
+.chip[aria-pressed=true]{background:rgba(255,107,26,.16);border-color:var(--tang);}
+.chip .dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:7px;}
 .d-creative{background:var(--tang);} .d-product{background:var(--sky);} .d-all{background:var(--lemon);}
-.sticker:nth-child(4n+1){background:var(--tang);color:var(--on-tang);transform:rotate(-1.6deg);}
-.sticker:nth-child(4n+2){background:var(--lemon);color:#0B1146;transform:rotate(1.2deg);}
-.sticker:nth-child(4n+3){background:var(--sky);color:#0B1146;transform:rotate(-0.8deg);}
-.sticker:nth-child(4n){transform:rotate(1.6deg);}
-.sticker{transition:transform .15s;}
-.sticker:hover{transform:rotate(0) translateY(-2px);}
-.seg{display:flex;border:2px solid var(--edge);border-radius:999px;overflow:hidden;background:var(--surface);margin:14px 0;}
-.seg button{flex:1;font:700 15px var(--f-body);padding:10px 8px;border:0;background:transparent;color:var(--ink);cursor:pointer;}
-.seg button+button{border-left:2px solid var(--edge);}
-.seg button[aria-pressed=true]{background:var(--tang);color:var(--on-tang);}
+.sticker{font-size:14.5px;}
+.seg{display:flex;border:1px solid var(--line);border-radius:999px;overflow:hidden;background:var(--surface);margin:14px 0;}
+.seg button{flex:1;font:500 14.5px var(--f-body);padding:9px 8px;border:0;background:transparent;color:var(--muted);cursor:pointer;}
+.seg button[aria-pressed=true]{background:rgba(255,107,26,.16);color:var(--ink);}
 .ctl{display:flex;gap:8px;margin:10px 0 0;}
-.ctl input,#askIn{flex:1;min-width:0;font:500 16px var(--f-body);padding:12px 18px;border:2px solid var(--edge);border-radius:999px;background:var(--surface);color:var(--ink);}
-.ctl input::placeholder,#askIn::placeholder{color:var(--muted);}
-.note{margin:12px 0;padding:10px 14px;border-left:6px solid var(--lemon);background:var(--surface);font-size:14.5px;border-radius:4px 14px 14px 4px;}
-.empty{margin:22px 0;color:var(--muted);font-size:17px;}
+.ctl input,#askIn,.lookup input{flex:1;min-width:0;font:400 16px var(--f-body);padding:12px 18px;border:1px solid var(--line);border-radius:999px;background:var(--surface);color:var(--ink);}
+.ctl input::placeholder,#askIn::placeholder,.lookup input::placeholder{color:var(--muted);}
+.note{margin:14px 0;padding:11px 15px;border-left:3px solid var(--lemon);background:var(--surface);font-size:14.5px;border-radius:4px 14px 14px 4px;color:var(--muted);}
+.empty{margin:24px 0;color:var(--muted);font-size:16.5px;}
 .src{color:var(--muted);font-size:13px;}
+.back{background:none;border:0;color:var(--muted);font:500 14.5px var(--f-body);cursor:pointer;padding:8px 0;}
+.back::before{content:"‹  ";}
+.lead{margin:10px auto 0;max-width:34ch;color:var(--muted);font-size:16.5px;}
+.lead.left{margin:8px 0 0;max-width:46ch;}
 
 /* home */
-.hero{padding:14px 0 6px;text-align:center;}
-.hero h1{font-size:clamp(44px,13vw,82px);font-weight:800;letter-spacing:-0.045em;line-height:.9;}
-.lead{margin:12px auto 0;max-width:30ch;color:var(--muted);font-size:17px;}
-.dialwrap{width:min(80vw,330px);margin:22px auto 20px;}
+.hero{padding:18px 0 4px;text-align:center;}
+.dialwrap{width:min(56vw,210px);margin:0 auto 8px;}
 #dial{display:block;width:100%;height:auto;overflow:visible;}
 #needle{transform-origin:150px 150px;transition:transform 2.6s cubic-bezier(.12,.7,.15,1);}
-.res{margin:22px auto 0;max-width:520px;text-align:left;border:2px solid var(--edge);border-radius:28px 28px 28px 8px;padding:18px 20px 20px;background:var(--surface);box-shadow:7px 7px 0 var(--zone,var(--tang));}
-.res.fresh{animation:pop .5s cubic-bezier(.3,1.5,.5,1);}
-@keyframes pop{from{transform:scale(.9) translateY(10px);opacity:0;}to{transform:none;opacity:1;}}
-.tagc{display:inline-block;padding:2px 12px;border:2px solid #0B1146;border-radius:999px;color:#0B1146;font:800 14px var(--f-display);margin-bottom:8px;}
-.res h2{font-size:26px;}
+#needle.idle{animation:sway 6s ease-in-out infinite alternate;}
+@keyframes sway{from{transform:rotate(-7deg);}to{transform:rotate(7deg);}}
+.hero h1{font-size:clamp(34px,8vw,48px);margin-top:14px;}
+.sur{margin-top:14px;}
+.res{margin:18px auto 0;max-width:520px;text-align:left;border:1px solid var(--line);border-left:3px solid var(--zone,var(--tang));border-radius:6px 22px 22px 6px;padding:16px 20px 18px;background:var(--surface);}
+.res.fresh{animation:rise .5s cubic-bezier(.2,.8,.2,1);}
+@keyframes rise{from{transform:translateY(10px);opacity:0;}to{transform:none;opacity:1;}}
+.tagc{display:inline-block;margin-bottom:6px;color:var(--zone,var(--tang));font:600 14px var(--f-display);}
+.res h2{font-size:23px;}
 .res p{margin:6px 0 14px;color:var(--muted);}
-.jam{margin:38px 0 0;padding:20px;border:2px solid var(--edge);border-radius:8px 30px 8px 30px;background:var(--surface);}
-.jam h2{font-size:28px;}
-.jam .sub{color:var(--muted);margin:4px 0 10px;}
-.meter{height:14px;border:2px solid var(--edge);border-radius:99px;overflow:hidden;margin:6px 0 8px;background:var(--paper);}
-.meter i{display:block;height:100%;background:var(--tang);transition:width .35s;}
-.ck{display:flex;gap:14px;align-items:center;padding:11px 0;border-top:2px dashed var(--line);cursor:pointer;font-weight:500;}
-.ck input{appearance:none;-webkit-appearance:none;width:28px;height:28px;border:2px solid var(--edge);border-radius:9px;background:var(--surface);display:grid;place-content:center;flex:none;cursor:pointer;transition:background .15s;margin:0;}
-.ck input::after{content:"";width:13px;height:7px;border-left:3px solid var(--on-tang);border-bottom:3px solid var(--on-tang);transform:rotate(-45deg) scale(0);transition:transform .15s;margin-top:-3px;}
-.ck input:checked{background:var(--tang);}
-.ck input:checked::after{transform:rotate(-45deg) scale(1);}
-.ck input:checked + span{text-decoration:line-through;opacity:.65;}
-
-/* ask */
-.askhead h2{font-size:34px;margin-bottom:6px;}
-.askhead p{color:var(--muted);max-width:44ch;}
-.chips{display:flex;flex-wrap:wrap;gap:10px;margin:16px 0 4px;}
-.chat{display:flex;flex-direction:column;gap:10px;margin:14px 0;}
-.msg{max-width:88%;padding:11px 15px;white-space:pre-wrap;font-size:16px;line-height:1.45;border:2px solid var(--edge);}
-.msg.u{align-self:flex-end;background:var(--tang);color:var(--on-tang);border-radius:20px 20px 4px 20px;}
-.msg.a{align-self:flex-start;background:var(--surface);border-radius:20px 20px 20px 4px;}
-.msg small{display:block;margin-top:6px;color:var(--muted);font-size:13px;}
-.msg .btn{margin-top:10px;}
-.dots{display:inline-flex;gap:5px;padding:5px 0;}
-.dots i{width:9px;height:9px;border-radius:50%;background:var(--ink);animation:bob 1s infinite ease-in-out;}
-.dots i:nth-child(2){animation-delay:.15s;} .dots i:nth-child(3){animation-delay:.3s;}
-@keyframes bob{0%,60%,100%{transform:translateY(0);opacity:.4;}30%{transform:translateY(-6px);opacity:1;}}
-.askrow{display:flex;gap:8px;position:sticky;bottom:calc(84px + env(safe-area-inset-bottom,0px));background:var(--paper);padding:10px 0;}
-
-/* schedule */
-.tl{list-style:none;margin:14px 0 0;padding:0;display:grid;gap:12px;}
-.tix{display:grid;grid-template-columns:98px 1fr auto;align-items:center;border:2px solid var(--edge);border-radius:26px 10px 10px 26px;background:var(--surface);overflow:hidden;}
-.stub{align-self:stretch;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:10px 6px;border-right:2px dashed var(--edge);color:#0B1146;}
-.stub b{font:800 17px var(--f-display);line-height:1.1;}
-.stub i{font-style:normal;font-size:12.5px;line-height:1.2;margin-top:3px;}
-.t-creative .stub{background:var(--tang);} .t-product .stub{background:var(--sky);} .t-all .stub{background:var(--lemon);}
-.tb{padding:12px 14px;min-width:0;}
-.ttl{font:800 18px/1.2 var(--f-display);letter-spacing:-0.01em;}
-.who{color:var(--muted);font-size:14.5px;margin-top:3px;}
-.meta{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;margin-top:8px;font-size:14.5px;}
-.b{display:inline-block;padding:0 9px;border:2px solid var(--edge);border-radius:999px;font:700 12.5px var(--f-display);}
-.loc{padding:0;border:0;background:none;color:var(--ink);font:inherit;text-align:left;cursor:pointer;text-decoration:underline;text-decoration-color:var(--tang);text-decoration-thickness:2px;text-underline-offset:3px;}
-.loc.none{text-decoration:none;color:var(--muted);cursor:default;}
-.tix .btn{margin-right:14px;}
-.tip{margin-top:6px;font-size:14px;color:var(--muted);}
-.hint{margin:0;padding:9px 14px;border-left:6px solid var(--tang);background:var(--surface);border-radius:4px 14px 14px 4px;font-size:14.5px;}
-h2.day{font-size:24px;margin:22px 0 2px;}
-@media (max-width:540px){
-  .tix{grid-template-columns:82px 1fr;}
-  .tix .btn{grid-column:1 / -1;margin:0 14px 14px;}
-}
-
-/* rooms */
-details.bd{border:2px solid var(--edge);border-radius:26px;margin:14px 0;background:var(--surface);overflow:hidden;}
-details.bd summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:12px;padding:16px 18px;font:800 22px var(--f-display);color:#0B1146;}
-details.bd summary::-webkit-details-marker{display:none;}
-details.bd summary::after{content:"+";font:800 28px var(--f-display);margin-left:4px;}
-details.bd[open] summary::after{content:"–";}
-.bc{margin-left:auto;font:600 14px var(--f-body);}
-.bd-nh1 summary{background:var(--tang);} .bd-nh2 summary{background:var(--sky);} .bd-nh3 summary{background:var(--lemon);} .bd-un summary{background:var(--paper);color:var(--ink);}
-.bdin{padding:4px 18px 16px;}
-.bdin h3{font-size:19px;margin:18px 0 4px;}
-.rc{padding:12px 0;border-top:2px dashed var(--line);}
-.rc b{font:800 17px var(--f-display);}
+.choices{display:grid;gap:12px;margin:26px 0 0;}
+@media (min-width:560px){.choices{grid-template-columns:1fr 1fr;}}
+.choice{display:flex;flex-direction:column;gap:4px;text-align:left;padding:18px 20px;border:1px solid var(--line);border-radius:22px;background:var(--surface);color:var(--ink);cursor:pointer;transition:border-color .2s,transform .15s;}
+.choice:hover{border-color:var(--tang);}
+.choice[aria-pressed=true]{border-color:var(--tang);background:rgba(255,107,26,.10);}
+.choice strong{font:500 21px var(--f-display);letter-spacing:-0.02em;}
+.choice em{font-style:normal;color:var(--muted);font-size:14.5px;}
+.choice svg{width:26px;height:26px;fill:none;stroke:var(--tang);stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;margin-bottom:6px;}
+.below{margin:14px 0 0;text-align:center;color:var(--muted);font-size:14.5px;}
+.below button{background:none;border:0;padding:0;color:var(--ink);font:inherit;font-weight:500;cursor:pointer;text-decoration:underline;text-decoration-color:var(--tang);text-underline-offset:3px;}
+.panel{margin:16px 0 0;padding:18px 20px;border:1px solid var(--line);border-radius:22px;background:var(--surface);}
+.panel h3{font-size:19px;margin-bottom:4px;}
+.blds{display:grid;gap:10px;margin-top:12px;}
+.bcard{display:flex;align-items:center;gap:14px;text-align:left;padding:14px 16px;border:1px solid var(--line);border-radius:18px;background:var(--paper);color:var(--ink);cursor:pointer;transition:border-color .2s;}
+.bcard:hover{border-color:var(--tang);}
+.bcard strong{font:500 19px var(--f-display);display:block;}
+.bcard em{font-style:normal;color:var(--muted);font-size:14px;}
+.bdot{flex:none;width:12px;height:12px;border-radius:50%;}
+.bd-nh1{background:var(--tang);} .bd-nh2{background:var(--sky);} .bd-nh3{background:var(--lemon);}
+.bh{font-size:32px;margin-top:4px;}
+.evl{list-style:none;margin:18px 0 0;padding:0;display:grid;gap:10px;}
+.evt{display:flex;align-items:center;gap:14px;justify-content:space-between;padding:14px 16px;border:1px solid var(--line);border-radius:18px;background:var(--surface);}
+details.more{margin:22px 0 0;border:1px solid var(--line);border-radius:18px;background:var(--surface);}
+details.more summary{cursor:pointer;padding:14px 18px;font:500 16px var(--f-display);list-style:none;}
+details.more summary::-webkit-details-marker{display:none;}
+details.more summary::after{content:"+";float:right;color:var(--tang);font-size:20px;line-height:1;}
+details.more[open] summary::after{content:"–";}
+.moreb{padding:0 18px 16px;}
+.moreb h3{font-size:17px;margin:14px 0 4px;}
+.rc{padding:10px 0;border-top:1px solid var(--line);}
+.rc b{font:500 16px var(--f-display);}
 .rc ul,.plain{margin:4px 0 0;padding-left:20px;}
 .plain li{margin:8px 0;}
 
+/* scan page and results */
+.scanhead h2{font-size:32px;}
+.scanhead p{margin-top:8px;color:var(--muted);max-width:44ch;}
+.lookup{display:flex;gap:8px;margin:18px 0 0;}
+.sres{margin:16px 0 0;padding:16px 18px;border:1px solid var(--line);border-left:3px solid var(--tang);border-radius:6px 20px 20px 6px;background:var(--surface);}
+.sres h3{font-size:22px;}
+.sres .tags{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 10px;}
+.tag{padding:2px 12px;border:1px solid var(--line);border-radius:999px;font-size:13.5px;color:var(--muted);}
+.sres ul{margin:6px 0 0;padding-left:18px;}
+.sres li{margin:5px 0;}
+.sres .sub{color:var(--muted);font-size:14.5px;margin-top:6px;}
+.banner{margin:0 0 10px;padding:8px 12px;border-radius:12px;font-size:14.5px;background:rgba(255,216,77,.22);}
+.banner.ok{background:rgba(255,107,26,.2);}
+.found{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;}
+h2.sec2{font-size:20px;margin:26px 0 0;}
+
+/* ask */
+.askhead h2{font-size:32px;margin-bottom:6px;}
+.askhead p{color:var(--muted);max-width:44ch;}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0 4px;}
+.chat{display:flex;flex-direction:column;gap:10px;margin:14px 0;}
+.msg{max-width:88%;padding:11px 16px;white-space:pre-wrap;font-size:16px;line-height:1.5;}
+.msg.u{align-self:flex-end;background:rgba(255,107,26,.18);border-radius:20px 20px 4px 20px;}
+.msg.a{align-self:flex-start;background:var(--surface);border:1px solid var(--line);border-radius:20px 20px 20px 4px;}
+.msg small{display:block;margin-top:6px;color:var(--muted);font-size:13px;}
+.msg .btn{margin-top:10px;margin-right:6px;}
+.dots{display:inline-flex;gap:5px;padding:5px 0;}
+.dots i{width:8px;height:8px;border-radius:50%;background:var(--muted);animation:bob 1s infinite ease-in-out;}
+.dots i:nth-child(2){animation-delay:.15s;} .dots i:nth-child(3){animation-delay:.3s;}
+@keyframes bob{0%,60%,100%{transform:translateY(0);opacity:.4;}30%{transform:translateY(-5px);opacity:1;}}
+.askrow{display:flex;gap:8px;position:sticky;bottom:calc(76px + env(safe-area-inset-bottom,0px));background:var(--paper);padding:10px 0;}
+.tools{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:4px 0 0;}
+.ck2{display:flex;align-items:center;gap:8px;font-size:14.5px;cursor:pointer;color:var(--muted);}
+.ck2 input{width:18px;height:18px;accent-color:var(--tang);}
+
+/* schedule */
+.tl{list-style:none;margin:14px 0 0;padding:0;display:grid;gap:10px;}
+.tix{display:grid;grid-template-columns:96px 1fr auto;align-items:center;border:1px solid var(--line);border-radius:20px;background:var(--surface);overflow:hidden;}
+.stub{align-self:stretch;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:10px 6px;border-right:1px dashed var(--line);}
+.stub b{font:500 16px var(--f-display);line-height:1.15;}
+.stub i{font-style:normal;font-size:12.5px;line-height:1.2;margin-top:3px;color:var(--muted);}
+.t-creative .stub{background:var(--c-creative);} .t-product .stub{background:var(--c-product);} .t-all .stub{background:var(--c-all);}
+.tb{padding:12px 14px;min-width:0;}
+.ttl{font:500 17px/1.25 var(--f-display);letter-spacing:-0.01em;}
+.who{color:var(--muted);font-size:14.5px;margin-top:3px;}
+.meta{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;margin-top:8px;font-size:14.5px;}
+.b{display:inline-block;padding:0 9px;border:1px solid var(--line);border-radius:999px;font:500 12.5px var(--f-body);color:var(--muted);}
+.loc{padding:0;border:0;background:none;color:var(--ink);font:inherit;text-align:left;cursor:pointer;text-decoration:underline;text-decoration-color:var(--tang);text-decoration-thickness:1.5px;text-underline-offset:3px;}
+.loc.none{text-decoration:none;color:var(--muted);cursor:default;}
+.tix .btn{margin-right:14px;}
+.tip{margin-top:6px;font-size:14px;color:var(--muted);}
+.hint{margin:0;padding:9px 14px;border-left:3px solid var(--tang);background:var(--surface);border-radius:4px 14px 14px 4px;font-size:14.5px;color:var(--muted);}
+h2.day{font-size:22px;margin:22px 0 2px;}
+@media (max-width:540px){
+  .tix{grid-template-columns:80px 1fr;}
+  .tix .btn{grid-column:1 / -1;margin:0 14px 14px;}
+}
+
 /* around */
-.roll{border:2px solid var(--edge);border-radius:28px;padding:18px 20px;background:var(--lemon);color:#0B1146;margin:12px 0 18px;box-shadow:7px 7px 0 var(--edge);}
-.rollname{font:800 clamp(28px,8vw,40px) var(--f-display);letter-spacing:-0.03em;line-height:1;min-height:1.1em;}
-.roll p{margin:8px 0 14px;font-size:15.5px;}
+.roll{border:1px solid var(--line);border-left:3px solid var(--lemon);border-radius:6px 22px 22px 6px;padding:18px 20px;background:var(--surface);margin:12px 0 18px;}
+.rollname{font:500 clamp(26px,7vw,34px) var(--f-display);letter-spacing:-0.02em;line-height:1.05;min-height:1.1em;}
+.roll p{margin:8px 0 14px;color:var(--muted);font-size:15.5px;}
 .sec{margin:26px 0 0;}
-.sec h2{font-size:24px;margin-bottom:4px;}
+.sec h2{font-size:22px;margin-bottom:4px;}
 .sec .sub{color:var(--muted);font-size:14.5px;margin-bottom:6px;}
 .rts{list-style:none;margin:8px 0 0;padding:0;}
-.rt{margin:8px 0;padding:10px 14px;background:var(--surface);border-left:9px solid var(--c,var(--edge));border-radius:6px 18px 18px 6px;font-size:15px;}
-.rt strong{font-family:var(--f-display);font-size:17px;}
+.rt{margin:8px 0;padding:10px 14px;background:var(--surface);border-left:4px solid var(--c,var(--line));border-radius:4px 16px 16px 4px;font-size:15px;}
+.rt strong{font-family:var(--f-display);font-weight:500;font-size:16.5px;}
 .rt-orange{--c:var(--tang);} .rt-blue{--c:var(--sky);}
 
-
-/* voice and photo */
-.tools{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:4px 0 0;}
-.ck2{display:flex;align-items:center;gap:8px;font-size:14.5px;font-weight:500;cursor:pointer;}
-.ck2 input{width:20px;height:20px;accent-color:var(--tang);}
-.snap{display:block;max-width:180px;width:100%;border-radius:14px;border:2px solid #1A0A00;margin-bottom:8px;}
-.snapchip{display:inline-flex;align-items:center;gap:10px;margin:10px 0 0;padding:6px 10px;border:2px solid var(--edge);border-radius:16px;background:var(--surface);font-size:14px;}
-.snapchip img{width:44px;height:44px;object-fit:cover;border-radius:8px;}
-
-
-/* live camera */
+/* live scanner */
 .cam{position:fixed;inset:0;z-index:70;background:#000;color:#F3F5FF;}
 .cam[hidden]{display:none;}
 .cam video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
-.camtop{position:absolute;top:calc(14px + env(safe-area-inset-top,0px));left:14px;}
-.cam .btn.ghost{color:#F3F5FF;border-color:#F3F5FF;box-shadow:0 3px 0 #F3F5FF;background:rgba(5,8,43,.55);}
-.reticle{position:absolute;left:10%;right:10%;top:24%;height:26%;border:4px solid var(--tang);border-radius:26px;box-shadow:0 0 0 9999px rgba(5,8,43,.28);pointer-events:none;}
-.camout{position:absolute;left:14px;right:14px;bottom:calc(104px + env(safe-area-inset-bottom,0px));padding:12px 16px;border-radius:20px 20px 20px 6px;background:rgba(5,8,43,.88);font-size:17px;line-height:1.4;max-height:34vh;overflow:auto;}
-.camctl{position:absolute;left:0;right:0;bottom:calc(20px + env(safe-area-inset-bottom,0px));display:flex;justify-content:center;}
+.camtop{position:absolute;top:calc(14px + env(safe-area-inset-top,0px));left:14px;right:14px;display:flex;align-items:center;gap:10px;}
+.cam .btn.ghost{color:#F3F5FF;border-color:rgba(243,245,255,.55);background:rgba(5,8,43,.5);}
+.camtarget{flex:1;padding:7px 14px;border-radius:999px;background:rgba(5,8,43,.7);font-size:14px;line-height:1.3;}
+.reticle{position:absolute;left:12%;right:12%;top:20%;height:24%;pointer-events:none;}
+.reticle i{position:absolute;width:26px;height:26px;border:3px solid var(--tang);}
+.reticle i:nth-child(1){top:0;left:0;border-right:0;border-bottom:0;border-radius:10px 0 0 0;}
+.reticle i:nth-child(2){top:0;right:0;border-left:0;border-bottom:0;border-radius:0 10px 0 0;}
+.reticle i:nth-child(3){bottom:0;left:0;border-right:0;border-top:0;border-radius:0 0 0 10px;}
+.reticle i:nth-child(4){bottom:0;right:0;border-left:0;border-top:0;border-radius:0 0 10px 0;}
+.sweep{position:absolute;left:6px;right:6px;top:0;height:2px;background:var(--tang);opacity:0;}
+.reticle.scan .sweep{opacity:.9;animation:sweep 1.4s ease-in-out infinite alternate;}
+@keyframes sweep{from{top:6%;}to{top:94%;}}
+.camdock{position:absolute;left:0;right:0;bottom:0;padding:16px 14px calc(16px + env(safe-area-inset-bottom,0px));background:linear-gradient(transparent,rgba(5,8,43,.9) 22%);}
+.camstatus{font-size:15px;margin-bottom:8px;text-shadow:0 1px 8px rgba(0,0,0,.8);}
+.camcard{max-height:34vh;overflow:auto;margin-bottom:10px;padding:14px 16px;border-radius:20px;background:rgba(15,22,84,.94);border:1px solid rgba(243,245,255,.18);color:#F3F5FF;}
+.camcard h3{font-size:21px;}
+.camcard .tag{border-color:rgba(243,245,255,.3);color:#C9D0F5;}
+.camcard .sub{color:#C9D0F5;}
+.camcard .banner{color:#F3F5FF;}
+.camform{display:flex;gap:8px;margin-bottom:10px;}
+.camform input{flex:1;min-width:0;font:400 15px var(--f-body);padding:9px 16px;border:1px solid rgba(243,245,255,.35);border-radius:999px;background:rgba(5,8,43,.6);color:#F3F5FF;}
+.camform input::placeholder{color:#A5AFE6;}
+.camctl{display:flex;gap:10px;justify-content:center;}
 
 @media (prefers-reduced-motion: reduce){
   *,*::before,*::after{animation:none !important;transition:none !important;}
@@ -202,7 +243,7 @@ details.bd[open] summary::after{content:"–";}
 <body>
 <header class="top">
   <button class="logo" id="logo" type="button" aria-label="CuseCompass home">
-    <svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="29" fill="#0B1146" stroke="#FF6B1A" stroke-width="4"/><path d="M32 11l8 21H24z" fill="#FF6B1A"/><path d="M32 53l-8-21h16z" fill="#F3F5FF"/><circle cx="32" cy="32" r="3.5" fill="#0B1146"/></svg>
+    <svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="29" fill="#0B1146" stroke="#FF6B1A" stroke-width="3"/><path d="M32 11l6 21H26z" fill="#FF6B1A"/><path d="M32 53l-6-21h12z" fill="#F3F5FF"/><circle cx="32" cy="32" r="3" fill="#0B1146"/></svg>
     CuseCompass
   </button>
   <span class="hnote">AI Creative Summit</span>
@@ -210,12 +251,17 @@ details.bd[open] summary::after{content:"–";}
 <main id="view"></main>
 <nav class="nav" id="nav" aria-label="Main"></nav>
 <div id="fx" aria-hidden="true"></div>
-<div class="cam" id="cam" hidden role="dialog" aria-label="Live camera">
+
+<div class="cam" id="cam" hidden role="dialog" aria-label="Live room scanner">
   <video id="camVid" playsinline muted autoplay></video>
-  <div class="camtop"><button class="btn sm ghost" data-camclose="1" type="button">Close</button></div>
-  <div class="reticle" aria-hidden="true"></div>
-  <div class="camout" id="camOut" aria-live="polite"></div>
-  <div class="camctl"><button class="btn big" id="camBtn" data-camread="1" type="button">Read the sign</button></div>
+  <div class="camtop"><button class="btn ghost sm" data-camclose="1" type="button">Close</button><div class="camtarget" id="camTarget" hidden></div></div>
+  <div class="reticle" id="reticle" aria-hidden="true"><i></i><i></i><i></i><i></i><span class="sweep"></span></div>
+  <div class="camdock">
+    <div class="camstatus" id="camStatus" aria-live="polite"></div>
+    <div class="camcard" id="camCard" hidden></div>
+    <form class="camform" id="camForm" autocomplete="off"><input id="camNum" type="text" placeholder="Or type a room number" aria-label="Type a room number"><button class="btn sm" type="submit">Look up</button></form>
+    <div class="camctl"><button class="btn" id="camBtn" data-camread="1" type="button">Scan now</button><button class="btn ghost" id="camAuto" data-camauto="1" aria-pressed="true" type="button">Auto-scan on</button></div>
+  </div>
 </div>
 
 <script>
@@ -350,14 +396,23 @@ function parseAI(t){
   } catch (e) { return {reply:String(t || '').trim() || 'Sorry, I had trouble answering that.', add:[]}; }
 }
 function localAnswer(q){
+  if (/plan/i.test(q)) {
+    const day = /day\s*2/i.test(q) ? 2 : 1;
+    const track = /product|coding|building|vibe/i.test(q) ? 'product' : /creative|image|audio|video|firefly/i.test(q) ? 'creative' : 'all';
+    const pool = SESSIONS.filter(s => s.day === day && (track === 'all' || s.track === 'all' || s.track === track)).sort((a, b) => a.s - b.s || (a.track === 'all' ? -1 : 1));
+    const picks = []; let end = 0;
+    pool.forEach(s => { if (s.s >= end) { picks.push(s); end = s.e; } });
+    if (picks.length) return {reply:'The AI isn’t connected right now, so here’s a plan built from the schedule:\n' + picks.map(s => `${s.time}: ${s.title} (${s.loc || 'room not listed'})`).join('\n'), add:picks.map(s => s.id), offline:true};
+  }
   const stop = new Set('the and for you are what when where which who how can does with from that this have has any near about tell give there will would should could into your our its'.split(' '));
   const t = q.toLowerCase().replace(/[^a-z0-9 ]/g, ' ').split(/\s+/).filter(w => w.length > 2 && !stop.has(w));
   const hits = SESSIONS.map(s => ({s, sc:t.filter(w => sessText(s).toLowerCase().includes(w)).length})).filter(x => x.sc > 0).sort((a, b) => b.sc - a.sc).slice(0, 4);
-  if (!hits.length) return {reply:'The AI isn’t connected right now and I found no matching session. Try the Schedule, Rooms, Food, or Getting around tabs, or ask an organizer.', add:[], offline:true};
+  if (!hits.length) return {reply:'The AI isn’t connected right now and I found no matching session. Try the Schedule or Around tabs, or ask an organizer.', add:[], offline:true};
   return {reply:'The AI isn’t connected right now, so here are the best matches from the schedule:\n' + hits.map(x => `Day ${x.s.day}, ${x.s.time}: ${x.s.title} (${x.s.loc || 'room not listed'})`).join('\n'), add:hits.map(x => x.s.id), offline:true};
 }
 
-/* ===== more verified facts for the compass and the roller ===== */
+
+/* ===== facts for the compass and the food roller ===== */
 const FOOD_SPOTS = [
   {name:'food.com café', where:'Newhouse 3, Room 244', note:'Choolaah and Yella’s were announced there in 2025. Check current hours.'},
   {name:'Schine Dining', where:'Schine Student Center, second floor', note:'SU has listed Dunkin’, CoreLife Eatery, Halal Shack, Tavola 44, Panda Express, and Biscotti Cafe.'},
@@ -366,37 +421,32 @@ const FOOD_SPOTS = [
   {name:'Falk Cafe', where:'MacNaughton Hall', note:''},
   {name:'BBBistro', where:'Brockway Hall, basement', note:''}
 ];
-const JAM = [
-  {n:'The Spec Ad', track:'Media', blurb:'Make a 30-second commercial for a product that doesn’t exist.'},
-  {n:'The Impossible Trailer', track:'Media', blurb:'Cut a 30- to 45-second trailer for a film that will never be made.'},
-  {n:'The Music Video', track:'Media', blurb:'Make a 30 to 45 second music video for a royalty-free track.'},
-  {n:'Campus, Upgraded', track:'Product Dev', blurb:'Build something that makes life at Syracuse better.'},
-  {n:'Small Action, Real Impact', track:'Product Dev', blurb:'Build something that helps people take action on an issue they care about.'},
-  {n:'Make It Make Sense', track:'Product Dev', blurb:'Build an interactive experience that helps people understand something confusing.'}
-];
-const JAM_ITEMS = [
-  ['track', 'Pick a track: Creative or Product Dev'],
-  ['team', 'Form a team by the end of the Day 1 lunch session'],
-  ['challenge', 'Pick one Gen Jam challenge'],
-  ['submit', 'Submit by 3:00 PM on Day 2 (late entries aren’t accepted)']
-];
-const ZONES = [['Talk','#FF6B1A'], ['Eat','#FFD84D'], ['Ride','#9CCBFF'], ['Rooms','#FFFFFF'], ['Jam','#FF9E6B']];
+const ZONES = [['Talk','#FF6B1A'], ['Eat','#FFD84D'], ['Ride','#9CCBFF'], ['Rooms','#F3F5FF'], ['Scan','#FF9E6B']];
 
 /* ===== state ===== */
 const roomFor = s => s.rooms.map(id => ROOM[id].name).join(' ');
 const sessText = s => `${s.title} ${s.who} ${s.loc || ''} ${roomFor(s)} ${s.time}`;
-const st = {tab:'home', day:1, track:'all', q:'', mine:false, around:'eat', plan:new Set(), jam:{}, chat:[], busy:false, openB:{nh1:true}, spin:{rot:0, busy:false, pick:null, fresh:false}, roll:{busy:false, i:null}, pop:null, speak:false, listening:false, img:null};
+const st = {tab:'home', flow:null, bld:null, hiRoom:null, pday:1, ptrack:'all', day:1, track:'all', q:'', mine:false, around:'eat', plan:new Set(), chat:[], busy:false, openB:{}, spin:{rot:0, busy:false, pick:null, fresh:false, did:false}, roll:{busy:false, i:null}, pop:null, speak:false, listening:false, found:[], target:null};
 try { const raw = localStorage.getItem('cuse-summit-plan'); if (raw) st.plan = new Set(JSON.parse(raw)); } catch (e) {}
 try { st.speak = !!localStorage.getItem('cuse-speak'); } catch (e) {}
-try { st.jam = JSON.parse(localStorage.getItem('cuse-jam-check') || '{}') || {}; } catch (e) {}
 const persist = () => { try { localStorage.setItem('cuse-summit-plan', JSON.stringify([...st.plan])); } catch (e) {} };
-const persistJam = () => { try { localStorage.setItem('cuse-jam-check', JSON.stringify(st.jam)); } catch (e) {} };
 
-/* ===== fun: confetti that answers a tap ===== */
+/* ===== room index: every verified room number, with its building, floor, and events ===== */
+const nums = s => [...String(s).matchAll(/\b(\d{3}[A-Z]{0,2})\b/g)].map(m => m[1]);
+const INDEX = {};
+function addIdx(n, e){ (INDEX[n] = INDEX[n] || []).push(e); }
+ROOMS.forEach(r => nums(r.name).forEach(n => addIdx(n, {name:r.name.replace(/^Rooms /, 'Room '), b:r.b, id:r.id, floor:null, notes:r.note ? [r.note] : [], sessions:SESSIONS.filter(s => s.rooms.includes(r.id))})));
+DIRECTORY.forEach(r => nums(r.name).forEach(n => {
+  const ex = (INDEX[n] || []).find(e => e.b === r.b);
+  if (ex) { if (r.note) ex.notes.push(r.note); if (r.floor) ex.floor = r.floor; }
+  else addIdx(n, {name:r.name, b:r.b, id:null, floor:r.floor || null, notes:r.note ? [r.note] : [], sessions:[]});
+}));
+
+/* ===== confetti that answers a tap ===== */
 function burst(x, y){
   if (reduce) return;
-  const fx = $('fx'), colors = ['#FF6B1A', '#FFD84D', '#9CCBFF', '#FFFFFF'];
-  for (let i = 0; i < 16; i++) {
+  const fx = $('fx'), colors = ['#FF6B1A', '#FFD84D', '#9CCBFF', '#F3F5FF'];
+  for (let i = 0; i < 14; i++) {
     const p = document.createElement('span'); p.className = 'cf'; p.style.left = x + 'px'; p.style.top = y + 'px'; p.style.background = colors[i % 4];
     fx.appendChild(p);
     const a = Math.random() * Math.PI * 2, d = 40 + Math.random() * 70;
@@ -408,36 +458,39 @@ function burst(x, y){
 /* ===== nav ===== */
 const ICONS = {
   home:'<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2 5-5 2 2-5z"/></svg>',
-  ask:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v11H9l-5 4z"/></svg>',
+  scan:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8V5h3M17 5h3v3M20 16v3h-3M7 19H4v-3"/><circle cx="12" cy="12" r="3"/></svg>',
   schedule:'<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/></svg>',
-  rooms:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 20V4h12v16M4 20h16M15 12h.01"/></svg>',
+  ask:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v11H9l-5 4z"/></svg>',
   around:'<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="13" rx="3"/><path d="M4 12h16M8 20v-3M16 20v-3M8 14.5h.01M16 14.5h.01"/></svg>'
 };
-const NAV = [['home','Home'], ['ask','Ask AI'], ['schedule','Schedule'], ['rooms','Rooms'], ['around','Around']];
+const NAV = [['home','Home'], ['scan','Scan'], ['schedule','Schedule'], ['ask','Ask AI'], ['around','Around']];
 const navHTML = () => NAV.map(([id, label]) => `<button type="button" data-tab="${id}" class="${st.tab === id ? 'on' : ''}" aria-current="${st.tab === id ? 'page' : 'false'}">${ICONS[id]}<span>${label}</span>${id === 'schedule' && st.plan.size ? `<em class="cnt">${st.plan.size}</em>` : ''}</button>`).join('');
 
-/* ===== home: the spinnable compass ===== */
+/* ===== the compass ===== */
 function dialSVG(){
   let ticks = '';
-  for (let i = 0; i < 60; i++) {
-    const a = i * 6 * Math.PI / 180, r1 = i % 5 === 0 ? 122 : 127, r2 = 132;
-    ticks += `<line x1="${(150 + r1*Math.sin(a)).toFixed(1)}" y1="${(150 - r1*Math.cos(a)).toFixed(1)}" x2="${(150 + r2*Math.sin(a)).toFixed(1)}" y2="${(150 - r2*Math.cos(a)).toFixed(1)}" stroke="#F3F5FF" stroke-width="${i % 5 === 0 ? 2.5 : 1.2}" opacity=".7"/>`;
+  for (let i = 0; i < 72; i++) {
+    const a = i * 5 * Math.PI / 180, major = i % 6 === 0, r1 = major ? 120 : 126, r2 = 132;
+    ticks += `<line x1="${(150 + r1*Math.sin(a)).toFixed(1)}" y1="${(150 - r1*Math.cos(a)).toFixed(1)}" x2="${(150 + r2*Math.sin(a)).toFixed(1)}" y2="${(150 - r2*Math.cos(a)).toFixed(1)}" stroke="#F3F5FF" stroke-width="${major ? 1.6 : 0.8}" opacity="${major ? .65 : .35}"/>`;
   }
+  const lit = st.spin.pick ? st.spin.pick.i : -1;
   let zones = '';
   ZONES.forEach(([n, c], i) => {
-    const a = i * 72 * Math.PI / 180, x = 150 + 88*Math.sin(a), y = 150 - 88*Math.cos(a);
-    zones += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="28" fill="${c}" stroke="#0B1146" stroke-width="2.5"/><text x="${x.toFixed(1)}" y="${(y + 5).toFixed(1)}" text-anchor="middle" font-size="14" font-weight="800" fill="#0B1146" style="font-family:var(--f-display)">${n}</text>`;
+    const a = i * 72 * Math.PI / 180, dx = 150 + 104*Math.sin(a), dy = 150 - 104*Math.cos(a), tx = 150 + 80*Math.sin(a), ty = 150 - 80*Math.cos(a);
+    zones += `<circle cx="${dx.toFixed(1)}" cy="${dy.toFixed(1)}" r="${lit === i ? 7 : 4.5}" fill="${c}"/>` +
+      `<text x="${tx.toFixed(1)}" y="${(ty + 4.5).toFixed(1)}" text-anchor="middle" font-size="13" font-weight="${lit === i ? 600 : 500}" fill="#F3F5FF" style="font-family:var(--f-display)" opacity="${lit === -1 || lit === i ? 1 : .55}">${n}</text>`;
   });
-  return `<svg id="dial" viewBox="-4 -4 316 316" role="img" aria-label="Compass with five destinations: Talk, Eat, Ride, Rooms, Jam"><circle cx="158" cy="158" r="140" fill="#FF6B1A"/><circle cx="150" cy="150" r="140" fill="var(--dial)" stroke="#F3F5FF" stroke-width="3"/>${ticks}${zones}<g id="needle" style="transform:rotate(${st.spin.rot}deg)"><polygon points="150,50 162,150 138,150" fill="#FF6B1A" stroke="#F3F5FF" stroke-width="2"/><polygon points="150,258 162,150 138,150" fill="#F3F5FF"/></g><circle cx="150" cy="150" r="10" fill="#F3F5FF" stroke="#0B1146" stroke-width="3"/></svg>`;
+  const idle = !st.spin.did && st.spin.rot === 0;
+  return `<svg id="dial" viewBox="0 0 300 300" role="img" aria-label="Compass with five destinations: Talk, Eat, Ride, Rooms, Scan"><circle cx="150" cy="150" r="141" fill="var(--dial)" stroke="#F3F5FF" stroke-opacity=".3" stroke-width="1.5"/><circle cx="150" cy="150" r="136" fill="none" stroke="#FF6B1A" stroke-opacity=".45" stroke-width="1"/>${ticks}${zones}<g id="needle" class="${idle ? 'idle' : ''}" style="transform:rotate(${st.spin.rot}deg)"><polygon points="150,52 157,150 143,150" fill="#FF6B1A"/><polygon points="150,248 157,150 143,150" fill="#F3F5FF" opacity=".9"/></g><circle cx="150" cy="150" r="6.5" fill="#F3F5FF" stroke="#0B1146" stroke-width="2"/></svg>`;
 }
-const pickFor = i => [() => pick(SESSIONS), () => pick(FOOD_SPOTS), () => pick([...TRANSIT.loops, ...TRANSIT.centro]), () => pick(ROOMS), () => pick(JAM)][i]();
+const pickFor = i => [() => pick(SESSIONS), () => pick(FOOD_SPOTS), () => pick([...TRANSIT.loops, ...TRANSIT.centro]), () => pick(ROOMS.filter(r => r.b)), () => ({})][i]();
 function spin(){
   if (st.spin.busy) return;
-  st.spin.busy = true; st.spin.pick = null; st.spin.fresh = false;
+  st.spin.busy = true; st.spin.pick = null; st.spin.fresh = false; st.spin.did = true;
   const o = $('spinOut'); if (o) o.innerHTML = '';
   const i = Math.floor(Math.random() * 5), base = Math.ceil(st.spin.rot / 360) * 360;
   st.spin.rot = base + (reduce ? 0 : 1080) + i * 72;
-  const n = $('needle'); if (n) { if (reduce) n.style.transition = 'none'; n.style.transform = `rotate(${st.spin.rot}deg)`; }
+  const n = $('needle'); if (n) { if (n.classList) n.classList.remove('idle'); if (reduce) n.style.transition = 'none'; n.style.transform = `rotate(${st.spin.rot}deg)`; }
   setTimeout(() => {
     st.spin.busy = false; st.spin.pick = {i, item:pickFor(i)}; st.spin.fresh = true; render();
     setTimeout(() => { st.spin.fresh = false; }, 700);
@@ -448,37 +501,185 @@ function spinCard(){
   const [label, color] = ZONES[p.i], it = p.item; let title = '', body = '', act = '';
   if (p.i === 0) {
     title = esc(it.title); body = `Day ${it.day}, ${esc(it.time)}. ${esc(it.loc || 'Room not listed in the deck.')}`;
-    act = `<button class="btn" data-save="${it.id}" aria-pressed="${st.plan.has(it.id)}" type="button">${st.plan.has(it.id) ? 'Saved' : 'Save to my plan'}</button><button class="btn ghost" data-go="schedule" type="button">Open schedule</button>`;
+    act = `<button class="btn sm" data-save="${it.id}" aria-pressed="${st.plan.has(it.id)}" type="button">${st.plan.has(it.id) ? 'Saved' : 'Save to my plan'}</button><button class="btn ghost sm" data-tab="schedule" type="button">Open schedule</button>`;
   } else if (p.i === 1) {
     title = esc(it.name); body = esc(`${it.where}. ${it.note}`.trim());
-    act = `<button class="btn" data-go="around" data-sub="eat" type="button">See all food</button>`;
+    act = `<button class="btn sm" data-go="around" data-sub="eat" type="button">See all food</button>`;
   } else if (p.i === 2) {
     title = esc(it.name); body = it.note ? esc(it.note) : 'Open the schedule for stops and times.';
-    act = `<a class="btn" href="${it.sched}" target="_blank" rel="noopener">Schedule (PDF)</a>${it.map ? `<a class="btn ghost" href="${it.map}" target="_blank" rel="noopener">Route map</a>` : ''}`;
+    act = `<a class="btn sm" href="${it.sched}" target="_blank" rel="noopener">Schedule (PDF)</a>${it.map ? `<a class="btn ghost sm" href="${it.map}" target="_blank" rel="noopener">Route map</a>` : ''}`;
   } else if (p.i === 3) {
     const n = SESSIONS.filter(s => s.rooms.includes(it.id)).length;
-    title = esc(it.name); body = `${it.b ? BUILDINGS[it.b] : 'Building not listed in the deck'}. ${n ? n + ' summit session' + (n > 1 ? 's' : '') + ' here.' : ''}`;
-    act = `<button class="btn" data-go="rooms" data-room="${it.id}" type="button">Show me this room</button>`;
+    title = esc(it.name); body = `${BUILDINGS[it.b]}. ${n ? n + ' summit session' + (n > 1 ? 's' : '') + ' here.' : ''}`;
+    act = `<button class="btn sm" data-bld="${it.b}" data-room="${it.id}" type="button">Show me this room</button>`;
   } else {
-    title = esc(it.n); body = `${it.track} challenge. ${esc(it.blurb)}`;
-    act = `<button class="btn" data-brain="${esc(it.n)}" type="button">Get AI ideas</button>`;
+    title = 'Scan a room'; body = 'Point your camera at any door number. I’ll tell you what’s happening inside.';
+    act = `<button class="btn sm" data-live="1" type="button">Open the camera</button>`;
   }
-  return `<div class="res${st.spin.fresh ? ' fresh' : ''}" style="--zone:${color}"><span class="tagc" style="background:${color}">${label}</span><h2>${title}</h2><p>${body}</p><div class="row">${act}</div></div>`;
-}
-function viewHome(){
-  const done = JAM_ITEMS.filter(([k]) => st.jam[k]).length;
-  return `<section class="hero"><h1>Where to next?</h1><p class="lead">Spin the compass. It points at something real from the summit.</p>
-    <div class="dialwrap">${dialSVG()}</div>
-    <button class="btn big" data-spin="1" type="button">Spin the compass</button>
-    <div id="spinOut" aria-live="polite">${spinCard()}</div></section>
-  <section class="jam" aria-labelledby="jamh"><h2 id="jamh">Gen Jam checklist</h2>
-    <p class="sub">${done === 4 ? 'You’re ready. Go make something.' : `${done} of 4 done`}</p>
-    <div class="meter" aria-hidden="true"><i style="width:${done * 25}%"></i></div>
-    ${JAM_ITEMS.map(([k, t]) => `<label class="ck"><input type="checkbox" data-jam="${k}" ${st.jam[k] ? 'checked' : ''}><span>${esc(t)}</span></label>`).join('')}
-    <p class="note">Media teams upload to Frame.io. Product dev teams share a link at ${ln('https://aicreativesummit.flywheelsites.com', 'aicreativesummit.flywheelsites.com')}.</p></section>`;
+  return `<div class="res${st.spin.fresh ? ' fresh' : ''}" style="--zone:${color}"><span class="tagc">${label}</span><h2>${title}</h2><p>${body}</p><div class="row">${act}</div></div>`;
 }
 
-/* ===== voice: ElevenLabs through /api/speak, with the browser voice as backup ===== */
+/* ===== home: a short conversation ===== */
+const EV_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/></svg>';
+const GO_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s7-6.2 7-11a7 7 0 10-14 0c0 4.8 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>';
+function planPanel(){
+  return `<div class="panel"><h3>Which day, and what are you into?</h3>
+    <div class="seg" role="group" aria-label="Day"><button data-pday="1" aria-pressed="${st.pday === 1}" type="button">Day 1</button><button data-pday="2" aria-pressed="${st.pday === 2}" type="button">Day 2</button></div>
+    <div class="row" role="group" aria-label="Interest" style="margin-bottom:16px">${[['creative', 'Image, video, audio'], ['product', 'Building and coding'], ['all', 'A bit of everything']].map(([id, label]) => `<button class="chip" data-ptrack="${id}" aria-pressed="${st.ptrack === id}" type="button">${label}</button>`).join('')}</div>
+    <button class="btn" data-build="1" type="button">Build my day</button></div>`;
+}
+function buildingPicker(){
+  return `<div class="panel"><h3>Which building are you heading to?</h3><div class="blds">${Object.keys(BUILDINGS).map(b => { const n = SESSIONS.filter(s => s.b === b).length; return `<button class="bcard" data-bld="${b}" type="button"><span class="bdot bd-${b}"></span><span><strong>${BUILDINGS[b]}</strong><em>${n} summit event${n === 1 ? '' : 's'}</em></span></button>`; }).join('')}</div></div>`;
+}
+function viewHome(){
+  if (st.flow === 'go' && st.bld) return viewBuilding(st.bld);
+  return `<section class="hero"><div class="dialwrap">${dialSVG()}</div>
+    <button class="btn ghost sm" data-spin="1" type="button">Surprise me</button>
+    <div id="spinOut" aria-live="polite" class="sur">${spinCard()}</div>
+    <h1>Where to today?</h1><p class="lead">Would you like to plan your day, or head somewhere? I’ll help you find the room.</p></section>
+  <div class="choices">
+    <button class="choice" data-flow="plan" aria-pressed="${st.flow === 'plan'}" type="button">${EV_ICON}<strong>Plan my day</strong><em>Pick a day and what you’re into</em></button>
+    <button class="choice" data-flow="go" aria-pressed="${st.flow === 'go'}" type="button">${GO_ICON}<strong>Take me somewhere</strong><em>Pick a building, then an event</em></button>
+  </div>
+  ${st.flow === 'plan' ? planPanel() : st.flow === 'go' ? buildingPicker() : ''}
+  <p class="below">Already inside? <button data-live="1" type="button">Scan a room with your camera</button></p>`;
+}
+const roomCard = r => { const here = SESSIONS.filter(s => s.rooms.includes(r.id)); return `<div class="rc" id="room-${r.id}"><b>${esc(r.name)}</b>${here.length ? `<ul>${here.map(s => `<li>Day ${s.day}, ${esc(s.time)}: ${esc(s.title)}</li>`).join('')}</ul>` : ''}${r.note ? `<p class="src">${esc(r.note)}</p>` : ''}</div>`; };
+const dirRow = r => `<li><strong>${esc(r.name)}</strong>. ${r.floor ? `Floor ${r.floor}. ` : ''}${esc(r.note)} <span class="src">Source: ${r.src.map(k => SRC[k]).join('; ')}.</span></li>`;
+function viewBuilding(b){
+  const evs = SESSIONS.filter(s => s.b === b).sort((a, c) => a.day - c.day || a.s - c.s);
+  const rooms = ROOMS.filter(r => r.b === b), more = DIRECTORY.filter(r => r.b === b);
+  let h = `<button class="back" data-bback="1" type="button">Back</button><h2 class="bh">${BUILDINGS[b]}</h2>
+  <p class="lead left">What are you looking for? Tap an event and I’ll help you find its room with your camera.</p>`;
+  h += evs.length ? `<ul class="evl">${evs.map(s => `<li class="evt"><div><div class="ttl">${esc(s.title)}</div><div class="who">Day ${s.day}, ${esc(s.time)}</div><div class="who">${esc(s.loc)}</div></div><button class="btn sm" data-find="${s.id}" type="button">Find it</button></li>`).join('')}</ul>` : `<p class="empty">No summit events are listed in ${BUILDINGS[b]}.</p>`;
+  h += `<div class="row" style="margin-top:18px"><button class="btn ghost" data-live="1" type="button">Open the camera</button></div>
+  <details class="more" id="more" ${st.hiRoom ? 'open' : ''}><summary>Every room I know in ${BUILDINGS[b]}</summary><div class="moreb">
+    <p class="note">${ln(SU_MAP[b], b === 'nh1' ? 'Open Newhouse 1 on the SU campus map' : 'Open the SU campus map')} for official floor plans.${b === 'nh1' ? ' On that map, floor 1 shows rooms numbered 2xx and floor 2 shows 3xx, so match floors by room number.' : ''}</p>
+    ${rooms.length ? `<h3>At the summit</h3>${rooms.map(roomCard).join('')}` : ''}
+    ${more.length ? `<h3>More rooms</h3><ul class="plain">${more.map(dirRow).join('')}</ul>` : ''}</div></details>`;
+  return h;
+}
+function openBuilding(b, room){
+  st.tab = 'home'; st.flow = 'go'; st.bld = b; st.hiRoom = room || null; render();
+  const el = room ? document.getElementById('room-' + room) : null;
+  if (el && el.scrollIntoView) el.scrollIntoView({block:'center'}); else window.scrollTo(0, 0);
+}
+function findEvent(id){
+  const s = SESSIONS.find(x => x.id === id); if (!s) return;
+  const r = ROOM[s.rooms[0]]; if (!r) return;
+  st.target = {nums:nums(r.name), name:r.name, b:s.b || r.b, title:s.title};
+  openCam();
+}
+
+/* ===== scan: results shared by the page and the live camera ===== */
+function scanCard(list, target){
+  const n = list.find(x => INDEX[x]) || list[0], es = INDEX[n] || [];
+  const fl = es[0] && es[0].floor ? es[0].floor : Number(n[0]);
+  let h = '';
+  if (target) {
+    if (target.nums.includes(n)) h += `<div class="banner ok">You found it. ${esc(target.title)} is in this room.</div>`;
+    else {
+      const tf = Number(target.nums[0][0]), b0 = es[0] && es[0].b;
+      let msg = `Your room is ${esc(target.name)} in ${BUILDINGS[target.b]}, floor ${tf}.`;
+      if (b0 && b0 !== target.b) msg += ` This one is in ${BUILDINGS[b0]}. The Newhouse buildings connect indoors.`;
+      else if (fl !== tf) msg += ` This is floor ${fl}, so go ${tf > fl ? 'up' : 'down'} ${Math.abs(tf - fl)} floor${Math.abs(tf - fl) > 1 ? 's' : ''}.`;
+      else msg += ` Same floor. Keep looking for ${esc(target.nums.join(' or '))}.`;
+      h += `<div class="banner">${msg}</div>`;
+    }
+  }
+  if (!es.length) return h + `<h3>Room ${esc(n)}</h3><div class="tags"><span class="tag">Floor ${fl}, going by its number</span></div><p class="sub">That room isn’t in our verified list yet. In Newhouse, the first digit of a room number is its floor.</p>`;
+  const evs = es.flatMap(x => x.sessions), note = es.flatMap(x => x.notes)[0];
+  h += `<h3>${esc(es[0].name)}</h3><div class="tags">${[...new Set(es.map(x => x.b ? BUILDINGS[x.b] : 'Building not listed'))].map(t => `<span class="tag">${esc(t)}</span>`).join('')}<span class="tag">Floor ${fl}</span></div>`;
+  h += evs.length ? `<ul>${evs.map(s => `<li><strong>${esc(s.title)}</strong>, Day ${s.day}, ${esc(s.time)}</li>`).join('')}</ul>` : `<p class="sub">No summit sessions here.</p>`;
+  if (note) h += `<p class="sub">${esc(note)}</p>`;
+  return h;
+}
+const readNums = text => [...String(text).toUpperCase().matchAll(/\d{3}[A-Z]{0,2}/g)].map(m => m[0]);
+function viewScan(){
+  return `<section class="scanhead"><h2>Point at a door. See what’s inside.</h2><p>Open the camera and aim at a room number. I read it and pop up the building, the floor, and what’s happening there.</p></section>
+  <div class="row" style="margin-top:18px"><button class="btn big" data-live="1" type="button">Open the camera</button></div>
+  <form class="lookup" id="lookForm" autocomplete="off"><input id="lookNum" type="text" placeholder="Or type a room number, like 206F" aria-label="Type a room number"><button class="btn" type="submit">Look up</button></form>
+  <div id="lookOut" aria-live="polite"></div>
+  ${st.found.length ? `<h2 class="sec2">Rooms you’ve found</h2><div class="found">${st.found.map(f => `<span class="chip">${esc(f.name)}</span>`).join('')}</div>` : ''}`;
+}
+function wireScan(){
+  $('lookForm').onsubmit = e => {
+    e.preventDefault();
+    const list = readNums($('lookNum').value), out = $('lookOut');
+    out.innerHTML = list.length ? `<div class="sres">${scanCard(list, null)}</div>` : `<p class="empty">Enter a three-digit room number, like 206F.</p>`;
+  };
+}
+
+/* ===== live camera: reads door numbers as you move ===== */
+let camStream = null, camTimer = null, camBusy = false, camAuto = true, camScans = 0, camLast = '';
+const MAX_SCANS = 24;
+function setStatus(msg, scanning){ const s = $('camStatus'); if (s) s.textContent = msg; const r = $('reticle'); if (r) r.className = 'reticle' + (scanning ? ' scan' : ''); }
+function updateAutoBtn(){ const b = $('camAuto'); if (b) { b.setAttribute('aria-pressed', String(camAuto)); b.textContent = camAuto ? 'Auto-scan on' : 'Auto-scan off'; } }
+async function openCam(){
+  $('cam').hidden = false; document.body.style.overflow = 'hidden';
+  camAuto = true; camScans = 0; camLast = ''; camBusy = false; updateAutoBtn();
+  $('camCard').hidden = true; $('camCard').innerHTML = '';
+  const t = st.target, tb = $('camTarget');
+  if (t) { tb.hidden = false; tb.textContent = `Looking for ${t.name} · ${BUILDINGS[t.b]} · floor ${t.nums[0][0]}`; } else { tb.hidden = true; tb.textContent = ''; }
+  setStatus('Opening the camera…');
+  try {
+    camStream = await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'}}, audio:false});
+    const v = $('camVid'); v.srcObject = camStream; await v.play();
+    setStatus('Point at a room number. I’ll read it automatically.');
+    camTimer = setInterval(() => { if (camAuto && !camBusy) scanOnce(true); }, 3500);
+  } catch (e) { setStatus('The camera isn’t available. Allow camera access, or type a room number below.'); }
+}
+function closeCam(){
+  if (camTimer) { clearInterval(camTimer); camTimer = null; }
+  if (camStream) { camStream.getTracks().forEach(t => t.stop()); camStream = null; }
+  $('cam').hidden = true; document.body.style.overflow = ''; st.target = null;
+}
+function grabFrame(){
+  const v = $('camVid'); if (!v.videoWidth) return null;
+  const k = Math.min(1, 1024 / Math.max(v.videoWidth, v.videoHeight)), c = document.createElement('canvas');
+  c.width = Math.round(v.videoWidth * k); c.height = Math.round(v.videoHeight * k);
+  c.getContext('2d').drawImage(v, 0, 0, c.width, c.height);
+  const url = c.toDataURL('image/jpeg', 0.7); return {media_type:'image/jpeg', data:url.split(',')[1]};
+}
+function parseScan(t){
+  try {
+    const m = String(t).match(/\{[\s\S]*\}/), o = JSON.parse(m ? m[0] : t);
+    return [...new Set((Array.isArray(o.numbers) ? o.numbers : []).map(x => String(x).toUpperCase().replace(/[^0-9A-Z]/g, '')).filter(x => /^\d{3}[A-Z]{0,2}$/.test(x)))];
+  } catch (e) { return []; }
+}
+function spokenFor(n, es, hit){
+  if (!es.length) return `I read room ${n}. It isn't in our verified list yet.`;
+  const s = es.flatMap(x => x.sessions)[0];
+  return `${hit ? 'You found it. ' : ''}${es[0].name}. ${s ? `${s.title}, Day ${s.day}, ${s.time}.` : 'No summit sessions here.'}`;
+}
+function showFound(list){
+  const key = list.join(','), n = list.find(x => INDEX[x]) || list[0], es = INDEX[n] || [], card = $('camCard');
+  if (key !== camLast) {
+    camLast = key; card.innerHTML = scanCard(list, st.target); card.hidden = false;
+    const isNew = es.length > 0 && !st.found.some(f => f.n === n);
+    if (isNew) st.found.push({n, name:es[0].name});
+    const hit = !!(st.target && st.target.nums.includes(n));
+    if (hit || isNew) burst(window.innerWidth / 2, window.innerHeight * 0.5);
+    if (st.speak) speak(spokenFor(n, es, hit));
+  }
+  setStatus(es.length ? `Found ${es[0].name}` : `I read ${n}`, false);
+}
+async function scanOnce(auto){
+  if (camBusy || !camStream) return;
+  const img = grabFrame(); if (!img) { if (!auto) setStatus('Waiting for the camera…'); return; }
+  camBusy = true; camScans++; setStatus(auto ? 'Scanning…' : 'Reading the sign…', true);
+  let list = [];
+  try {
+    const r = await fetch('/api/ask', {method:'POST', headers:{'content-type':'application/json'}, body:JSON.stringify({mode:'scan', messages:[{role:'user', content:'Read the room numbers.'}], image:img})});
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    list = parseScan((await r.json()).text);
+  } catch (e) { setStatus('I can’t reach the AI right now. Type a room number below.'); camBusy = false; return; }
+  camBusy = false;
+  if (list.length) showFound(list); else setStatus(auto ? 'Looking for a room number…' : 'I couldn’t read a number. Move closer and hold steady.');
+  if (camScans >= MAX_SCANS && camAuto) { camAuto = false; updateAutoBtn(); setStatus('Paused to save data. Tap Scan now, or turn auto-scan back on.'); }
+}
+
+/* ===== voice ===== */
 let voicePlayer = null;
 const SILENT = 'data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQAAAAA=';
 function unlockAudio(){ try { if (!voicePlayer) voicePlayer = new Audio(); voicePlayer.src = SILENT; const p = voicePlayer.play(); if (p && p.catch) p.catch(() => {}); } catch (e) {} }
@@ -504,51 +705,25 @@ function listen(){
   if (!SR || st.listening || st.busy) return;
   const rec = new SR(); rec.lang = 'en-US'; rec.interimResults = false; rec.maxAlternatives = 1;
   st.listening = true; updateMic();
-  rec.onresult = e => { const q = e.results[0][0].transcript; if (q) askAI(q, takeImage()); };
+  rec.onresult = e => { const q = e.results[0][0].transcript; if (q) askAI(q); };
   rec.onerror = () => { st.listening = false; updateMic(); };
   rec.onend = () => { st.listening = false; updateMic(); };
   try { rec.start(); } catch (e) { st.listening = false; updateMic(); }
 }
 
-/* ===== vision: snap a room sign ===== */
-const SNAP_Q = 'Read the room number or sign in this photo and tell me what’s there.';
-function fileToJpeg(file, max){
-  max = max || 1024;
-  return new Promise(res => {
-    const fr = new FileReader();
-    fr.onload = () => { const img = new Image(); img.onload = () => {
-      const k = Math.min(1, max / Math.max(img.width, img.height)), c = document.createElement('canvas');
-      c.width = Math.round(img.width * k); c.height = Math.round(img.height * k);
-      c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
-      const url = c.toDataURL('image/jpeg', 0.72); res({url, data:url.split(',')[1], media_type:'image/jpeg'}); };
-      img.onerror = () => res(null); img.src = fr.result; };
-    fr.onerror = () => res(null); fr.readAsDataURL(file);
-  });
-}
-function updateSnap(){
-  const el = $('snapPrev'); if (!el) return;
-  el.innerHTML = st.img ? `<span class="snapchip"><img src="${st.img.url}" alt="Photo ready to send"> Photo ready <button class="btn sm ghost" data-snapx="1" type="button">Remove</button></span>` : '';
-}
-function takeImage(){ const i = st.img; st.img = null; updateSnap(); return i; }
-async function handleSnap(input){ const f = input.files && input.files[0]; if (!f) return; const j = await fileToJpeg(f); input.value = ''; if (j) { st.img = j; updateSnap(); } }
-
 /* ===== ask AI ===== */
-async function askAI(q, img){
+async function askAI(q){
   stopSpeak();
-  st.chat.push({role:'user', content:q, img:img ? img.url : null}); st.busy = true; renderChat();
+  st.chat.push({role:'user', content:q}); st.busy = true; renderChat();
   const history = st.chat.slice(-8).map(m => ({role:m.role, content:m.content}));
   let out;
   try {
     const ctrl = new AbortController(), to = setTimeout(() => ctrl.abort(), 40000);
-    const body = {messages:history, context:buildContext()};
-    if (img) body.image = {media_type:img.media_type, data:img.data};
-    const r = await fetch('/api/ask', {method:'POST', headers:{'content-type':'application/json'}, body:JSON.stringify(body), signal:ctrl.signal});
+    const r = await fetch('/api/ask', {method:'POST', headers:{'content-type':'application/json'}, body:JSON.stringify({messages:history, context:buildContext()}), signal:ctrl.signal});
     clearTimeout(to);
     if (!r.ok) throw new Error('HTTP ' + r.status);
     out = parseAI((await r.json()).text);
-  } catch (e) {
-    out = img ? {reply:'I can’t read photos right now. Check the room number on the door sign and search it in the Rooms tab.', add:[], offline:true} : localAnswer(q);
-  }
+  } catch (e) { out = localAnswer(q); }
   st.chat.push({role:'assistant', content:out.reply, add:out.add || [], offline:!!out.offline});
   st.busy = false; renderChat();
   if (st.speak && !out.offline) speak(out.reply);
@@ -557,61 +732,29 @@ function renderChat(){
   const log = $('chatLog'); if (!log) return;
   let h = `<div class="msg a">${esc(GREETING)}</div>`;
   st.chat.forEach((m, idx) => {
-    if (m.role === 'user') { h += `<div class="msg u">${m.img ? `<img class="snap" src="${m.img}" alt="Your photo">` : ''}${esc(m.content)}</div>`; return; }
+    if (m.role === 'user') { h += `<div class="msg u">${esc(m.content)}</div>`; return; }
     const fresh = (m.add || []).filter(id => !st.plan.has(id));
-    h += `<div class="msg a">${esc(m.content)}${m.offline ? '<small>Offline mode: answered without AI.</small>' : ''}` +
+    h += `<div class="msg a">${esc(m.content)}${m.offline ? '<small>Offline mode: answered from the schedule without AI.</small>' : ''}` +
       (fresh.length ? `<button class="btn sm" data-addplan="${fresh.join(',')}" type="button">Add ${fresh.length} session${fresh.length > 1 ? 's' : ''} to my plan</button>` : (m.add && m.add.length ? '<small>Added to your plan.</small>' : '')) +
-      `<button class="btn sm ghost" data-say="${idx}" type="button">Play voice</button></div>`;
+      `<button class="btn ghost sm" data-say="${idx}" type="button">Play voice</button></div>`;
   });
   if (st.busy) h += `<div class="msg a"><span class="dots" aria-label="Thinking"><i></i><i></i><i></i></span></div>`;
   log.innerHTML = h;
   if (log.lastElementChild && log.lastElementChild.scrollIntoView) log.lastElementChild.scrollIntoView({block:'nearest'});
 }
 function viewAsk(){
-  const chips = ['Plan my Day 1 if I like image generation', 'Where is lunch on Day 2?', 'Which sessions are in Newhouse 2?', 'Where can I eat near Newhouse?', 'Which bus goes to South Campus?', 'Give me 3 ideas for Campus, Upgraded'];
-  return `<section class="askhead"><h2>Ask anything about the summit</h2><p>Type, talk, or snap a photo of a room sign. The AI answers from the verified info in this app and says so when it doesn’t know. Please don’t type personal information, and keep people out of your photos.</p></section>
+  const chips = ['Plan my Day 1 if I like image generation', 'What’s happening in Newhouse 2?', 'Where is lunch on Day 2?', 'Where can I eat near Newhouse?', 'Which bus goes to South Campus?', 'Give me 3 ideas for Campus, Upgraded'];
+  return `<section class="askhead"><h2>Ask anything</h2><p>Type or talk. I answer from the verified summit info and say so when I don’t know. I can build your day, too. Please don’t type personal information.</p></section>
   <div class="chips">${chips.map(c => `<button class="chip sticker" data-q="${esc(c)}" type="button">${esc(c)}</button>`).join('')}</div>
   <div class="chat" id="chatLog" aria-live="polite"></div>
-  <div class="tools">${SR ? `<button class="btn sm ghost" id="micBtn" data-mic="1" aria-pressed="false" type="button">Talk</button>` : ''}<button class="btn sm" data-live="1" type="button">Live camera</button><button class="btn sm ghost" data-snapbtn="1" type="button">Snap a sign</button><input type="file" id="snap" accept="image/*" capture="environment" hidden><label class="ck2"><input type="checkbox" id="speakT"> Read answers aloud</label></div>
-  <div id="snapPrev"></div>
+  <div class="tools">${SR ? `<button class="btn ghost sm" id="micBtn" data-mic="1" aria-pressed="false" type="button">Talk</button>` : ''}<label class="ck2"><input type="checkbox" id="speakT"> Read answers aloud</label></div>
   <form class="askrow" id="askForm" autocomplete="off"><input type="search" id="askIn" placeholder="Ask CuseCompass…" aria-label="Ask CuseCompass"><button class="btn" type="submit">Ask</button></form>`;
 }
 function wireAsk(){
-  renderChat(); updateSnap(); updateMic();
+  renderChat(); updateMic();
   const sp = $('speakT');
   if (sp) { sp.checked = st.speak; sp.onchange = () => { st.speak = sp.checked; try { localStorage.setItem('cuse-speak', st.speak ? '1' : ''); } catch (e) {} if (st.speak) unlockAudio(); else stopSpeak(); }; }
-  $('askForm').onsubmit = e => { e.preventDefault(); const i = $('askIn'); let q = i.value.trim(); if (!q && st.img) q = SNAP_Q; if (!q || st.busy) return; i.value = ''; askAI(q, takeImage()); };
-}
-
-/* ===== live camera: point at a sign, tap, and the answer appears over the live view ===== */
-let camStream = null;
-async function openCam(){
-  $('cam').hidden = false; document.body.style.overflow = 'hidden';
-  $('camOut').textContent = 'Point at a room sign, then tap Read the sign.';
-  try {
-    camStream = await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'}}, audio:false});
-    const v = $('camVid'); v.srcObject = camStream; await v.play();
-  } catch (e) { $('camOut').textContent = 'The camera isn’t available. It needs https and your permission. Use Snap a sign instead.'; }
-}
-function closeCam(){
-  if (camStream) { camStream.getTracks().forEach(t => t.stop()); camStream = null; }
-  $('cam').hidden = true; document.body.style.overflow = '';
-}
-async function readFrame(){
-  const v = $('camVid'), btn = $('camBtn');
-  if (!camStream || !v.videoWidth) { $('camOut').textContent = 'Waiting for the camera…'; return; }
-  btn.disabled = true; $('camOut').textContent = 'Reading…';
-  const k = Math.min(1, 1024 / Math.max(v.videoWidth, v.videoHeight)), c = document.createElement('canvas');
-  c.width = Math.round(v.videoWidth * k); c.height = Math.round(v.videoHeight * k);
-  c.getContext('2d').drawImage(v, 0, 0, c.width, c.height);
-  const url = c.toDataURL('image/jpeg', 0.72); let reply;
-  try {
-    const r = await fetch('/api/ask', {method:'POST', headers:{'content-type':'application/json'}, body:JSON.stringify({messages:[{role:'user', content:SNAP_Q}], context:buildContext(), image:{media_type:'image/jpeg', data:url.split(',')[1]}})});
-    if (!r.ok) throw new Error('HTTP ' + r.status);
-    reply = parseAI((await r.json()).text).reply;
-  } catch (e) { reply = 'I can’t read signs right now. Check the number on the door and search it in the Rooms tab.'; }
-  $('camOut').textContent = reply; btn.disabled = false;
-  if (st.speak && reply) speak(reply);
+  $('askForm').onsubmit = e => { e.preventDefault(); const i = $('askIn'), q = i.value.trim(); if (!q || st.busy) return; i.value = ''; askAI(q); };
 }
 
 /* ===== schedule ===== */
@@ -619,7 +762,7 @@ function timeStub(t){ const parts = t.split('–'); return `<b>${esc(parts[0])}<
 function ticket(s){
   const saved = st.plan.has(s.id);
   const track = s.track === 'creative' ? 'Creative track' : s.track === 'product' ? 'Product Dev track' : '';
-  const loc = s.loc ? `<button class="loc" data-go="rooms" data-room="${esc(s.rooms[0] || '')}" type="button">${esc(s.loc)}</button>` : `<span class="loc none">Room not listed in the deck. Ask an organizer.</span>`;
+  const loc = s.loc ? (s.b ? `<button class="loc" data-bld="${s.b}" data-room="${esc(s.rooms[0] || '')}" type="button">${esc(s.loc)}</button>` : `<span class="loc none">${esc(s.loc)}</span>`) : `<span class="loc none">Room not listed in the deck. Ask an organizer.</span>`;
   return `<li class="tix t-${s.track}"><div class="stub">${timeStub(s.time)}</div>
     <div class="tb"><div class="ttl">${esc(s.title)}</div>${s.who ? `<div class="who">${esc(s.who)}</div>` : ''}
       <div class="meta">${s.b ? `<span class="b">${BUILDINGS[s.b].replace('Newhouse ', 'NH')}</span>` : ''}${track ? `<span class="who">${track}</span>` : ''}</div>
@@ -654,32 +797,6 @@ function viewSchedule(){
   return h;
 }
 
-/* ===== rooms ===== */
-function roomCard(r){
-  const here = SESSIONS.filter(s => s.rooms.includes(r.id));
-  return `<div class="rc" id="room-${r.id}"><b>${esc(r.name)}</b>${here.length ? `<ul>${here.map(s => `<li>Day ${s.day}, ${esc(s.time)}: ${esc(s.title)}</li>`).join('')}</ul>` : ''}${r.note ? `<p class="src">${esc(r.note)}</p>` : ''}</div>`;
-}
-const dirRow = r => `<li><strong>${esc(r.name)}</strong>. ${r.floor ? `Floor ${r.floor}. ` : ''}${esc(r.note)} <span class="src">Source: ${r.src.map(k => SRC[k]).join('; ')}.</span></li>`;
-function viewRooms(){
-  let h = `<div class="ctl"><input type="search" id="q" placeholder="Search rooms or buildings" aria-label="Search rooms" value="${esc(st.q)}"></div>`;
-  let any = false;
-  Object.keys(BUILDINGS).forEach(b => {
-    const summit = ROOMS.filter(r => r.b === b && matches(`${r.name} ${BUILDINGS[b]} ${r.note}`, st.q));
-    const more = DIRECTORY.filter(r => r.b === b && matches(`${r.name} ${BUILDINGS[b]} ${r.note}`, st.q));
-    if (!summit.length && !more.length) return;
-    any = true;
-    h += `<details class="bd bd-${b}" data-b="${b}" ${st.q || st.openB[b] ? 'open' : ''}><summary><span>${BUILDINGS[b]}</span><span class="bc">${summit.length + more.length} rooms</span></summary><div class="bdin">
-      <p class="note">${ln(SU_MAP[b], b === 'nh1' ? 'Open Newhouse 1 on the SU campus map' : 'Open the SU campus map')} for official floor plans and wayfinding.${b === 'nh1' ? ' On that map, floor 1 shows rooms numbered 2xx and floor 2 shows 3xx, so match floors by room number. Ground-floor rooms (1xx) weren’t drawn in the map’s floor 0 view.' : ''}</p>
-      ${summit.length ? `<h3>At the summit</h3>${summit.map(roomCard).join('')}` : ''}
-      ${more.length ? `<h3>More rooms</h3><ul class="plain">${more.map(dirRow).join('')}</ul>` : ''}</div></details>`;
-  });
-  const un = ROOMS.filter(r => !r.b && matches(`${r.name} ${r.note}`, st.q));
-  if (un.length) { any = true; h += `<details class="bd bd-un" data-b="un" open><summary><span>Building not listed in the deck</span></summary><div class="bdin">${un.map(roomCard).join('')}</div></details>`; }
-  if (!any) h += `<p class="empty">No rooms match that search.</p>`;
-  h += `<p class="note">Per the SU campus map, Newhouse 1 (building N010, 215 University Place) links to Newhouse 2 on its lower north side and to Newhouse 3 on its lower west side, so you can move between the buildings without going outside.</p>`;
-  return h;
-}
-
 /* ===== around: eat and ride ===== */
 function roll(){
   if (st.roll.busy) return;
@@ -695,10 +812,10 @@ function roll(){
 }
 function viewEat(){
   const sp = st.roll.i != null ? FOOD_SPOTS[st.roll.i] : null;
-  return `<div class="roll"><div class="rollname" id="rollName">${sp ? esc(sp.name) : 'Hungry? Roll for a spot.'}</div><div id="rollOut">${sp ? `<p>${esc(`${sp.where}. ${sp.note}`.trim())}</p>` : '<p>Picks from real campus eateries.</p>'}</div><button class="btn" data-roll="1" type="button">${sp ? 'Roll again' : 'Roll the dice'}</button></div>
+  return `<div class="roll"><div class="rollname" id="rollName">${sp ? esc(sp.name) : 'Hungry? Roll for a spot.'}</div><div id="rollOut">${sp ? `<p>${esc(`${sp.where}. ${sp.note}`.trim())}</p>` : '<p>Picks from real campus eateries.</p>'}</div><button class="btn sm" data-roll="1" type="button">${sp ? 'Roll again' : 'Roll the dice'}</button></div>
   <p class="note">Hours change, so check ${ln('https://campusdining.syr.edu/hours', 'SU’s official hours page')} before you go. The summit schedule also includes lunch on both days.</p>
   <div class="sec"><h2>Eateries near you</h2><p class="sub">Opens your map app. Your location stays on your phone and is only used to center the map.</p>
-    <button class="btn ghost" data-eat="1" type="button">Show restaurants near me</button><p class="note" id="eatOut" aria-live="polite" hidden></p></div>
+    <button class="btn ghost sm" data-eat="1" type="button">Show restaurants near me</button><p class="note" id="eatOut" aria-live="polite" hidden></p></div>
   <div class="sec"><h2>Inside Newhouse</h2><ul class="plain"><li><strong>food.com café, Newhouse 3, Room 244.</strong> A Campus Dining café. SU announced Choolaah (Indian BBQ) and Yella’s (breakfast sandwiches, lunch, milkshakes) here in 2025. Their hours have changed more than once.</li></ul></div>
   <div class="sec"><h2>Next door: Schine Student Center</h2><p class="sub">On SU’s map, Schine sits next to Newhouse 1 and 2. Schine Dining is on its second floor.</p><ul class="plain"><li>SU has listed Dunkin’, CoreLife Eatery, Halal Shack, Tavola 44 (pizza), Panda Express, and Biscotti Cafe there. See the ${ln('https://campusdining.syr.edu/retail-dining/food-courts/', 'food court page')} for menus.</li><li>SU says the food halls are open late on weekends.</li></ul></div>
   <div class="sec"><h2>Other campus cafés</h2><p class="sub">SU has 14 cafés in academic buildings, mostly open around 8 a.m. to 3 p.m.</p><ul class="plain"><li><strong>The Canteen</strong>, National Veterans Resource Center (across Waverly Avenue from Newhouse 2 on SU’s map).</li><li><strong>Gerry’s Cafe</strong>, Eggers Hall, Room 300.</li><li><strong>Falk Cafe</strong>, MacNaughton Hall.</li><li><strong>BBBistro</strong>, Brockway Hall, basement.</li></ul><p class="note">${ln('https://campusdining.syr.edu/retail-dining/', 'All retail dining')} and ${ln('https://campusdining.syr.edu/menus/', 'menus')}. All Campus Dining locations are cashless: ’CUSE Cash, Meal Plan Dining Dollars, and cards.</p></div>`;
@@ -708,7 +825,7 @@ function viewRide(){
   const loopClass = r => r.name === 'Orange Loop' ? 'rt-orange' : r.name === 'Blue Loop' ? 'rt-blue' : '';
   return `<p class="note">Find the nearest stop, then pick the loop or route that goes where you’re headed. These are SU’s 2026–2027 academic-year schedules and they change during breaks.</p>
   <div class="sec"><h2>Stops near you</h2><p class="sub">Opens your map app. Your location stays on your phone and is only used to center the map.</p>
-    <button class="btn" data-near="1" type="button">Show bus stops near me</button><p class="note" id="nearOut" aria-live="polite" hidden></p></div>
+    <button class="btn sm" data-near="1" type="button">Show bus stops near me</button><p class="note" id="nearOut" aria-live="polite" hidden></p></div>
   <div class="sec"><h2>Live tracking</h2><ul class="plain"><li>${ln('https://subus.syr.edu/', 'SU bus and trolley tracker')} shows ’Cuse Trolleys and Centro’s SU routes with predicted arrivals, per SU. SU has posted outages for it before, so check the schedules too.</li><li>${ln('https://www.centro.org/how-to-ride/transit-tools', 'Centro transit tools')}: real-time bus tracking and the GoCentroBus app.</li></ul></div>
   <div class="sec"><h2>’Cuse Trolley loops</h2><p class="sub">Free with an SU or SUNY-ESF ID.</p><ul class="rts">${TRANSIT.loops.map(r => li(r, loopClass(r))).join('')}</ul></div>
   <div class="sec"><h2>Centro campus routes</h2><p class="sub">Per SU, SU344 and SU243 run until 11:00 pm. SU243 now runs as SU343, so check SU343’s own schedule. For other routes after 8:00 pm, use the trolley schedules.</p><ul class="rts">${TRANSIT.centro.map(r => li(r)).join('')}</ul></div>
@@ -730,26 +847,38 @@ function locate(outId, term, fallbackQuery){
 /* ===== render + events ===== */
 function render(){
   $('nav').innerHTML = navHTML();
-  const views = {home:viewHome, ask:viewAsk, schedule:viewSchedule, rooms:viewRooms, around:viewAround};
+  const views = {home:viewHome, scan:viewScan, schedule:viewSchedule, ask:viewAsk, around:viewAround};
   $('view').innerHTML = views[st.tab]();
   if (st.tab === 'ask') wireAsk();
+  if (st.tab === 'scan') wireScan();
   const q = $('q');
   if (q) q.oninput = e => { st.q = e.target.value; const pos = e.target.selectionStart; render(); const n = $('q'); if (n) { n.focus(); try { n.setSelectionRange(pos, pos); } catch (err) {} } };
-  document.querySelectorAll('details[data-b]').forEach(d => { d.ontoggle = () => { st.openB[d.dataset.b] = d.open; }; });
 }
-function go(tab, sub, room){
+function go(tab, sub){
   st.tab = tab; st.q = ''; if (sub) st.around = sub;
-  if (room && ROOM[room] && ROOM[room].b) st.openB[ROOM[room].b] = true;
-  render();
-  const el = room ? document.getElementById('room-' + room) : null;
-  if (el && el.scrollIntoView) el.scrollIntoView({behavior:reduce ? 'auto' : 'smooth', block:'center'}); else window.scrollTo(0, 0);
+  if (tab === 'home') { st.flow = null; st.bld = null; st.hiRoom = null; }
+  render(); window.scrollTo(0, 0);
 }
 document.addEventListener('click', e => {
   const t = e.target.closest('button'); if (!t) return;
   const d = t.dataset;
   if (d.tab) go(d.tab);
-  else if (d.go) go(d.go, d.sub, d.room);
+  else if (d.go) go(d.go, d.sub);
   else if (d.spin) spin();
+  else if (d.flow) { st.flow = st.flow === d.flow ? null : d.flow; st.bld = null; st.hiRoom = null; render(); }
+  else if (d.pday) { st.pday = +d.pday; render(); }
+  else if (d.ptrack) { st.ptrack = d.ptrack; render(); }
+  else if (d.build) {
+    const like = st.ptrack === 'creative' ? 'the Creative track (image, video, and audio)' : st.ptrack === 'product' ? 'the Product Dev track (building and coding)' : 'a bit of everything';
+    st.tab = 'ask'; render(); window.scrollTo(0, 0); askAI(`Plan my Day ${st.pday}. I like ${like}.`);
+  }
+  else if (d.bld) openBuilding(d.bld, d.room);
+  else if (d.bback) { st.bld = null; st.hiRoom = null; render(); window.scrollTo(0, 0); }
+  else if (d.find) findEvent(d.find);
+  else if (d.live) { st.target = null; openCam(); }
+  else if (d.camclose) closeCam();
+  else if (d.camread) scanOnce(false);
+  else if (d.camauto) { camAuto = !camAuto; if (camAuto) camScans = 0; updateAutoBtn(); }
   else if (d.roll) roll();
   else if (d.save) {
     const was = st.plan.has(d.save); if (was) st.plan.delete(d.save); else st.plan.add(d.save); persist();
@@ -765,27 +894,18 @@ document.addEventListener('click', e => {
   else if (d.track) { st.track = d.track; render(); }
   else if (d.around) { st.around = d.around; render(); }
   else if (d.q) { if (!st.busy) askAI(d.q); }
-  else if (d.brain) { st.tab = 'ask'; render(); window.scrollTo(0, 0); askAI(`Give me three fun, PG ideas for the Gen Jam challenge "${d.brain}".`); }
   else if (d.mic) listen();
-  else if (d.live) openCam();
-  else if (d.camread) readFrame();
-  else if (d.camclose) closeCam();
-  else if (d.snapbtn) { const s = $('snap'); if (s) s.click(); }
-  else if (d.snapx) { st.img = null; updateSnap(); }
   else if (d.say) { const m = st.chat[+d.say]; if (m) { unlockAudio(); speak(m.content); } }
   else if (d.near) locate('nearOut', 'bus+stop', 'bus stop near 215 University Pl Syracuse NY');
   else if (d.eat) locate('eatOut', 'restaurants', 'restaurants near 215 University Pl Syracuse NY');
 });
-document.addEventListener('change', e => {
-  if (e.target && e.target.id === 'snap') { handleSnap(e.target); return; }
-  const k = e.target && e.target.dataset && e.target.dataset.jam; if (!k) return;
-  const r = e.target.getBoundingClientRect();
-  st.jam[k] = e.target.checked; persistJam();
-  const all = JAM_ITEMS.every(([key]) => st.jam[key]);
-  if (all && e.target.checked) burst(r.left + r.width / 2, r.top + r.height / 2);
-  render();
-});
 document.addEventListener('keydown', e => { if (e.key === 'Escape' && $('cam') && !$('cam').hidden) closeCam(); });
+$('camForm').onsubmit = e => {
+  e.preventDefault();
+  const list = readNums($('camNum').value);
+  if (!list.length) { setStatus('Enter a three-digit room number, like 206F.'); return; }
+  camLast = ''; showFound(list);
+};
 $('logo').onclick = () => go('home');
 render();
 </script>

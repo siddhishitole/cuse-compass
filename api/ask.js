@@ -5,10 +5,10 @@
 // AI_PROVIDER=openai-compatible    -> needs AI_API_KEY, AI_MODEL, optional AI_BASE_URL
 //   Works with OpenAI, and with open-weight models served through any OpenAI-compatible API.
 //
-// Grounded Q&A, plan building, Gen Jam brainstorming, and optional photo of a room sign.
+// Modes: "chat" (default: grounded Q&A, plan building, brainstorming) and "scan" (reads room numbers from a camera frame).
 
 const hits = new Map();
-const LIMIT = 40, WINDOW_MS = 10 * 60 * 1000;
+const LIMIT = 150, WINDOW_MS = 10 * 60 * 1000; // generous: many judges may share one Wi-Fi address
 function limited(ip) {
   const now = Date.now();
   const arr = (hits.get(ip) || []).filter(t => now - t < WINDOW_MS);
@@ -46,6 +46,15 @@ ${clip(ctx.transit, 1800)}
 
 GEN JAM RULES:
 ${clip(ctx.rules, 2500)}`;
+}
+
+function scanPrompt() {
+  return `You read room numbers from camera frames inside a university building.
+
+RULES
+- Find room numbers on door signs, placards, or plaques in the image. A room number is three digits with an optional letter, like 206F, 101, or 305. If a sign shows two numbers, like 432/434, return both.
+- Respond ONLY with JSON, no markdown: {"numbers": ["206F"]}
+- If you cannot clearly read a room number, respond {"numbers": []}. Never guess. Ignore people. Do not describe the scene.`;
 }
 
 function cleanMessages(list) {
@@ -129,11 +138,13 @@ module.exports = async function handler(req, res) {
   const messages = cleanMessages(body.messages);
   if (!messages.length) return res.status(400).json({ error: 'Send at least one user message.' });
 
+  const mode = body.mode === 'scan' ? 'scan' : 'chat';
   const image = validImage(body.image);
+  if (mode === 'scan' && !image) return res.status(400).json({ error: 'Send an image to scan.' });
 
   try {
-    const system = chatPrompt(body.context || {}, !!image);
-    const maxTokens = 600;
+    const system = mode === 'scan' ? scanPrompt() : chatPrompt(body.context || {}, !!image);
+    const maxTokens = mode === 'scan' ? 120 : 600;
     const provider = (process.env.AI_PROVIDER || 'anthropic').toLowerCase();
     const text = provider === 'anthropic'
       ? await callAnthropic(system, messages, image, maxTokens)
