@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>CuseCompass</title>
+<meta name="description" content="Your pocket guide to the Syracuse AI Creative Summit: sessions, rooms, food, buses, and an AI assistant.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='30' fill='%230B1146'/%3E%3Cpath d='M32 10l8 22H24z' fill='%23FF6B1A'/%3E%3Cpath d='M32 54l-8-22h16z' fill='%23F3F5FF'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F3F5FF; --surface:#FFFFFF; --ink:#0B1146; --muted:#4B5485; --line:#CBD1EE; --edge:#0B1146;
+  --tang:#FF6B1A; --lemon:#FFD84D; --sky:#9CCBFF; --on-tang:#1A0A00; --dial:#0B1146;
+  --f-display:"Bricolage Grotesque","Trebuchet MS",system-ui,sans-serif;
+  --f-body:"Instrument Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --paper:#080C33; --surface:#131A58; --ink:#F3F5FF; --muted:#AEB7EC; --line:#2B3586; --edge:#6C79D6; --dial:#05082B;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --paper:#080C33; --surface:#131A58; --ink:#F3F5FF; --muted:#AEB7EC; --line:#2B3586; --edge:#6C79D6; --dial:#05082B;
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px);}
+*,*::before,*::after{box-sizing:inherit;}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.5;-webkit-tap-highlight-color:transparent;}
+h1,h2,h3{font-family:var(--f-display);letter-spacing:-0.02em;line-height:1.05;margin:0;}
+p{margin:0;}
+:focus-visible{outline:3px solid var(--tang);outline-offset:3px;}
+.ln{color:inherit;font-weight:600;text-decoration:underline;text-decoration-color:var(--tang);text-decoration-thickness:2px;text-underline-offset:3px;}
+
+/* shell */
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;max-width:760px;margin:0 auto;padding:14px 16px 4px;}
+.logo{display:flex;align-items:center;gap:10px;background:none;border:0;padding:0;color:var(--ink);cursor:pointer;font:800 24px var(--f-display);letter-spacing:-0.03em;}
+.logo svg{width:36px;height:36px;transition:transform .6s cubic-bezier(.3,1.6,.5,1);}
+.logo:hover svg,.logo:focus-visible svg{transform:rotate(70deg);}
+.hnote{color:var(--muted);font-size:14px;text-align:right;}
+main{max-width:760px;margin:0 auto;padding:6px 16px 130px;}
+.nav{position:fixed;left:0;right:0;bottom:0;z-index:40;display:flex;justify-content:center;gap:4px;padding:8px 8px calc(8px + env(safe-area-inset-bottom,0px));background:var(--paper);border-top:2px solid var(--edge);}
+.nav button{position:relative;flex:1;max-width:124px;display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 4px;border:0;border-radius:16px;background:transparent;color:var(--muted);font:700 12.5px var(--f-body);cursor:pointer;}
+.nav button svg{width:26px;height:26px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+.nav button.on{background:var(--tang);color:var(--on-tang);}
+.cnt{position:absolute;top:-2px;right:10px;min-width:22px;height:22px;padding:0 5px;border-radius:99px;background:var(--lemon);color:#0B1146;font:800 12px/18px var(--f-display);font-style:normal;border:2px solid var(--edge);text-align:center;}
+#fx{position:fixed;inset:0;pointer-events:none;z-index:60;overflow:hidden;}
+.cf{position:absolute;width:9px;height:9px;border-radius:2px;}
+
+/* buttons, chips, controls */
+.btn{display:inline-block;text-decoration:none;font:700 16px var(--f-body);cursor:pointer;padding:11px 18px;border:2px solid var(--edge);border-radius:14px;background:var(--tang);color:var(--on-tang);box-shadow:0 4px 0 var(--edge);transition:transform .08s,box-shadow .08s;}
+.btn:active{transform:translateY(3px);box-shadow:0 1px 0 var(--edge);}
+.btn.ghost{background:transparent;color:var(--ink);}
+.btn.big{font-size:19px;padding:14px 30px;border-radius:999px;}
+.btn.sm{padding:7px 14px;font-size:14px;border-radius:12px;box-shadow:0 3px 0 var(--edge);}
+.btn[aria-pressed=true]{background:var(--lemon);color:#0B1146;}
+.btn.pop{animation:stampin .45s cubic-bezier(.3,1.7,.5,1);}
+@keyframes stampin{0%{transform:scale(1.5) rotate(-8deg);}100%{transform:scale(1) rotate(0);}}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;}
+.chip{font:600 14.5px var(--f-body);cursor:pointer;padding:7px 14px;border:2px solid var(--edge);border-radius:999px;background:var(--surface);color:var(--ink);}
+.chip[aria-pressed=true]{background:var(--ink);color:var(--paper);}
+.chip .dot{display:inline-block;width:11px;height:11px;border-radius:50%;margin-right:7px;border:2px solid #0B1146;vertical-align:-1px;}
+.d-creative{background:var(--tang);} .d-product{background:var(--sky);} .d-all{background:var(--lemon);}
+.sticker:nth-child(4n+1){background:var(--tang);color:var(--on-tang);transform:rotate(-1.6deg);}
+.sticker:nth-child(4n+2){background:var(--lemon);color:#0B1146;transform:rotate(1.2deg);}
+.sticker:nth-child(4n+3){background:var(--sky);color:#0B1146;transform:rotate(-0.8deg);}
+.sticker:nth-child(4n){transform:rotate(1.6deg);}
+.sticker{transition:transform .15s;}
+.sticker:hover{transform:rotate(0) translateY(-2px);}
+.seg{display:flex;border:2px solid var(--edge);border-radius:999px;overflow:hidden;background:var(--surface);margin:14px 0;}
+.seg button{flex:1;font:700 15px var(--f-body);padding:10px 8px;border:0;background:transparent;color:var(--ink);cursor:pointer;}
+.seg button+button{border-left:2px solid var(--edge);}
+.seg button[aria-pressed=true]{background:var(--tang);color:var(--on-tang);}
+.ctl{display:flex;gap:8px;margin:10px 0 0;}
+.ctl input,#askIn{flex:1;min-width:0;font:500 16px var(--f-body);padding:12px 18px;border:2px solid var(--edge);border-radius:999px;background:var(--surface);color:var(--ink);}
+.ctl input::placeholder,#askIn::placeholder{color:var(--muted);}
+.note{margin:12px 0;padding:10px 14px;border-left:6px solid var(--lemon);background:var(--surface);font-size:14.5px;border-radius:4px 14px 14px 4px;}
+.empty{margin:22px 0;color:var(--muted);font-size:17px;}
+.src{color:var(--muted);font-size:13px;}
+
+/* home */
+.hero{padding:14px 0 6px;text-align:center;}
+.hero h1{font-size:clamp(44px,13vw,82px);font-weight:800;letter-spacing:-0.045em;line-height:.9;}
+.lead{margin:12px auto 0;max-width:30ch;color:var(--muted);font-size:17px;}
+.dialwrap{width:min(80vw,330px);margin:22px auto 20px;}
+#dial{display:block;width:100%;height:auto;overflow:visible;}
+#needle{transform-origin:150px 150px;transition:transform 2.6s cubic-bezier(.12,.7,.15,1);}
+.res{margin:22px auto 0;max-width:520px;text-align:left;border:2px solid var(--edge);border-radius:28px 28px 28px 8px;padding:18px 20px 20px;background:var(--surface);box-shadow:7px 7px 0 var(--zone,var(--tang));}
+.res.fresh{animation:pop .5s cubic-bezier(.3,1.5,.5,1);}
+@keyframes pop{from{transform:scale(.9) translateY(10px);opacity:0;}to{transform:none;opacity:1;}}
+.tagc{display:inline-block;padding:2px 12px;border:2px solid #0B1146;border-radius:999px;color:#0B1146;font:800 14px var(--f-display);margin-bottom:8px;}
+.res h2{font-size:26px;}
+.res p{margin:6px 0 14px;color:var(--muted);}
+.jam{margin:38px 0 0;padding:20px;border:2px solid var(--edge);border-radius:8px 30px 8px 30px;background:var(--surface);}
+.jam h2{font-size:28px;}
+.jam .sub{color:var(--muted);margin:4px 0 10px;}
+.meter{height:14px;border:2px solid var(--edge);border-radius:99px;overflow:hidden;margin:6px 0 8px;background:var(--paper);}
+.meter i{display:block;height:100%;background:var(--tang);transition:width .35s;}
+.ck{display:flex;gap:14px;align-items:center;padding:11px 0;border-top:2px dashed var(--line);cursor:pointer;font-weight:500;}
+.ck input{appearance:none;-webkit-appearance:none;width:28px;height:28px;border:2px solid var(--edge);border-radius:9px;background:var(--surface);display:grid;place-content:center;flex:none;cursor:pointer;transition:background .15s;margin:0;}
+.ck input::after{content:"";width:13px;height:7px;border-left:3px solid var(--on-tang);border-bottom:3px solid var(--on-tang);transform:rotate(-45deg) scale(0);transition:transform .15s;margin-top:-3px;}
+.ck input:checked{background:var(--tang);}
+.ck input:checked::after{transform:rotate(-45deg) scale(1);}
+.ck input:checked + span{text-decoration:line-through;opacity:.65;}
+
+/* ask */
+.askhead h2{font-size:34px;margin-bottom:6px;}
+.askhead p{color:var(--muted);max-width:44ch;}
+.chips{display:flex;flex-wrap:wrap;gap:10px;margin:16px 0 4px;}
+.chat{display:flex;flex-direction:column;gap:10px;margin:14px 0;}
+.msg{max-width:88%;padding:11px 15px;white-space:pre-wrap;font-size:16px;line-height:1.45;border:2px solid var(--edge);}
+.msg.u{align-self:flex-end;background:var(--tang);color:var(--on-tang);border-radius:20px 20px 4px 20px;}
+.msg.a{align-self:flex-start;background:var(--surface);border-radius:20px 20px 20px 4px;}
+.msg small{display:block;margin-top:6px;color:var(--muted);font-size:13px;}
+.msg .btn{margin-top:10px;}
+.dots{display:inline-flex;gap:5px;padding:5px 0;}
+.dots i{width:9px;height:9px;border-radius:50%;background:var(--ink);animation:bob 1s infinite ease-in-out;}
+.dots i:nth-child(2){animation-delay:.15s;} .dots i:nth-child(3){animation-delay:.3s;}
+@keyframes bob{0%,60%,100%{transform:translateY(0);opacity:.4;}30%{transform:translateY(-6px);opacity:1;}}
+.askrow{display:flex;gap:8px;position:sticky;bottom:calc(84px + env(safe-area-inset-bottom,0px));background:var(--paper);padding:10px 0;}
+
+/* schedule */
+.tl{list-style:none;margin:14px 0 0;padding:0;display:grid;gap:12px;}
+.tix{display:grid;grid-template-columns:98px 1fr auto;align-items:center;border:2px solid var(--edge);border-radius:26px 10px 10px 26px;background:var(--surface);overflow:hidden;}
+.stub{align-self:stretch;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:10px 6px;border-right:2px dashed var(--edge);color:#0B1146;}
+.stub b{font:800 17px var(--f-display);line-height:1.1;}
+.stub i{font-style:normal;font-size:12.5px;line-height:1.2;margin-top:3px;}
+.t-creative .stub{background:var(--tang);} .t-product .stub{background:var(--sky);} .t-all .stub{background:var(--lemon);}
+.tb{padding:12px 14px;min-width:0;}
+.ttl{font:800 18px/1.2 var(--f-display);letter-spacing:-0.01em;}
+.who{color:var(--muted);font-size:14.5px;margin-top:3px;}
+.meta{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;margin-top:8px;font-size:14.5px;}
+.b{display:inline-block;padding:0 9px;border:2px solid var(--edge);border-radius:999px;font:700 12.5px var(--f-display);}
+.loc{padding:0;border:0;background:none;color:var(--ink);font:inherit;text-align:left;cursor:pointer;text-decoration:underline;text-decoration-color:var(--tang);text-decoration-thickness:2px;text-underline-offset:3px;}
+.loc.none{text-decoration:none;color:var(--muted);cursor:default;}
+.tix .btn{margin-right:14px;}
+.tip{margin-top:6px;font-size:14px;color:var(--muted);}
+.hint{margin:0;padding:9px 14px;border-left:6px solid var(--tang);background:var(--surface);border-radius:4px 14px 14px 4px;font-size:14.5px;}
+h2.day{font-size:24px;margin:22px 0 2px;}
+@media (max-width:540px){
+  .tix{grid-template-columns:82px 1fr;}
+  .tix .btn{grid-column:1 / -1;margin:0 14px 14px;}
+}
+
+/* rooms */
+details.bd{border:2px solid var(--edge);border-radius:26px;margin:14px 0;background:var(--surface);overflow:hidden;}
+details.bd summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:12px;padding:16px 18px;font:800 22px var(--f-display);color:#0B1146;}
+details.bd summary::-webkit-details-marker{display:none;}
+details.bd summary::after{content:"+";font:800 28px var(--f-display);margin-left:4px;}
+details.bd[open] summary::after{content:"–";}
+.bc{margin-left:auto;font:600 14px var(--f-body);}
+.bd-nh1 summary{background:var(--tang);} .bd-nh2 summary{background:var(--sky);} .bd-nh3 summary{background:var(--lemon);} .bd-un summary{background:var(--paper);color:var(--ink);}
+.bdin{padding:4px 18px 16px;}
+.bdin h3{font-size:19px;margin:18px 0 4px;}
+.rc{padding:12px 0;border-top:2px dashed var(--line);}
+.rc b{font:800 17px var(--f-display);}
+.rc ul,.plain{margin:4px 0 0;padding-left:20px;}
+.plain li{margin:8px 0;}
+
+/* around */
+.roll{border:2px solid var(--edge);border-radius:28px;padding:18px 20px;background:var(--lemon);color:#0B1146;margin:12px 0 18px;box-shadow:7px 7px 0 var(--edge);}
+.rollname{font:800 clamp(28px,8vw,40px) var(--f-display);letter-spacing:-0.03em;line-height:1;min-height:1.1em;}
+.roll p{margin:8px 0 14px;font-size:15.5px;}
+.sec{margin:26px 0 0;}
+.sec h2{font-size:24px;margin-bottom:4px;}
+.sec .sub{color:var(--muted);font-size:14.5px;margin-bottom:6px;}
+.rts{list-style:none;margin:8px 0 0;padding:0;}
+.rt{margin:8px 0;padding:10px 14px;background:var(--surface);border-left:9px solid var(--c,var(--edge));border-radius:6px 18px 18px 6px;font-size:15px;}
+.rt strong{font-family:var(--f-display);font-size:17px;}
+.rt-orange{--c:var(--tang);} .rt-blue{--c:var(--sky);}
+
+
+/* voice and photo */
+.tools{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:4px 0 0;}
+.ck2{display:flex;align-items:center;gap:8px;font-size:14.5px;font-weight:500;cursor:pointer;}
+.ck2 input{width:20px;height:20px;accent-color:var(--tang);}
+.snap{display:block;max-width:180px;width:100%;border-radius:14px;border:2px solid #1A0A00;margin-bottom:8px;}
+.snapchip{display:inline-flex;align-items:center;gap:10px;margin:10px 0 0;padding:6px 10px;border:2px solid var(--edge);border-radius:16px;background:var(--surface);font-size:14px;}
+.snapchip img{width:44px;height:44px;object-fit:cover;border-radius:8px;}
+
+
+/* live camera */
+.cam{position:fixed;inset:0;z-index:70;background:#000;color:#F3F5FF;}
+.cam[hidden]{display:none;}
+.cam video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
+.camtop{position:absolute;top:calc(14px + env(safe-area-inset-top,0px));left:14px;}
+.cam .btn.ghost{color:#F3F5FF;border-color:#F3F5FF;box-shadow:0 3px 0 #F3F5FF;background:rgba(5,8,43,.55);}
+.reticle{position:absolute;left:10%;right:10%;top:24%;height:26%;border:4px solid var(--tang);border-radius:26px;box-shadow:0 0 0 9999px rgba(5,8,43,.28);pointer-events:none;}
+.camout{position:absolute;left:14px;right:14px;bottom:calc(104px + env(safe-area-inset-bottom,0px));padding:12px 16px;border-radius:20px 20px 20px 6px;background:rgba(5,8,43,.88);font-size:17px;line-height:1.4;max-height:34vh;overflow:auto;}
+.camctl{position:absolute;left:0;right:0;bottom:calc(20px + env(safe-area-inset-bottom,0px));display:flex;justify-content:center;}
+
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation:none !important;transition:none !important;}
+}
+</style>
+</head>
+<body>
+<header class="top">
+  <button class="logo" id="logo" type="button" aria-label="CuseCompass home">
+    <svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="29" fill="#0B1146" stroke="#FF6B1A" stroke-width="4"/><path d="M32 11l8 21H24z" fill="#FF6B1A"/><path d="M32 53l-8-21h16z" fill="#F3F5FF"/><circle cx="32" cy="32" r="3.5" fill="#0B1146"/></svg>
+    CuseCompass
+  </button>
+  <span class="hnote">AI Creative Summit</span>
+</header>
+<main id="view"></main>
+<nav class="nav" id="nav" aria-label="Main"></nav>
+<div id="fx" aria-hidden="true"></div>
+<div class="cam" id="cam" hidden role="dialog" aria-label="Live camera">
+  <video id="camVid" playsinline muted autoplay></video>
+  <div class="camtop"><button class="btn sm ghost" data-camclose="1" type="button">Close</button></div>
+  <div class="reticle" aria-hidden="true"></div>
+  <div class="camout" id="camOut" aria-live="polite"></div>
+  <div class="camctl"><button class="btn big" id="camBtn" data-camread="1" type="button">Read the sign</button></div>
+</div>
+
+<script>
+/* ===== helpers ===== */
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const matches = (text, q) => !q || text.toLowerCase().includes(q.toLowerCase());
+const reduce = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+const ln = (u, t) => `<a class="ln" href="${u}" target="_blank" rel="noopener">${t}</a>`;
+const pick = a => a[Math.floor(Math.random() * a.length)];
+
+/* ===== REAL DATA: copied from the 2026 AI Creative Summit event deck ===== */
+const BUILDINGS = {nh1:'Newhouse 1', nh2:'Newhouse 2', nh3:'Newhouse 3'};
+
+const ROOMS = [
+  {id:'r432', b:'nh3', name:'Rooms 432/434', note:'Creative track sessions on Day 1 take place here. Room 434 is also known as the I-3 Center, per the SU events calendar.'},
+  {id:'r101', b:'nh1', name:'Room 101', note:''},
+  {id:'r102', b:'nh1', name:'Room 102', note:'Product Dev / Vibe Code track sessions on Day 1 take place here.'},
+  {id:'r206f', b:'nh1', name:'Room 206F', note:'Per the deck, the free open-source image and video generators (Qwen 2.1, Flux 3, MiniMax H3) are available in the 206F lab. Coaches and mentors are around here. On the SU floor plan, 206F is on the second floor of Newhouse 1, in a corner beside 206D and 206E.'},
+  {id:'r220', b:'nh1', name:'Room 220', note:'Coaches and mentors are around here. It appears on Newhouse 1’s second-floor plan.'},
+  {id:'r222', b:'nh1', name:'Room 222', note:'Coaches and mentors are around here. It appears on Newhouse 1’s second-floor plan.'},
+  {id:'r225', b:'nh1', name:'Room 225', note:'Coaches and mentors are around here.'},
+  {id:'r469', b:'nh2', name:'Room 469', note:''},
+  {id:'garage', b:null, name:'Startup Garage', note:'The deck doesn’t list which building it is in. Ask a coach or organizer. Coaches and mentors are around here.'}
+];
+const SU_MAP = {nh1:'https://maps.syracuse.edu/?id=1275#!ce/34413', nh2:'https://maps.syracuse.edu/?id=1275', nh3:'https://maps.syracuse.edu/?id=1275'};
+const ROOM = Object.fromEntries(ROOMS.map(r => [r.id, r]));
+
+/* ===== VERIFIED NEWHOUSE ROOM DIRECTORY (names only, no layouts) =====
+   src: L = Newhouse reservable-rooms list, C = SU events calendar, I = SU IT classroom page, P = SU campus map floor plan, D = SU Campus Dining */
+const SRC = {L:'Newhouse reservable-rooms list', C:'SU events calendar', I:'SU IT classroom page', P:'SU campus map floor plan', D:'SU Campus Dining'};
+const DIRECTORY = [
+  {b:'nh1', name:'Lobby / Newhouse Patio', note:'Used as a meeting spot in past SU events.', src:['L','C']},
+  {b:'nh1', floor:3, name:'Room 303', note:'Reservable room.', src:['L','C','P']},
+  {b:'nh1', floor:3, name:'Room 305 (Dressler Room)', note:'Third floor, per the SU events calendar.', src:['L','C','P']},
+  {b:'nh1', name:'Room 407', note:'Reservable room.', src:['L']},
+  {b:'nh1', name:'Room 409', note:'Used for advising events in past years.', src:['C']},
+  {b:'nh1', floor:2, name:'Room 205A', note:'Classroom listed by SU IT.', src:['I','P']},
+  {b:'nh1', floor:2, name:'Room 212', note:'Classroom listed by SU IT.', src:['I','P']},
+  {b:'nh1', name:'Room 406', note:'Classroom listed by SU IT.', src:['I']},
+  {b:'nh2', floor:3, name:'Room 340', note:'Classroom listed by SU IT.', src:['I','P']},
+  {b:'nh2', floor:3, name:'Room 345', note:'Classroom listed by SU IT.', src:['I','P']},
+  {b:'nh2', floor:3, name:'Room 350', note:'Classroom listed by SU IT.', src:['I','P']},
+  {b:'nh2', floor:3, name:'Room 355', note:'Classroom listed by SU IT.', src:['I','P']},
+  {b:'nh3', name:'Lobby (first floor)', note:'Reservable space.', src:['L','C']},
+  {b:'nh3', name:'Room 140 (Hergenhan Auditorium)', note:'SU IT lists the auditorium as 3-104, but the events calendar and room list say 140. Confirm on the door sign.', src:['L','C','I']},
+  {b:'nh3', name:'Room 141', note:'Technology classroom with 106 seats, per SU IT.', src:['L','I']},
+  {b:'nh3', floor:2, name:'Room 244', note:'Reservable room. SU Campus Dining lists the food.com café at this room number.', src:['L','D','P']},
+  {b:'nh3', floor:2, name:'Room 250', note:'Classroom listed by SU IT.', src:['I','P']},
+  {b:'nh3', floor:2, name:'Room 251', note:'Classroom listed by SU IT.', src:['I','P']},
+  {b:'nh3', floor:2, name:'Room 257', note:'Reservable room.', src:['L','P']},
+  {b:'nh3', floor:3, name:'Room 316', note:'Used for advising events in past years.', src:['C','P']},
+  {b:'nh3', floor:3, name:'Room 318', note:'Used for department meetings in past years.', src:['C','P']},
+  {b:'nh3', floor:3, name:'Room 327', note:'Reservable room.', src:['L','P']},
+  {b:'nh3', name:'Plaza', note:'Reservable space.', src:['L']},
+  {b:'nh3', name:'Collaborative Media Room', note:'Described by SU IT as a feature of Newhouse 3. The room number isn’t given.', src:['I']},
+  {b:'nh3', name:'Café', note:'SU IT describes an expanded 2,500 sq ft café in Newhouse 3. Its room number isn’t given.', src:['I']},
+  {b:'nh3', floor:2, name:'food.com café (Room 244)', note:'Campus Dining café in Newhouse 3. Also used for coffee-and-conversation events in past years.', src:['D','C','P']}
+];
+
+
+// s/e = start/end in minutes after midnight (for ordering and overlap checks)
+const SESSIONS = [
+  {id:'d1-welcome', day:1, s:540, e:555, time:'9:00–9:15 AM', track:'all', title:'Welcome', who:'', rooms:[], loc:null, b:null},
+  {id:'d1-keynote', day:1, s:555, e:600, time:'9:15–10:00 AM', track:'all', title:'Opening keynote: Craft, Creativity & Careers in the Age of AI', who:'Tom Matheu, A+E Networks', rooms:['r432'], loc:'Rooms 432/434, Newhouse 3', b:'nh3'},
+  {id:'d1-imagegen', day:1, s:615, e:675, time:'10:15–11:15 AM', track:'creative', title:'Image Generation', who:'Hailey Tredo, American High', rooms:['r432'], loc:'Rooms 432/434, Newhouse 3', b:'nh3'},
+  {id:'d1-claudedesign', day:1, s:615, e:675, time:'10:15–11:15 AM', track:'product', title:'Claude Design', who:'Tony Goncalves, Computer Science', rooms:['r102'], loc:'Room 102, Newhouse 1', b:'nh1'},
+  {id:'d1-firefly', day:1, s:690, e:750, time:'11:30 AM–12:30 PM', track:'creative', title:'Adobe Firefly', who:'Michael Flores, Adobe', rooms:['r432'], loc:'Rooms 432/434, Newhouse 3', b:'nh3'},
+  {id:'d1-vibe', day:1, s:690, e:750, time:'11:30 AM–12:30 PM', track:'product', title:'Vibe Coding / Product Dev Basics', who:'Chris Dunham, iSchool', rooms:['r102'], loc:'Room 102, Newhouse 1', b:'nh1'},
+  {id:'d1-panel', day:1, s:765, e:855, time:'12:45–2:15 PM', track:'all', title:'Lunch & panel: Art, Creativity, & AI', who:'Michael Jones (What Art is Now), Tom Matheu (A+E Networks), Nick Bernardone (screenwriter & TRF faculty). Moderated by Ava Swidler.', rooms:['r101'], loc:'Room 101, Newhouse 1', b:'nh1', tip:'Form your Gen Jam team by the end of this session, or the organizers will assign you to one.'},
+  {id:'d1-audio', day:1, s:870, e:930, time:'2:30–3:30 PM', track:'creative', title:'Audio Generation', who:'Drew Muckell, INVNT', rooms:['r432'], loc:'Rooms 432/434, Newhouse 3', b:'nh3'},
+  {id:'d1-moreprod', day:1, s:870, e:930, time:'2:30–3:30 PM', track:'product', title:'More Product Dev', who:'Evan Hirsch, OpenAI', rooms:['r469'], loc:'Room 469, Newhouse 2', b:'nh2'},
+  {id:'d1-opensrc', day:1, s:945, e:1005, time:'3:45–4:45 PM', track:'creative', title:'Using Open Source Image + Video Models', who:'Milton Santiago, Newhouse', rooms:[], loc:null, b:null},
+  {id:'d1-adv', day:1, s:945, e:1005, time:'3:45–4:45 PM', track:'product', title:'“Advanced” Product Dev', who:'Ken Collins, YPC Media', rooms:[], loc:null, b:null},
+
+  {id:'d2-opensrc', day:2, s:570, e:615, time:'9:30–10:15 AM', track:'creative', title:'Using Open Source Image + Video Models', who:'Milton Santiago, Newhouse', rooms:['r206f'], loc:'Room 206F, Newhouse 1', b:'nh1'},
+  {id:'d2-script', day:2, s:570, e:615, time:'9:30–10:15 AM', track:'product', title:'AI in Script Development', who:'Ben Frahm', rooms:['r469'], loc:'Room 469, Newhouse 2', b:'nh2'},
+  {id:'d2-work', day:2, s:630, e:900, time:'10:30 AM–3:00 PM', track:'all', title:'Working session', who:'', rooms:['r222','r225','r206f','garage'], loc:'222 Newhouse; 225 Newhouse 1; 206F Newhouse 1; Startup Garage', b:null, tip:'Gen Jam submissions are due at 3:00 PM.'},
+  {id:'d2-lunch', day:2, s:750, e:840, time:'12:30–2:00 PM', track:'all', title:'Lunch', who:'Scheduled during the working session.', rooms:['r222','r225'], loc:'Outside Rooms 222 & 225, Newhouse 1', b:'nh1'},
+  {id:'d2-judges', day:2, s:900, e:930, time:'3:00–3:30 PM', track:'all', title:'Judges deliberate', who:'', rooms:['garage'], loc:'Startup Garage', b:null},
+  {id:'d2-awards', day:2, s:930, e:960, time:'3:30–4:00 PM', track:'all', title:'Screening / viewing + awards', who:'', rooms:['r469'], loc:'Room 469, Newhouse 2', b:'nh2'}
+];
+
+
+/* ===== GETTING AROUND: routes copied from SU Parking & Transportation Services, 2026-2027 schedules ===== */
+const PK = 'https://parking.syr.edu/wp-content/uploads/';
+const CENTRO = 'https://www.centro.org/docs/default-source/pdf-schedules/';
+const SUMAP = (ce, m, ct) => `https://maps.syracuse.edu/?id=1275#!ce/${ce}?ct/${ct || '48860,43018,42873,34415,34413,34416,38441,38498,38500,38611,38612,38613,38617,53074,53075,57269'}?m/${m}?s/`;
+const TRANSIT = {
+  loops:[
+    {name:'Orange Loop', sched:PK+'2026/02/New-Orange-Loop-2.25.26.pdf', map:SUMAP(46095, 459606)},
+    {name:'Blue Loop', sched:PK+'2026/02/New-Blue-Loop-2.25.26.pdf', map:SUMAP(46094, 459602)},
+    {name:'South Campus Loop', sched:PK+'2026/10/South-Campus-Weekday-and-Weekend-1.26.26-Copy.pdf', map:SUMAP(60531, 611752)},
+    {name:'Warehouse Loop', sched:PK+'2026/09/Warehouse-AY-Schedule-Revised-9.17.26.pdf'},
+    {name:'Euclid Loop', sched:PK+'2025/08/Euclid-Shuttle-everyday-evenings-.pdf', map:PK+'2023/08/New-Euclid-Shuttle-Loop-Map-8.21.23-1.pdf'},
+    {name:'Comstock / Colvin St. Loop', sched:PK+'2023/08/CC-Loop-AY-Schedule-Access.pdf'}
+  ],
+  centro:[
+    {name:'SU43 Main Campus', sched:CENTRO+'su/su-43.pdf?sfvrsn=50d795ec_3'},
+    {name:'SU443 Connective Corridor', sched:CENTRO+'su/su443.pdf?sfvrsn=c62d13a2_3'},
+    {name:'SU44 Skytop Road', sched:CENTRO+'su/1-26-su44.pdf?sfvrsn=6354f8a4_1'},
+    {name:'SU344 South Campus', sched:CENTRO+'su/1-26-su344.pdf?sfvrsn=19a43277_1'},
+    {name:'SU343 East Genesee St. / Westcott Street (formerly SU243)', sched:CENTRO+'su/1-26-su343.pdf?sfvrsn=1c338380_1'},
+    {name:'SU345 Thurber Street', sched:CENTRO+'su/su345.pdf?sfvrsn=b16c99a1_3'}
+  ],
+  city:[
+    {name:'Sy240 Nob Hill / Thurber St.', note:'Free inside the fare-free zone, $1.00 outside it. SU ID required to board.', sched:CENTRO+'syracuse/sy-40-140-240.pdf?sfvrsn=fee528d2_4'},
+    {name:'Sy340 Drumlins / Tops Market', note:'Free inside the fare-free zone, $1.00 outside it. SU ID required to board.', sched:CENTRO+'syracuse/sy-40-340.pdf?sfvrsn=ba07316a_4'},
+    {name:'Sy40 SU Hill Hospitals to Hub', note:'$1.00 fare.', sched:CENTRO+'syracuse/sy-40.pdf?sfvrsn=b43d8d01_5'}
+  ]
+};
+
+/* ===== ASK AI: Claude (or any OpenAI-compatible model) via /api/ask, grounded in the data above ===== */
+const RULES = 'Gen Jam: teams of 2 to 4 (media) or 2 to 3 (product dev, solo allowed if needed). Pick one challenge. Media: every element AI-generated, final video at least 30 seconds, PG and positive, upload to Frame.io labeled with team number and prompt. Product dev: prototype or working code, at least one complete interactive feature, share the link at https://aicreativesummit.flywheelsites.com. Submissions are due at 3:00 PM on Day 2 and late entries are not accepted. Media challenges: The Spec Ad (30-second commercial for a product that does not exist), The Impossible Trailer (30 to 45 second trailer for a film that will never be made), The Music Video (30 to 45 seconds for a royalty-free track). Product dev challenges: Campus Upgraded, Small Action Real Impact, Make It Make Sense. Pick your team by the end of the Day 1 lunch session or the organizers will assign you. Coaches and mentors are around the Startup Garage and NH1 rooms 206, 220, 222, 225.';
+const FOOD_FACTS = 'food.com cafe is in Newhouse 3, Room 244 (Campus Dining; Choolaah and Yella’s announced there in 2025; hours change, check campusdining.syr.edu/hours). Schine Student Center is next to Newhouse 1 and 2; Schine Dining is on its second floor (Dunkin’, CoreLife Eatery, Halal Shack, Tavola 44, Panda Express, Biscotti Cafe listed by SU). SU has 14 cafes in academic buildings, mostly 8 a.m. to 3 p.m. Campus Dining is cashless: ’CUSE Cash, Dining Dollars, and cards.';
+function buildContext(){
+  return {
+    sessions: SESSIONS.map(s => `${s.id} | Day ${s.day} | ${s.time} | ${s.track} track | ${s.title} | ${s.who || '-'} | ${s.loc || 'room not listed in the deck'}${s.tip ? ' | ' + s.tip : ''}`).join('\n'),
+    rooms: ROOMS.map(r => `${r.name} | ${r.b ? BUILDINGS[r.b] : 'building not listed'} | ${r.note || ''}`).join('\n') + '\n' +
+           DIRECTORY.map(r => `${r.name} | ${BUILDINGS[r.b]} | ${r.floor ? 'floor ' + r.floor : 'floor unknown'} | ${r.note}`).join('\n'),
+    food: FOOD_FACTS,
+    transit: 'Free ’Cuse Trolley loops with SU ID: ' + TRANSIT.loops.map(r => r.name).join(', ') + '. Centro campus routes: ' + TRANSIT.centro.map(r => r.name).join('; ') + '. Centro city routes: ' + TRANSIT.city.map(r => r.name).join('; ') + '. Live tracking: subus.syr.edu.',
+    rules: RULES
+  };
+}
+const GREETING = 'Hi! I’m the CuseCompass assistant. Ask me about sessions, rooms, lunch, buses, food, or Gen Jam rules, or tell me what you’re into and I’ll build your day.';
+function parseAI(t){
+  try {
+    const m = String(t).match(/\{[\s\S]*\}/), o = JSON.parse(m ? m[0] : t);
+    const ids = (Array.isArray(o.add) ? o.add : []).filter(id => SESSIONS.some(s => s.id === id));
+    return {reply:String(o.reply || '').trim() || 'Sorry, I had trouble answering that.', add:ids};
+  } catch (e) { return {reply:String(t || '').trim() || 'Sorry, I had trouble answering that.', add:[]}; }
+}
+function localAnswer(q){
+  const stop = new Set('the and for you are what when where which who how can does with from that this have has any near about tell give there will would should could into your our its'.split(' '));
+  const t = q.toLowerCase().replace(/[^a-z0-9 ]/g, ' ').split(/\s+/).filter(w => w.length > 2 && !stop.has(w));
+  const hits = SESSIONS.map(s => ({s, sc:t.filter(w => sessText(s).toLowerCase().includes(w)).length})).filter(x => x.sc > 0).sort((a, b) => b.sc - a.sc).slice(0, 4);
+  if (!hits.length) return {reply:'The AI isn’t connected right now and I found no matching session. Try the Schedule, Rooms, Food, or Getting around tabs, or ask an organizer.', add:[], offline:true};
+  return {reply:'The AI isn’t connected right now, so here are the best matches from the schedule:\n' + hits.map(x => `Day ${x.s.day}, ${x.s.time}: ${x.s.title} (${x.s.loc || 'room not listed'})`).join('\n'), add:hits.map(x => x.s.id), offline:true};
+}
+
+/* ===== more verified facts for the compass and the roller ===== */
+const FOOD_SPOTS = [
+  {name:'food.com café', where:'Newhouse 3, Room 244', note:'Choolaah and Yella’s were announced there in 2025. Check current hours.'},
+  {name:'Schine Dining', where:'Schine Student Center, second floor', note:'SU has listed Dunkin’, CoreLife Eatery, Halal Shack, Tavola 44, Panda Express, and Biscotti Cafe.'},
+  {name:'The Canteen', where:'National Veterans Resource Center', note:'Across Waverly Avenue from Newhouse 2 on SU’s map.'},
+  {name:'Gerry’s Cafe', where:'Eggers Hall, Room 300', note:''},
+  {name:'Falk Cafe', where:'MacNaughton Hall', note:''},
+  {name:'BBBistro', where:'Brockway Hall, basement', note:''}
+];
+const JAM = [
+  {n:'The Spec Ad', track:'Media', blurb:'Make a 30-second commercial for a product that doesn’t exist.'},
+  {n:'The Impossible Trailer', track:'Media', blurb:'Cut a 30- to 45-second trailer for a film that will never be made.'},
+  {n:'The Music Video', track:'Media', blurb:'Make a 30 to 45 second music video for a royalty-free track.'},
+  {n:'Campus, Upgraded', track:'Product Dev', blurb:'Build something that makes life at Syracuse better.'},
+  {n:'Small Action, Real Impact', track:'Product Dev', blurb:'Build something that helps people take action on an issue they care about.'},
+  {n:'Make It Make Sense', track:'Product Dev', blurb:'Build an interactive experience that helps people understand something confusing.'}
+];
+const JAM_ITEMS = [
+  ['track', 'Pick a track: Creative or Product Dev'],
+  ['team', 'Form a team by the end of the Day 1 lunch session'],
+  ['challenge', 'Pick one Gen Jam challenge'],
+  ['submit', 'Submit by 3:00 PM on Day 2 (late entries aren’t accepted)']
+];
+const ZONES = [['Talk','#FF6B1A'], ['Eat','#FFD84D'], ['Ride','#9CCBFF'], ['Rooms','#FFFFFF'], ['Jam','#FF9E6B']];
+
+/* ===== state ===== */
+const roomFor = s => s.rooms.map(id => ROOM[id].name).join(' ');
+const sessText = s => `${s.title} ${s.who} ${s.loc || ''} ${roomFor(s)} ${s.time}`;
+const st = {tab:'home', day:1, track:'all', q:'', mine:false, around:'eat', plan:new Set(), jam:{}, chat:[], busy:false, openB:{nh1:true}, spin:{rot:0, busy:false, pick:null, fresh:false}, roll:{busy:false, i:null}, pop:null, speak:false, listening:false, img:null};
+try { const raw = localStorage.getItem('cuse-summit-plan'); if (raw) st.plan = new Set(JSON.parse(raw)); } catch (e) {}
+try { st.speak = !!localStorage.getItem('cuse-speak'); } catch (e) {}
+try { st.jam = JSON.parse(localStorage.getItem('cuse-jam-check') || '{}') || {}; } catch (e) {}
+const persist = () => { try { localStorage.setItem('cuse-summit-plan', JSON.stringify([...st.plan])); } catch (e) {} };
+const persistJam = () => { try { localStorage.setItem('cuse-jam-check', JSON.stringify(st.jam)); } catch (e) {} };
+
+/* ===== fun: confetti that answers a tap ===== */
+function burst(x, y){
+  if (reduce) return;
+  const fx = $('fx'), colors = ['#FF6B1A', '#FFD84D', '#9CCBFF', '#FFFFFF'];
+  for (let i = 0; i < 16; i++) {
+    const p = document.createElement('span'); p.className = 'cf'; p.style.left = x + 'px'; p.style.top = y + 'px'; p.style.background = colors[i % 4];
+    fx.appendChild(p);
+    const a = Math.random() * Math.PI * 2, d = 40 + Math.random() * 70;
+    const an = p.animate([{transform:'translate(0,0) rotate(0deg)', opacity:1}, {transform:`translate(${Math.cos(a)*d}px,${Math.sin(a)*d + 36}px) rotate(${Math.random()*540}deg)`, opacity:0}], {duration:700 + Math.random()*300, easing:'cubic-bezier(.2,.7,.3,1)'});
+    an.onfinish = () => p.remove();
+  }
+}
+
+/* ===== nav ===== */
+const ICONS = {
+  home:'<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2 5-5 2 2-5z"/></svg>',
+  ask:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v11H9l-5 4z"/></svg>',
+  schedule:'<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/></svg>',
+  rooms:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 20V4h12v16M4 20h16M15 12h.01"/></svg>',
+  around:'<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="13" rx="3"/><path d="M4 12h16M8 20v-3M16 20v-3M8 14.5h.01M16 14.5h.01"/></svg>'
+};
+const NAV = [['home','Home'], ['ask','Ask AI'], ['schedule','Schedule'], ['rooms','Rooms'], ['around','Around']];
+const navHTML = () => NAV.map(([id, label]) => `<button type="button" data-tab="${id}" class="${st.tab === id ? 'on' : ''}" aria-current="${st.tab === id ? 'page' : 'false'}">${ICONS[id]}<span>${label}</span>${id === 'schedule' && st.plan.size ? `<em class="cnt">${st.plan.size}</em>` : ''}</button>`).join('');
+
+/* ===== home: the spinnable compass ===== */
+function dialSVG(){
+  let ticks = '';
+  for (let i = 0; i < 60; i++) {
+    const a = i * 6 * Math.PI / 180, r1 = i % 5 === 0 ? 122 : 127, r2 = 132;
+    ticks += `<line x1="${(150 + r1*Math.sin(a)).toFixed(1)}" y1="${(150 - r1*Math.cos(a)).toFixed(1)}" x2="${(150 + r2*Math.sin(a)).toFixed(1)}" y2="${(150 - r2*Math.cos(a)).toFixed(1)}" stroke="#F3F5FF" stroke-width="${i % 5 === 0 ? 2.5 : 1.2}" opacity=".7"/>`;
+  }
+  let zones = '';
+  ZONES.forEach(([n, c], i) => {
+    const a = i * 72 * Math.PI / 180, x = 150 + 88*Math.sin(a), y = 150 - 88*Math.cos(a);
+    zones += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="28" fill="${c}" stroke="#0B1146" stroke-width="2.5"/><text x="${x.toFixed(1)}" y="${(y + 5).toFixed(1)}" text-anchor="middle" font-size="14" font-weight="800" fill="#0B1146" style="font-family:var(--f-display)">${n}</text>`;
+  });
+  return `<svg id="dial" viewBox="-4 -4 316 316" role="img" aria-label="Compass with five destinations: Talk, Eat, Ride, Rooms, Jam"><circle cx="158" cy="158" r="140" fill="#FF6B1A"/><circle cx="150" cy="150" r="140" fill="var(--dial)" stroke="#F3F5FF" stroke-width="3"/>${ticks}${zones}<g id="needle" style="transform:rotate(${st.spin.rot}deg)"><polygon points="150,50 162,150 138,150" fill="#FF6B1A" stroke="#F3F5FF" stroke-width="2"/><polygon points="150,258 162,150 138,150" fill="#F3F5FF"/></g><circle cx="150" cy="150" r="10" fill="#F3F5FF" stroke="#0B1146" stroke-width="3"/></svg>`;
+}
+const pickFor = i => [() => pick(SESSIONS), () => pick(FOOD_SPOTS), () => pick([...TRANSIT.loops, ...TRANSIT.centro]), () => pick(ROOMS), () => pick(JAM)][i]();
+function spin(){
+  if (st.spin.busy) return;
+  st.spin.busy = true; st.spin.pick = null; st.spin.fresh = false;
+  const o = $('spinOut'); if (o) o.innerHTML = '';
+  const i = Math.floor(Math.random() * 5), base = Math.ceil(st.spin.rot / 360) * 360;
+  st.spin.rot = base + (reduce ? 0 : 1080) + i * 72;
+  const n = $('needle'); if (n) { if (reduce) n.style.transition = 'none'; n.style.transform = `rotate(${st.spin.rot}deg)`; }
+  setTimeout(() => {
+    st.spin.busy = false; st.spin.pick = {i, item:pickFor(i)}; st.spin.fresh = true; render();
+    setTimeout(() => { st.spin.fresh = false; }, 700);
+  }, reduce ? 0 : 2700);
+}
+function spinCard(){
+  const p = st.spin.pick; if (!p) return '';
+  const [label, color] = ZONES[p.i], it = p.item; let title = '', body = '', act = '';
+  if (p.i === 0) {
+    title = esc(it.title); body = `Day ${it.day}, ${esc(it.time)}. ${esc(it.loc || 'Room not listed in the deck.')}`;
+    act = `<button class="btn" data-save="${it.id}" aria-pressed="${st.plan.has(it.id)}" type="button">${st.plan.has(it.id) ? 'Saved' : 'Save to my plan'}</button><button class="btn ghost" data-go="schedule" type="button">Open schedule</button>`;
+  } else if (p.i === 1) {
+    title = esc(it.name); body = esc(`${it.where}. ${it.note}`.trim());
+    act = `<button class="btn" data-go="around" data-sub="eat" type="button">See all food</button>`;
+  } else if (p.i === 2) {
+    title = esc(it.name); body = it.note ? esc(it.note) : 'Open the schedule for stops and times.';
+    act = `<a class="btn" href="${it.sched}" target="_blank" rel="noopener">Schedule (PDF)</a>${it.map ? `<a class="btn ghost" href="${it.map}" target="_blank" rel="noopener">Route map</a>` : ''}`;
+  } else if (p.i === 3) {
+    const n = SESSIONS.filter(s => s.rooms.includes(it.id)).length;
+    title = esc(it.name); body = `${it.b ? BUILDINGS[it.b] : 'Building not listed in the deck'}. ${n ? n + ' summit session' + (n > 1 ? 's' : '') + ' here.' : ''}`;
+    act = `<button class="btn" data-go="rooms" data-room="${it.id}" type="button">Show me this room</button>`;
+  } else {
+    title = esc(it.n); body = `${it.track} challenge. ${esc(it.blurb)}`;
+    act = `<button class="btn" data-brain="${esc(it.n)}" type="button">Get AI ideas</button>`;
+  }
+  return `<div class="res${st.spin.fresh ? ' fresh' : ''}" style="--zone:${color}"><span class="tagc" style="background:${color}">${label}</span><h2>${title}</h2><p>${body}</p><div class="row">${act}</div></div>`;
+}
+function viewHome(){
+  const done = JAM_ITEMS.filter(([k]) => st.jam[k]).length;
+  return `<section class="hero"><h1>Where to next?</h1><p class="lead">Spin the compass. It points at something real from the summit.</p>
+    <div class="dialwrap">${dialSVG()}</div>
+    <button class="btn big" data-spin="1" type="button">Spin the compass</button>
+    <div id="spinOut" aria-live="polite">${spinCard()}</div></section>
+  <section class="jam" aria-labelledby="jamh"><h2 id="jamh">Gen Jam checklist</h2>
+    <p class="sub">${done === 4 ? 'You’re ready. Go make something.' : `${done} of 4 done`}</p>
+    <div class="meter" aria-hidden="true"><i style="width:${done * 25}%"></i></div>
+    ${JAM_ITEMS.map(([k, t]) => `<label class="ck"><input type="checkbox" data-jam="${k}" ${st.jam[k] ? 'checked' : ''}><span>${esc(t)}</span></label>`).join('')}
+    <p class="note">Media teams upload to Frame.io. Product dev teams share a link at ${ln('https://aicreativesummit.flywheelsites.com', 'aicreativesummit.flywheelsites.com')}.</p></section>`;
+}
+
+/* ===== voice: ElevenLabs through /api/speak, with the browser voice as backup ===== */
+let voicePlayer = null;
+const SILENT = 'data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQAAAAA=';
+function unlockAudio(){ try { if (!voicePlayer) voicePlayer = new Audio(); voicePlayer.src = SILENT; const p = voicePlayer.play(); if (p && p.catch) p.catch(() => {}); } catch (e) {} }
+function stopSpeak(){ try { if (voicePlayer) voicePlayer.pause(); if ('speechSynthesis' in window) window.speechSynthesis.cancel(); } catch (e) {} }
+async function speak(text){
+  if (!text) return; stopSpeak();
+  try {
+    const r = await fetch('/api/speak', {method:'POST', headers:{'content-type':'application/json'}, body:JSON.stringify({text:String(text).slice(0, 600)})});
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const url = URL.createObjectURL(await r.blob());
+    if (!voicePlayer) voicePlayer = new Audio();
+    voicePlayer.src = url;
+    await new Promise((res, rej) => { voicePlayer.onended = res; voicePlayer.onerror = rej; const p = voicePlayer.play(); if (p && p.catch) p.catch(rej); });
+  } catch (e) {
+    if ('speechSynthesis' in window && window.SpeechSynthesisUtterance) {
+      await new Promise(res => { const u = new window.SpeechSynthesisUtterance(String(text)); u.onend = res; u.onerror = res; window.speechSynthesis.speak(u); });
+    }
+  }
+}
+const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+function updateMic(){ const m = $('micBtn'); if (m) { m.setAttribute('aria-pressed', String(st.listening)); m.textContent = st.listening ? 'Listening…' : 'Talk'; } }
+function listen(){
+  if (!SR || st.listening || st.busy) return;
+  const rec = new SR(); rec.lang = 'en-US'; rec.interimResults = false; rec.maxAlternatives = 1;
+  st.listening = true; updateMic();
+  rec.onresult = e => { const q = e.results[0][0].transcript; if (q) askAI(q, takeImage()); };
+  rec.onerror = () => { st.listening = false; updateMic(); };
+  rec.onend = () => { st.listening = false; updateMic(); };
+  try { rec.start(); } catch (e) { st.listening = false; updateMic(); }
+}
+
+/* ===== vision: snap a room sign ===== */
+const SNAP_Q = 'Read the room number or sign in this photo and tell me what’s there.';
+function fileToJpeg(file, max){
+  max = max || 1024;
+  return new Promise(res => {
+    const fr = new FileReader();
+    fr.onload = () => { const img = new Image(); img.onload = () => {
+      const k = Math.min(1, max / Math.max(img.width, img.height)), c = document.createElement('canvas');
+      c.width = Math.round(img.width * k); c.height = Math.round(img.height * k);
+      c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+      const url = c.toDataURL('image/jpeg', 0.72); res({url, data:url.split(',')[1], media_type:'image/jpeg'}); };
+      img.onerror = () => res(null); img.src = fr.result; };
+    fr.onerror = () => res(null); fr.readAsDataURL(file);
+  });
+}
+function updateSnap(){
+  const el = $('snapPrev'); if (!el) return;
+  el.innerHTML = st.img ? `<span class="snapchip"><img src="${st.img.url}" alt="Photo ready to send"> Photo ready <button class="btn sm ghost" data-snapx="1" type="button">Remove</button></span>` : '';
+}
+function takeImage(){ const i = st.img; st.img = null; updateSnap(); return i; }
+async function handleSnap(input){ const f = input.files && input.files[0]; if (!f) return; const j = await fileToJpeg(f); input.value = ''; if (j) { st.img = j; updateSnap(); } }
+
+/* ===== ask AI ===== */
+async function askAI(q, img){
+  stopSpeak();
+  st.chat.push({role:'user', content:q, img:img ? img.url : null}); st.busy = true; renderChat();
+  const history = st.chat.slice(-8).map(m => ({role:m.role, content:m.content}));
+  let out;
+  try {
+    const ctrl = new AbortController(), to = setTimeout(() => ctrl.abort(), 40000);
+    const body = {messages:history, context:buildContext()};
+    if (img) body.image = {media_type:img.media_type, data:img.data};
+    const r = await fetch('/api/ask', {method:'POST', headers:{'content-type':'application/json'}, body:JSON.stringify(body), signal:ctrl.signal});
+    clearTimeout(to);
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    out = parseAI((await r.json()).text);
+  } catch (e) {
+    out = img ? {reply:'I can’t read photos right now. Check the room number on the door sign and search it in the Rooms tab.', add:[], offline:true} : localAnswer(q);
+  }
+  st.chat.push({role:'assistant', content:out.reply, add:out.add || [], offline:!!out.offline});
+  st.busy = false; renderChat();
+  if (st.speak && !out.offline) speak(out.reply);
+}
+function renderChat(){
+  const log = $('chatLog'); if (!log) return;
+  let h = `<div class="msg a">${esc(GREETING)}</div>`;
+  st.chat.forEach((m, idx) => {
+    if (m.role === 'user') { h += `<div class="msg u">${m.img ? `<img class="snap" src="${m.img}" alt="Your photo">` : ''}${esc(m.content)}</div>`; return; }
+    const fresh = (m.add || []).filter(id => !st.plan.has(id));
+    h += `<div class="msg a">${esc(m.content)}${m.offline ? '<small>Offline mode: answered without AI.</small>' : ''}` +
+      (fresh.length ? `<button class="btn sm" data-addplan="${fresh.join(',')}" type="button">Add ${fresh.length} session${fresh.length > 1 ? 's' : ''} to my plan</button>` : (m.add && m.add.length ? '<small>Added to your plan.</small>' : '')) +
+      `<button class="btn sm ghost" data-say="${idx}" type="button">Play voice</button></div>`;
+  });
+  if (st.busy) h += `<div class="msg a"><span class="dots" aria-label="Thinking"><i></i><i></i><i></i></span></div>`;
+  log.innerHTML = h;
+  if (log.lastElementChild && log.lastElementChild.scrollIntoView) log.lastElementChild.scrollIntoView({block:'nearest'});
+}
+function viewAsk(){
+  const chips = ['Plan my Day 1 if I like image generation', 'Where is lunch on Day 2?', 'Which sessions are in Newhouse 2?', 'Where can I eat near Newhouse?', 'Which bus goes to South Campus?', 'Give me 3 ideas for Campus, Upgraded'];
+  return `<section class="askhead"><h2>Ask anything about the summit</h2><p>Type, talk, or snap a photo of a room sign. The AI answers from the verified info in this app and says so when it doesn’t know. Please don’t type personal information, and keep people out of your photos.</p></section>
+  <div class="chips">${chips.map(c => `<button class="chip sticker" data-q="${esc(c)}" type="button">${esc(c)}</button>`).join('')}</div>
+  <div class="chat" id="chatLog" aria-live="polite"></div>
+  <div class="tools">${SR ? `<button class="btn sm ghost" id="micBtn" data-mic="1" aria-pressed="false" type="button">Talk</button>` : ''}<button class="btn sm" data-live="1" type="button">Live camera</button><button class="btn sm ghost" data-snapbtn="1" type="button">Snap a sign</button><input type="file" id="snap" accept="image/*" capture="environment" hidden><label class="ck2"><input type="checkbox" id="speakT"> Read answers aloud</label></div>
+  <div id="snapPrev"></div>
+  <form class="askrow" id="askForm" autocomplete="off"><input type="search" id="askIn" placeholder="Ask CuseCompass…" aria-label="Ask CuseCompass"><button class="btn" type="submit">Ask</button></form>`;
+}
+function wireAsk(){
+  renderChat(); updateSnap(); updateMic();
+  const sp = $('speakT');
+  if (sp) { sp.checked = st.speak; sp.onchange = () => { st.speak = sp.checked; try { localStorage.setItem('cuse-speak', st.speak ? '1' : ''); } catch (e) {} if (st.speak) unlockAudio(); else stopSpeak(); }; }
+  $('askForm').onsubmit = e => { e.preventDefault(); const i = $('askIn'); let q = i.value.trim(); if (!q && st.img) q = SNAP_Q; if (!q || st.busy) return; i.value = ''; askAI(q, takeImage()); };
+}
+
+/* ===== live camera: point at a sign, tap, and the answer appears over the live view ===== */
+let camStream = null;
+async function openCam(){
+  $('cam').hidden = false; document.body.style.overflow = 'hidden';
+  $('camOut').textContent = 'Point at a room sign, then tap Read the sign.';
+  try {
+    camStream = await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'}}, audio:false});
+    const v = $('camVid'); v.srcObject = camStream; await v.play();
+  } catch (e) { $('camOut').textContent = 'The camera isn’t available. It needs https and your permission. Use Snap a sign instead.'; }
+}
+function closeCam(){
+  if (camStream) { camStream.getTracks().forEach(t => t.stop()); camStream = null; }
+  $('cam').hidden = true; document.body.style.overflow = '';
+}
+async function readFrame(){
+  const v = $('camVid'), btn = $('camBtn');
+  if (!camStream || !v.videoWidth) { $('camOut').textContent = 'Waiting for the camera…'; return; }
+  btn.disabled = true; $('camOut').textContent = 'Reading…';
+  const k = Math.min(1, 1024 / Math.max(v.videoWidth, v.videoHeight)), c = document.createElement('canvas');
+  c.width = Math.round(v.videoWidth * k); c.height = Math.round(v.videoHeight * k);
+  c.getContext('2d').drawImage(v, 0, 0, c.width, c.height);
+  const url = c.toDataURL('image/jpeg', 0.72); let reply;
+  try {
+    const r = await fetch('/api/ask', {method:'POST', headers:{'content-type':'application/json'}, body:JSON.stringify({messages:[{role:'user', content:SNAP_Q}], context:buildContext(), image:{media_type:'image/jpeg', data:url.split(',')[1]}})});
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    reply = parseAI((await r.json()).text).reply;
+  } catch (e) { reply = 'I can’t read signs right now. Check the number on the door and search it in the Rooms tab.'; }
+  $('camOut').textContent = reply; btn.disabled = false;
+  if (st.speak && reply) speak(reply);
+}
+
+/* ===== schedule ===== */
+function timeStub(t){ const parts = t.split('–'); return `<b>${esc(parts[0])}</b>${parts[1] ? `<i>to ${esc(parts[1])}</i>` : ''}`; }
+function ticket(s){
+  const saved = st.plan.has(s.id);
+  const track = s.track === 'creative' ? 'Creative track' : s.track === 'product' ? 'Product Dev track' : '';
+  const loc = s.loc ? `<button class="loc" data-go="rooms" data-room="${esc(s.rooms[0] || '')}" type="button">${esc(s.loc)}</button>` : `<span class="loc none">Room not listed in the deck. Ask an organizer.</span>`;
+  return `<li class="tix t-${s.track}"><div class="stub">${timeStub(s.time)}</div>
+    <div class="tb"><div class="ttl">${esc(s.title)}</div>${s.who ? `<div class="who">${esc(s.who)}</div>` : ''}
+      <div class="meta">${s.b ? `<span class="b">${BUILDINGS[s.b].replace('Newhouse ', 'NH')}</span>` : ''}${track ? `<span class="who">${track}</span>` : ''}</div>
+      <div class="meta">${loc}</div>${s.tip ? `<div class="tip">${esc(s.tip)}</div>` : ''}</div>
+    <button class="btn sm${st.pop === s.id ? ' pop' : ''}" data-save="${s.id}" aria-pressed="${saved}" type="button">${saved ? 'Saved' : 'Save'}</button></li>`;
+}
+function planHint(prev, s){
+  if (s.s < prev.e) return `This overlaps with “${prev.title}”. You’ll need to choose.`;
+  const gap = s.s - prev.e;
+  if (prev.b && s.b && prev.b !== s.b) return `Change buildings: ${BUILDINGS[prev.b]} to ${BUILDINGS[s.b]}. You have ${gap} min. The three Newhouse buildings connect indoors.`;
+  if (prev.b && s.b && prev.b === s.b && prev.rooms[0] !== s.rooms[0]) return `Same building (${BUILDINGS[s.b]}), different room. You have ${gap} min.`;
+  return '';
+}
+function viewSchedule(){
+  const tracks = [['all', 'All talks', 'all'], ['creative', 'Creative', 'creative'], ['product', 'Product Dev', 'product']];
+  let h = `<div class="ctl"><input type="search" id="q" placeholder="Search talks, speakers, or rooms" aria-label="Search sessions" value="${esc(st.q)}"></div>
+  <div class="seg" role="group" aria-label="View"><button data-day="1" aria-pressed="${st.day === 1 && !st.mine}" type="button">Day 1</button><button data-day="2" aria-pressed="${st.day === 2 && !st.mine}" type="button">Day 2</button><button data-mine="1" aria-pressed="${st.mine}" type="button">My plan (${st.plan.size})</button></div>`;
+  if (!st.mine) {
+    h += `<div class="row" role="group" aria-label="Track">${tracks.map(([id, label, dot]) => `<button class="chip" data-track="${id}" aria-pressed="${st.track === id}" type="button"><span class="dot d-${dot}"></span>${label}</button>`).join('')}</div>`;
+    const list = SESSIONS.filter(s => s.day === st.day && (st.track === 'all' || s.track === 'all' || s.track === st.track) && matches(sessText(s), st.q));
+    h += list.length ? `<ul class="tl">${list.map(ticket).join('')}</ul>` : `<p class="empty">No talks match. Clear the search or switch the track.</p>`;
+    return h;
+  }
+  const items = SESSIONS.filter(s => st.plan.has(s.id) && matches(sessText(s), st.q)).sort((a, b) => a.day - b.day || a.s - b.s);
+  if (!items.length) return h + `<p class="empty">Nothing saved yet. Tap Save on a talk to build your day. You’ll get a heads-up when you have to change buildings.</p>`;
+  [1, 2].forEach(d => {
+    const ds = items.filter(s => s.day === d); if (!ds.length) return;
+    h += `<h2 class="day">Day ${d}</h2><ul class="tl">`;
+    ds.forEach((s, i) => { if (i > 0) { const hint = planHint(ds[i - 1], s); if (hint) h += `<li class="hint">${esc(hint)}</li>`; } h += ticket(s); });
+    h += `</ul>`;
+  });
+  return h;
+}
+
+/* ===== rooms ===== */
+function roomCard(r){
+  const here = SESSIONS.filter(s => s.rooms.includes(r.id));
+  return `<div class="rc" id="room-${r.id}"><b>${esc(r.name)}</b>${here.length ? `<ul>${here.map(s => `<li>Day ${s.day}, ${esc(s.time)}: ${esc(s.title)}</li>`).join('')}</ul>` : ''}${r.note ? `<p class="src">${esc(r.note)}</p>` : ''}</div>`;
+}
+const dirRow = r => `<li><strong>${esc(r.name)}</strong>. ${r.floor ? `Floor ${r.floor}. ` : ''}${esc(r.note)} <span class="src">Source: ${r.src.map(k => SRC[k]).join('; ')}.</span></li>`;
+function viewRooms(){
+  let h = `<div class="ctl"><input type="search" id="q" placeholder="Search rooms or buildings" aria-label="Search rooms" value="${esc(st.q)}"></div>`;
+  let any = false;
+  Object.keys(BUILDINGS).forEach(b => {
+    const summit = ROOMS.filter(r => r.b === b && matches(`${r.name} ${BUILDINGS[b]} ${r.note}`, st.q));
+    const more = DIRECTORY.filter(r => r.b === b && matches(`${r.name} ${BUILDINGS[b]} ${r.note}`, st.q));
+    if (!summit.length && !more.length) return;
+    any = true;
+    h += `<details class="bd bd-${b}" data-b="${b}" ${st.q || st.openB[b] ? 'open' : ''}><summary><span>${BUILDINGS[b]}</span><span class="bc">${summit.length + more.length} rooms</span></summary><div class="bdin">
+      <p class="note">${ln(SU_MAP[b], b === 'nh1' ? 'Open Newhouse 1 on the SU campus map' : 'Open the SU campus map')} for official floor plans and wayfinding.${b === 'nh1' ? ' On that map, floor 1 shows rooms numbered 2xx and floor 2 shows 3xx, so match floors by room number. Ground-floor rooms (1xx) weren’t drawn in the map’s floor 0 view.' : ''}</p>
+      ${summit.length ? `<h3>At the summit</h3>${summit.map(roomCard).join('')}` : ''}
+      ${more.length ? `<h3>More rooms</h3><ul class="plain">${more.map(dirRow).join('')}</ul>` : ''}</div></details>`;
+  });
+  const un = ROOMS.filter(r => !r.b && matches(`${r.name} ${r.note}`, st.q));
+  if (un.length) { any = true; h += `<details class="bd bd-un" data-b="un" open><summary><span>Building not listed in the deck</span></summary><div class="bdin">${un.map(roomCard).join('')}</div></details>`; }
+  if (!any) h += `<p class="empty">No rooms match that search.</p>`;
+  h += `<p class="note">Per the SU campus map, Newhouse 1 (building N010, 215 University Place) links to Newhouse 2 on its lower north side and to Newhouse 3 on its lower west side, so you can move between the buildings without going outside.</p>`;
+  return h;
+}
+
+/* ===== around: eat and ride ===== */
+function roll(){
+  if (st.roll.busy) return;
+  st.roll.busy = true; const o = $('rollOut'); if (o) o.innerHTML = '';
+  const final = Math.floor(Math.random() * FOOD_SPOTS.length); let n = 0;
+  const tick = () => {
+    const i = (n < 14 && !reduce) ? Math.floor(Math.random() * FOOD_SPOTS.length) : final;
+    const el = $('rollName'); if (el) el.textContent = FOOD_SPOTS[i].name;
+    n++;
+    if (n < 15 && !reduce) setTimeout(tick, 70 + n * 12); else { st.roll.busy = false; st.roll.i = final; render(); }
+  };
+  tick();
+}
+function viewEat(){
+  const sp = st.roll.i != null ? FOOD_SPOTS[st.roll.i] : null;
+  return `<div class="roll"><div class="rollname" id="rollName">${sp ? esc(sp.name) : 'Hungry? Roll for a spot.'}</div><div id="rollOut">${sp ? `<p>${esc(`${sp.where}. ${sp.note}`.trim())}</p>` : '<p>Picks from real campus eateries.</p>'}</div><button class="btn" data-roll="1" type="button">${sp ? 'Roll again' : 'Roll the dice'}</button></div>
+  <p class="note">Hours change, so check ${ln('https://campusdining.syr.edu/hours', 'SU’s official hours page')} before you go. The summit schedule also includes lunch on both days.</p>
+  <div class="sec"><h2>Eateries near you</h2><p class="sub">Opens your map app. Your location stays on your phone and is only used to center the map.</p>
+    <button class="btn ghost" data-eat="1" type="button">Show restaurants near me</button><p class="note" id="eatOut" aria-live="polite" hidden></p></div>
+  <div class="sec"><h2>Inside Newhouse</h2><ul class="plain"><li><strong>food.com café, Newhouse 3, Room 244.</strong> A Campus Dining café. SU announced Choolaah (Indian BBQ) and Yella’s (breakfast sandwiches, lunch, milkshakes) here in 2025. Their hours have changed more than once.</li></ul></div>
+  <div class="sec"><h2>Next door: Schine Student Center</h2><p class="sub">On SU’s map, Schine sits next to Newhouse 1 and 2. Schine Dining is on its second floor.</p><ul class="plain"><li>SU has listed Dunkin’, CoreLife Eatery, Halal Shack, Tavola 44 (pizza), Panda Express, and Biscotti Cafe there. See the ${ln('https://campusdining.syr.edu/retail-dining/food-courts/', 'food court page')} for menus.</li><li>SU says the food halls are open late on weekends.</li></ul></div>
+  <div class="sec"><h2>Other campus cafés</h2><p class="sub">SU has 14 cafés in academic buildings, mostly open around 8 a.m. to 3 p.m.</p><ul class="plain"><li><strong>The Canteen</strong>, National Veterans Resource Center (across Waverly Avenue from Newhouse 2 on SU’s map).</li><li><strong>Gerry’s Cafe</strong>, Eggers Hall, Room 300.</li><li><strong>Falk Cafe</strong>, MacNaughton Hall.</li><li><strong>BBBistro</strong>, Brockway Hall, basement.</li></ul><p class="note">${ln('https://campusdining.syr.edu/retail-dining/', 'All retail dining')} and ${ln('https://campusdining.syr.edu/menus/', 'menus')}. All Campus Dining locations are cashless: ’CUSE Cash, Meal Plan Dining Dollars, and cards.</p></div>`;
+}
+function viewRide(){
+  const li = (r, c) => `<li class="rt ${c || ''}"><strong>${esc(r.name)}</strong>${r.note ? '. ' + esc(r.note) : ''}<br>${ln(r.sched, 'Schedule (PDF)')}${r.map ? ' and ' + ln(r.map, 'Route map') : ''}</li>`;
+  const loopClass = r => r.name === 'Orange Loop' ? 'rt-orange' : r.name === 'Blue Loop' ? 'rt-blue' : '';
+  return `<p class="note">Find the nearest stop, then pick the loop or route that goes where you’re headed. These are SU’s 2026–2027 academic-year schedules and they change during breaks.</p>
+  <div class="sec"><h2>Stops near you</h2><p class="sub">Opens your map app. Your location stays on your phone and is only used to center the map.</p>
+    <button class="btn" data-near="1" type="button">Show bus stops near me</button><p class="note" id="nearOut" aria-live="polite" hidden></p></div>
+  <div class="sec"><h2>Live tracking</h2><ul class="plain"><li>${ln('https://subus.syr.edu/', 'SU bus and trolley tracker')} shows ’Cuse Trolleys and Centro’s SU routes with predicted arrivals, per SU. SU has posted outages for it before, so check the schedules too.</li><li>${ln('https://www.centro.org/how-to-ride/transit-tools', 'Centro transit tools')}: real-time bus tracking and the GoCentroBus app.</li></ul></div>
+  <div class="sec"><h2>’Cuse Trolley loops</h2><p class="sub">Free with an SU or SUNY-ESF ID.</p><ul class="rts">${TRANSIT.loops.map(r => li(r, loopClass(r))).join('')}</ul></div>
+  <div class="sec"><h2>Centro campus routes</h2><p class="sub">Per SU, SU344 and SU243 run until 11:00 pm. SU243 now runs as SU343, so check SU343’s own schedule. For other routes after 8:00 pm, use the trolley schedules.</p><ul class="rts">${TRANSIT.centro.map(r => li(r)).join('')}</ul></div>
+  <div class="sec"><h2>Centro city routes</h2><ul class="rts">${TRANSIT.city.map(r => li(r)).join('')}</ul></div>
+  <p class="note">Source: SU Parking and Transportation Services, campus shuttle schedules page. Questions: 315.443.4652.</p>`;
+}
+function viewAround(){
+  return `<div class="seg" role="group" aria-label="Around"><button data-around="eat" aria-pressed="${st.around === 'eat'}" type="button">Eat</button><button data-around="ride" aria-pressed="${st.around === 'ride'}" type="button">Ride</button></div>${st.around === 'eat' ? viewEat() : viewRide()}`;
+}
+function locate(outId, term, fallbackQuery){
+  const out = $(outId); if (!out) return;
+  const show = (u, msg) => { out.hidden = false; out.innerHTML = ''; out.append(msg + ' '); const a = document.createElement('a'); a.className = 'ln'; a.href = u; a.target = '_blank'; a.rel = 'noopener'; a.textContent = 'Open the map'; out.appendChild(a); };
+  const fb = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(fallbackQuery);
+  if (!navigator.geolocation) { show(fb, 'Showing places near Newhouse 1.'); return; }
+  out.hidden = false; out.textContent = 'Finding your location…';
+  navigator.geolocation.getCurrentPosition(p => show(`https://www.google.com/maps/search/${term}/@${p.coords.latitude.toFixed(5)},${p.coords.longitude.toFixed(5)},17z`, 'Found you.'), () => show(fb, 'Location is off, so showing places near Newhouse 1.'), {timeout:8000});
+}
+
+/* ===== render + events ===== */
+function render(){
+  $('nav').innerHTML = navHTML();
+  const views = {home:viewHome, ask:viewAsk, schedule:viewSchedule, rooms:viewRooms, around:viewAround};
+  $('view').innerHTML = views[st.tab]();
+  if (st.tab === 'ask') wireAsk();
+  const q = $('q');
+  if (q) q.oninput = e => { st.q = e.target.value; const pos = e.target.selectionStart; render(); const n = $('q'); if (n) { n.focus(); try { n.setSelectionRange(pos, pos); } catch (err) {} } };
+  document.querySelectorAll('details[data-b]').forEach(d => { d.ontoggle = () => { st.openB[d.dataset.b] = d.open; }; });
+}
+function go(tab, sub, room){
+  st.tab = tab; st.q = ''; if (sub) st.around = sub;
+  if (room && ROOM[room] && ROOM[room].b) st.openB[ROOM[room].b] = true;
+  render();
+  const el = room ? document.getElementById('room-' + room) : null;
+  if (el && el.scrollIntoView) el.scrollIntoView({behavior:reduce ? 'auto' : 'smooth', block:'center'}); else window.scrollTo(0, 0);
+}
+document.addEventListener('click', e => {
+  const t = e.target.closest('button'); if (!t) return;
+  const d = t.dataset;
+  if (d.tab) go(d.tab);
+  else if (d.go) go(d.go, d.sub, d.room);
+  else if (d.spin) spin();
+  else if (d.roll) roll();
+  else if (d.save) {
+    const was = st.plan.has(d.save); if (was) st.plan.delete(d.save); else st.plan.add(d.save); persist();
+    if (!was) { st.pop = d.save; const r = t.getBoundingClientRect(); burst(r.left + r.width / 2, r.top + r.height / 2); setTimeout(() => { st.pop = null; }, 700); }
+    render();
+  }
+  else if (d.addplan) {
+    const r = t.getBoundingClientRect(); burst(r.left + r.width / 2, r.top + r.height / 2);
+    d.addplan.split(',').forEach(id => { if (SESSIONS.some(x => x.id === id)) st.plan.add(id); }); persist(); render();
+  }
+  else if (d.day) { st.day = +d.day; st.mine = false; render(); }
+  else if (d.mine) { st.mine = true; render(); }
+  else if (d.track) { st.track = d.track; render(); }
+  else if (d.around) { st.around = d.around; render(); }
+  else if (d.q) { if (!st.busy) askAI(d.q); }
+  else if (d.brain) { st.tab = 'ask'; render(); window.scrollTo(0, 0); askAI(`Give me three fun, PG ideas for the Gen Jam challenge "${d.brain}".`); }
+  else if (d.mic) listen();
+  else if (d.live) openCam();
+  else if (d.camread) readFrame();
+  else if (d.camclose) closeCam();
+  else if (d.snapbtn) { const s = $('snap'); if (s) s.click(); }
+  else if (d.snapx) { st.img = null; updateSnap(); }
+  else if (d.say) { const m = st.chat[+d.say]; if (m) { unlockAudio(); speak(m.content); } }
+  else if (d.near) locate('nearOut', 'bus+stop', 'bus stop near 215 University Pl Syracuse NY');
+  else if (d.eat) locate('eatOut', 'restaurants', 'restaurants near 215 University Pl Syracuse NY');
+});
+document.addEventListener('change', e => {
+  if (e.target && e.target.id === 'snap') { handleSnap(e.target); return; }
+  const k = e.target && e.target.dataset && e.target.dataset.jam; if (!k) return;
+  const r = e.target.getBoundingClientRect();
+  st.jam[k] = e.target.checked; persistJam();
+  const all = JAM_ITEMS.every(([key]) => st.jam[key]);
+  if (all && e.target.checked) burst(r.left + r.width / 2, r.top + r.height / 2);
+  render();
+});
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && $('cam') && !$('cam').hidden) closeCam(); });
+$('logo').onclick = () => go('home');
+render();
+</script>
+</body>
+</html>
