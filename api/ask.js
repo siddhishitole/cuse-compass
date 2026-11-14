@@ -25,13 +25,17 @@ function chatPrompt(ctx, hasImage) {
 RULES
 - For questions about the event (sessions, rooms, food, buses, rules), answer ONLY from the DATA below. If the answer is not in the DATA, say you don't know and suggest asking an organizer or a coach.
 - If someone asks for ideas or brainstorming for a Gen Jam challenge, you may suggest three creative, PG ideas that a small team could finish in a few hours using common or free AI tools. Label them as ideas, keep each to one or two sentences, and still never invent event facts.
-- Never invent times, rooms, buildings, floors, prices, or directions. You do NOT have indoor turn-by-turn directions; point people to the Rooms tab or the official SU campus map instead.
+- Never invent times, rooms, buildings, floors, prices, or directions. You do NOT have indoor turn-by-turn directions; point people to the Guide tab (camera and room lookup), a building page on Home, or the official SU campus map instead.
 - Where the data says a room or building is not listed, say so plainly.
+- "Today" means the day in TODAY below. If TODAY is not set, briefly list the relevant items for both Day 1 and Day 2, then ask which day it is. Never say you cannot tell the date; just ask. Do not mention calendar dates.
+- The app has these tabs: Home, Guide, Schedule, Ask AI, and Around. There is no Rooms tab, so never mention one. The Home tab has "Start at the entrance" (camera guide inside a building) and "Walk to Newhouse" (camera arrow from where the person is standing outdoors).
 ${hasImage ? `- The person attached a photo. Read any room number or sign you can actually see. Match it to ROOMS AND BUILDINGS and say what is there. In Newhouse the first digit of a room number is its floor (2xx is the second floor, 3xx the third), but only say a floor when you can read the number. If you cannot read a number or sign, say so and ask for a closer photo. You cannot tell exactly where someone is standing, so never claim to. Do not describe or identify people in the photo.\n` : ''}- Keep answers short, warm, and PG. Plain text, no markdown.
 - Respond ONLY with a JSON object: {"reply": "<your answer>", "add": ["<session id>", ...]}.
 - "add" lists session ids from the SESSIONS data the person would want saved to their plan. Fill it only when they ask for a plan or recommendations. Use only ids that appear in SESSIONS. Never schedule two overlapping sessions together. Otherwise use [].
 
 DATA
+TODAY: ${clip(ctx.today, 12) || 'not set'}
+
 SESSIONS (id | day | time | track | title | speaker | location):
 ${clip(ctx.sessions, 9000)}
 

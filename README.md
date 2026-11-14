@@ -1,10 +1,12 @@
 # CuseCompass
 
-**You made it to Newhouse. Now find the room.**
+**Lost in Newhouse? We'll walk you to your room.**
 
 Gen Jam · Product Dev · Option 1: Campus, Upgraded
 
 Try it live: https://cuse-compass.vercel.app
+
+> **Scope today:** CuseCompass works for the three Newhouse buildings (Newhouse 1, 2, and 3). The same approach can grow to every building around Syracuse University: the camera reads each building's own door numbers, and the verified room data is organized by building and floor, so adding a building means adding its rooms and floors. See [Roadmap](#roadmap).
 
 ---
 
@@ -23,7 +25,11 @@ Picture a first-time visitor walking into Newhouse for the summit. They know the
 
 ---
 
-## How it works: from the entrance to the right door
+## How it works: from where you are to the right door
+
+**Outside: Walk to Newhouse.** Tap **Walk to Newhouse**, allow location and motion, and the camera shows a big arrow pointing toward the entrance you picked (the University Place side for Newhouse 1, or the Waverly Avenue side for Newhouse 2 and 3). It shows the distance in feet and the walking time, speaks the direction when you turn, and tells you when you've arrived. **Open walking directions in Maps** gives street-by-street directions from your current location. When you arrive, one tap continues indoors.
+
+**Inside: from the entrance to the right door.**
 
 1. **Stand at the entrance and open the camera.** CuseCompass asks which building you're in, then pops up what that building is used for (from SU's own descriptions).
 2. **It asks where you're headed:** plan your day, what's happening in this building, or a specific room. You can tap, type, or just say it. "Take me to the keynote" works.
@@ -32,6 +38,8 @@ Picture a first-time visitor walking into Newhouse for the summit. They know the
 5. **When you reach the right door,** you get "You're here" and the event.
 
 **Plan my day** (made for first-time visitors): pick a day and what you're into, and the day is built from the real schedule. Your plan shows the building for each stop, a heads-up when you have to **change buildings** with the minutes you have, and a warning when two sessions **overlap**.
+
+Outdoors, the arrow uses your phone's GPS and compass and the entrance points listed under "What's verified". GPS can be off by 10 to 20 meters near buildings, and the compass needs motion access on an iPhone, so the arrow is a guide, not a surveyed route. Without a compass the arrow shows the compass direction instead, with north at the top.
 
 It never makes up a room. If the answer isn't in our verified data, it says "I don't know."
 
@@ -67,8 +75,8 @@ It's also where teams are supposed to be formed for the Gen Jam, so the app show
 | What you do | Model |
 |---|---|
 | Point the camera at doors and signs | Claude (vision) reads door numbers and directional signs. The room popups come from our verified data, not from the AI's imagination. |
-| Say where you want to go | Your phone's speech input, then smart matching to sessions, rooms, and buildings |
-| Hear the directions | Your phone's voice, with an optional ElevenLabs voice |
+| Say where you want to go | Your browser's speech input. It shows your words as you speak, waits until you pause for about two seconds, then sends the whole sentence (tap the mic again to send early). Smart matching then finds the session, room, or building. |
+| Hear the directions and answers | Your phone's English voice, split into short sentences so nothing gets cut off, with an optional ElevenLabs voice. Answers in Ask AI are read aloud when **Read answers aloud** is on, and every answer has a **Play voice** button. |
 | Ask anything, build a day, brainstorm Gen Jam ideas | Claude (text) |
 
 The camera scans automatically every few seconds, and you can tap **Scan now** any time. No camera, or the AI is down? Type a room number and get the same popup.
@@ -77,7 +85,7 @@ The camera scans automatically every few seconds, and you can tap **Scan now** a
 
 ## Also in the app
 
-- **Home:** an illustrated entry point, a voice or text box ("Take me to Room 206F"), the three buildings, and a compass that spins up something real to do
+- **Home:** real photos of the three buildings, a voice or text box ("Take me to Room 206F" or "How do I get to Newhouse?"), a **Today is Day 1 / Day 2** switch so "what's happening today" just works, and a compass that spins up something real to do
 - **Schedule:** both days, filter by track, save talks to **My plan**, and a **Guide me** button on every talk
 - **Ask AI:** chat and voice
 - **Around:** a dice roll for lunch, nearby restaurants, and bus stops with SU's trolley loops and Centro routes
@@ -92,6 +100,9 @@ Everything the app states comes from a source we can name:
 - **Floors and room names:** SU's campus map floor plans, SU IT classroom pages, SU's events calendar
 - **Buses and loops:** SU Parking and Transportation Services, 2026–2027 schedules
 - **Food:** SU Campus Dining and SU News
+- **Building descriptions:** SU's campus map, SU IT, SU's public art page for Newhouse 3, Wikipedia (the 2014 Newhouse 2 renovation), and the architects' project page (Newhouse 3 connects Newhouse 1 and 2 on all floors)
+- **Photos:** Kiran891 on Wikimedia Commons, CC BY-SA 4.0. Credits and links are in the app footer and in Credits below.
+- **Outdoor entrance points:** approximate, taken from the geotags of those Commons photos (Newhouse 1 side: 43.03987, -76.13563; Waverly Avenue side: 43.04071, -76.13479). Wikipedia lists 43.0399, -76.1352 for the school. These are not surveyed entrance coordinates.
 
 What we don't have: a verified location for the Welcome session, the two 3:45 PM Day 1 sessions, and the Startup Garage's building. The app says so instead of guessing. We also don't draw turn-by-turn indoor routes, because SU doesn't publish hallway data. The app links to SU's official floor plans instead.
 
@@ -99,6 +110,7 @@ What we don't have: a verified location for the Welcome session, the two 3:45 PM
 
 ## Try it in 60 seconds
 
+0. Outside? Home: tap **Walk to Newhouse**, allow location, and follow the arrow.
 1. Home: tap **Start at the entrance** and allow the camera.
 2. Tap **Newhouse 2**. A card says what the building is for. Tap **What's happening here**, then **Guide me** on an event.
 3. Aim the camera at a door number. You'll get a popup for each room you pass, plus an arrow and a spoken direction when a sign shows the way.
@@ -107,6 +119,21 @@ What we don't have: a verified location for the Welcome session, the two 3:45 PM
 6. Around: roll the dice for lunch.
 
 **Judges, you don't need to be in Newhouse:** write "Room 469" on paper and point the camera at it. Or hold up two sheets, "Room 205 ←" and "Room 207 →", and set the target to Room 206F.
+
+---
+
+## Roadmap
+
+- **Now:** Newhouse 1, 2, and 3, with verified rooms, floors, sessions, food, and rides.
+- **Next:** more campus buildings. The data is already structured as building, floor, room, and what happens there, so each building is a data addition, not a rebuild. SU's campus map floor plans are the source.
+- **Then:** classes and campus events beyond the summit, and real entrance coordinates for every building.
+- **Known limits:** no public indoor hallway map exists, GPS drifts near buildings, and phone speech features depend on the browser (Chrome and Safari work best).
+
+---
+
+## Credits
+
+- Photos of Newhouse 1, Newhouse 2 (Dick Clark Studios entrance), and Newhouse 3 (First Amendment glass wall) by Kiran891, [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/), via Wikimedia Commons: [Newhouse 1](https://commons.wikimedia.org/wiki/File:Newhouse_1_Building_at_Syracuse_University_02.jpg), [Newhouse 2](https://commons.wikimedia.org/wiki/File:Dick_Clark_Studios_at_Syracuse_University,_Newhouse_2_Building_along_Waverly_Ave.jpg), [Newhouse 3](https://commons.wikimedia.org/wiki/File:Newhouse_3_Building_at_Syracuse_University_–_1st_Amendment_glass_Wall_01.jpg). The photos are linked directly from Wikimedia Commons, not copied into this repo.
 
 ---
 

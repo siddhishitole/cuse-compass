@@ -14,7 +14,7 @@
 :root{
   color-scheme:light;
   --paper:#FFFFFF; --tint:#EEF4FF; --surface:#FFFFFF; --ink:#0B1146; --muted:#55608F; --line:#DCE4F5;
-  --tang:#FF6B1A; --tang-ink:#C24100; --lemon:#FFD84D; --sky:#9CCBFF; --on-tang:#1A0A00; --dial:#0B1146;
+  --tang:#FF6B1A; --tang-ink:#C24100; --lemon:#FFD84D; --sky:#9CCBFF; --on-tang:#1A0A00; --dial:#0B1146; --navy:#0B1146;
   --c-creative:rgba(255,107,26,.14); --c-product:rgba(156,203,255,.38); --c-all:rgba(255,216,77,.34);
   --f-display:"Bricolage Grotesque","Trebuchet MS",system-ui,sans-serif;
   --f-body:"Instrument Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
@@ -270,6 +270,32 @@ h2.day{font-size:22px;margin:22px 0 2px;}
 .camctl{display:flex;gap:10px;justify-content:center;}
 .cam .btn.ghost{color:#F3F5FF;border-color:rgba(243,245,255,.5);}
 
+
+/* ===== SU-style layout: white page, orange rule, photo-led, concise ===== */
+body::before{content:"";display:block;height:5px;background:var(--tang);}
+.hero3{position:relative;display:flex;align-items:flex-end;min-height:540px;margin-top:12px;border-radius:24px;overflow:hidden;background:var(--navy);}
+.hero3 > img,.hero3 > svg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
+.hero3 .cap{position:relative;width:100%;padding:110px 18px 20px;background:linear-gradient(to bottom,rgba(8,12,51,0),rgba(8,12,51,.78) 38%,rgba(8,12,51,.93));color:#fff;}
+.hero3 h1{color:#fff;font-size:clamp(28px,6.6vw,44px);line-height:1.08;margin:0;max-width:17ch;}
+.hero3 p{color:#E4E8FF;margin:8px 0 0;max-width:40ch;font-size:15.5px;}
+.hero3 .btn.big{padding:12px 17px;font-size:15px;}
+.hero3 .cta{margin-top:16px;}
+.hero3 .btn.ghost{color:#fff;border-color:rgba(255,255,255,.7);}
+.hero3 .btn.ghost:hover{background:rgba(255,255,255,.12);border-color:#fff;}
+.sech{display:inline-block;border-bottom:3px solid var(--tang);padding-bottom:5px;}
+.today{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:18px 0 0;}
+.today > span{font:600 14px var(--f-body);color:var(--muted);margin-right:2px;}
+.today .btn{margin-left:auto;}
+.bcard2 .bart img{display:block;width:100%;aspect-ratio:16/10;object-fit:cover;}
+.bhero img{display:block;width:100%;aspect-ratio:16/9;object-fit:cover;}
+@media(min-width:600px){.bgrid{grid-template-columns:repeat(3,1fr);}}
+.micb[aria-pressed=true]{background:rgba(255,107,26,.16);border-color:var(--tang);color:var(--ink);}
+.sufoot{margin:44px -20px -100px;padding:26px 20px 128px;background:var(--navy);color:#DDE3FF;font-size:14.5px;}
+.sufoot h3{color:#fff;font-size:20px;margin:0 0 6px;}
+.sufoot p{margin:6px 0;max-width:60ch;}
+.sufoot .cr{font-size:12.5px;color:#B9C4F0;}
+.sufoot a{color:#fff;text-decoration:underline;text-underline-offset:2px;}
+.gicon svg[style]{width:52px;height:52px;transition:transform .25s linear;}
 @media (prefers-reduced-motion: reduce){
   *,*::before,*::after{animation:none !important;transition:none !important;}
 }
@@ -420,6 +446,7 @@ const RULES = 'Gen Jam: teams of 2 to 4 (media) or 2 to 3 (product dev, solo all
 const FOOD_FACTS = 'food.com cafe is in Newhouse 3, Room 244 (Campus Dining; Choolaah and Yella’s announced there in 2025; hours change, check campusdining.syr.edu/hours). Schine Student Center is next to Newhouse 1 and 2; Schine Dining is on its second floor (Dunkin’, CoreLife Eatery, Halal Shack, Tavola 44, Panda Express, Biscotti Cafe listed by SU). SU has 14 cafes in academic buildings, mostly 8 a.m. to 3 p.m. Campus Dining is cashless: ’CUSE Cash, Dining Dollars, and cards.';
 function buildContext(){
   return {
+    today: st.today ? 'Day ' + st.today : '',
     sessions: SESSIONS.map(s => `${s.id} | Day ${s.day} | ${s.time} | ${s.track} track | ${s.title} | ${s.who || '-'} | ${s.loc || 'room not listed in the deck'}${s.tip ? ' | ' + s.tip : ''}`).join('\n'),
     rooms: ROOMS.map(r => `${r.name} | ${r.b ? BUILDINGS[r.b] : 'building not listed'} | ${r.note || ''}`).join('\n') + '\n' +
            DIRECTORY.map(r => `${r.name} | ${BUILDINGS[r.b]} | ${r.floor ? 'floor ' + r.floor : 'floor unknown'} | ${r.note}`).join('\n'),
@@ -463,8 +490,8 @@ const FOOD_SPOTS = [
 const ZONES = [['Talk','#FF6B1A'], ['Eat','#FFD84D'], ['Ride','#9CCBFF'], ['Rooms','#F3F5FF'], ['Scan','#FF9E6B']];
 const BLD_INFO = {
   nh1:{tag:'The original Newhouse building, dedicated in 1964', use:'Classrooms, lecture halls, a photo studio, computer labs, and faculty offices. It also holds a Special Events Room and the Office of Academic Affairs.', link:'Linked to Newhouse 2 on its lower north side and to Newhouse 3 on its lower west side.', src:'SU campus map'},
-  nh2:{tag:'Built in 1974', use:'Classrooms. SU IT lists rooms 340, 345, 350, 355, and 469.', link:'Linked to Newhouse 1.', src:'SU campus map and SU IT'},
-  nh3:{tag:'The newest building, from 2007', use:'Classrooms, a Collaborative Media Room, a café, and a 350-seat auditorium. The food.com café is in Room 244.', link:'Linked to Newhouse 1.', src:'SU campus map, SU IT, and SU Campus Dining'},
+  nh2:{tag:'Built in 1974, renovated in 2014', use:'Classrooms, plus the Newhouse Studio and Innovation Center: Dick Clark Studios, the Alan Gerry Center for Media Innovation, and the Diane and Bob Miron Digital News Center. SU IT lists classrooms 340, 345, 350, 355, and 469.', link:'Linked to Newhouse 1 and Newhouse 3.', src:'SU campus map, Wikipedia, and SU IT'},
+  nh3:{tag:'The newest building, from 2007', use:'Classrooms, a Collaborative Media Room, a café, and a 350-seat auditorium. The food.com café is in Room 244. The glass “Liberty Wrap” on the west side carries the First Amendment in six-foot letters.', link:'It connects Newhouse 1 and Newhouse 2 on all floors.', src:'SU public art page, SU IT, SU Campus Dining, and the architects'},
   all:{tag:'Three connected buildings', use:'Newhouse 1, 2, and 3 connect indoors. In every Newhouse building, the first digit of a room number is its floor.', link:'', src:'SU campus map and SU floor plans'}
 };
 const MOVES = {ahead:'Keep going straight', left:'Turn left', right:'Turn right', back:'Turn around', here:'You’re here', unknown:'Keep walking'};
@@ -472,9 +499,10 @@ const MOVES = {ahead:'Keep going straight', left:'Turn left', right:'Turn right'
 /* ===== state ===== */
 const roomFor = s => s.rooms.map(id => ROOM[id].name).join(' ');
 const sessText = s => `${s.title} ${s.who} ${s.loc || ''} ${roomFor(s)} ${s.time}`;
-const st = {tab:'home', flow:null, bld:null, hiRoom:null, pday:1, ptrack:'all', day:1, track:'all', q:'', mine:false, around:'eat', plan:new Set(), chat:[], busy:false, openB:{}, spin:{rot:0, busy:false, pick:null, fresh:false, did:false}, roll:{busy:false, i:null}, pop:null, speak:false, voice:true, listening:false, found:[], target:null, here:null, stage:'where', evDay:1, planOut:[], guide:{move:'unknown', head:'', text:'', ts:0, sig:''}};
+const st = {tab:'home', flow:null, bld:null, hiRoom:null, pday:1, ptrack:'all', day:1, track:'all', q:'', mine:false, around:'eat', plan:new Set(), chat:[], busy:false, openB:{}, spin:{rot:0, busy:false, pick:null, fresh:false, did:false}, roll:{busy:false, i:null}, pop:null, speak:false, voice:true, listening:false, found:[], target:null, here:null, stage:'where', evDay:1, today:null, walk:{dest:'nh1', pos:null, err:'', camErr:false, curCat:'', catSince:0, lastSay:0, lastCat:'', lastDist:0, arrived:false, active:false}, planOut:[], guide:{move:'unknown', head:'', text:'', ts:0, sig:''}};
 try { const raw = localStorage.getItem('cuse-summit-plan'); if (raw) st.plan = new Set(JSON.parse(raw)); } catch (e) {}
 try { st.speak = !!localStorage.getItem('cuse-speak'); } catch (e) {}
+try { const t = Number(localStorage.getItem('cuse-today')); if (t === 1 || t === 2) { st.today = t; st.evDay = t; st.day = t; st.pday = t; } } catch (e) {}
 const persist = () => { try { localStorage.setItem('cuse-summit-plan', JSON.stringify([...st.plan])); } catch (e) {} };
 
 /* ===== room index: every verified room number with its building, floor, and events ===== */
@@ -506,6 +534,21 @@ function burst(x, y){
     an.onfinish = () => p.remove();
   }
 }
+
+/* ===== real photos: Wikimedia Commons, by Kiran891, CC BY-SA 4.0 ===== */
+const WM = 'https://upload.wikimedia.org/wikipedia/commons/thumb/';
+const PHOTOS = {
+  nh1:{dir:'9/96', file:'Newhouse_1_Building_at_Syracuse_University_02.jpg', alt:'Newhouse 1 and its plaza at Syracuse University', page:'https://commons.wikimedia.org/wiki/File:Newhouse_1_Building_at_Syracuse_University_02.jpg'},
+  nh2:{dir:'f/fb', file:'Dick_Clark_Studios_at_Syracuse_University,_Newhouse_2_Building_along_Waverly_Ave.jpg', alt:'Newhouse 2 and Dick Clark Studios along Waverly Avenue', page:'https://commons.wikimedia.org/wiki/File:Dick_Clark_Studios_at_Syracuse_University,_Newhouse_2_Building_along_Waverly_Ave.jpg'},
+  nh3:{dir:'f/f5', file:'Newhouse_3_Building_at_Syracuse_University_–_1st_Amendment_glass_Wall_01.jpg', alt:'Newhouse 3 and its First Amendment glass wall', page:'https://commons.wikimedia.org/wiki/File:Newhouse_3_Building_at_Syracuse_University_–_1st_Amendment_glass_Wall_01.jpg'}
+};
+const photoURL = (b, w) => `${WM}${PHOTOS[b].dir}/${encodeURIComponent(PHOTOS[b].file)}/${w}px-${encodeURIComponent(PHOTOS[b].file)}`;
+const photoImg = (b, w, cls) => `<img class="${cls || ''}" data-b="${b}" src="${photoURL(b, w)}" alt="${esc(PHOTOS[b].alt)}" loading="lazy" decoding="async" referrerpolicy="no-referrer">`;
+/* Approximate outdoor targets, from the geotags of the Commons photos above (about 20 m accuracy) */
+const DEST = {
+  nh1:{name:'Newhouse 1', side:'University Place side', lat:43.03987, lon:-76.13563},
+  nh23:{name:'Newhouse 2 and 3', side:'Waverly Avenue side', lat:43.04071, lon:-76.13479}
+};
 
 /* ===== illustrations (original, drawn in code) ===== */
 const ART = {
@@ -606,25 +649,25 @@ function planPanel(){
 }
 function viewHome(){
   if (st.flow === 'go' && st.bld) return viewBuilding(st.bld);
-  const cards = Object.keys(BUILDINGS).map(b => { const n = SESSIONS.filter(s => s.b === b).length; return `<button class="bcard2" data-bld="${b}" type="button"><div class="bart">${ART.bld(b)}</div><strong>${BUILDINGS[b]}</strong><em>${n} summit event${n === 1 ? '' : 's'}</em></button>`; }).join('');
-  return `<section class="hero2"><div class="heroart">${ART.hero()}</div>
-    <h1>Find the room, not just the building.</h1>
-    <p class="lead">Stand at the entrance and open the camera. I’ll tell you what the building is for, then guide you to your room with directions you can see and hear.</p>
-    <div class="row cta"><button class="btn big" data-start="1" type="button">Start at the entrance</button><button class="btn ghost big" data-flow="plan" aria-pressed="${st.flow === 'plan'}" type="button">Plan my day</button></div></section>
+  const cards = Object.keys(BUILDINGS).map(b => { const n = SESSIONS.filter(s => s.b === b).length; return `<button class="bcard2" data-bld="${b}" type="button"><div class="bart">${photoImg(b, 500)}</div><strong>${BUILDINGS[b]}</strong><em>${n} summit event${n === 1 ? '' : 's'}</em></button>`; }).join('');
+  const credits = Object.keys(PHOTOS).map(b => ln(PHOTOS[b].page, BUILDINGS[b])).join(', ');
+  return `<section class="hero3">${photoImg('nh1', 960)}<div class="cap"><h1>Lost in Newhouse? We’ll walk you to your room.</h1><p>Open your camera, say where you’re going, and follow the arrows.</p><div class="row cta"><button class="btn big" data-start="1" type="button">Start at the entrance</button><button class="btn ghost big" data-walk="1" type="button">Walk to Newhouse</button></div></div></section>
+  <form class="askbox" id="goForm" autocomplete="off"><input type="text" id="goIn" placeholder="Say or type where to go" aria-label="Where do you want to go?">${micBtn('Talk', 'data-routemic="1"', 'btn ghost')}<button class="btn" type="submit">Go</button></form>
+  <div class="exs">${['Take me to the keynote', 'Where is Room 206F?'].map(x => `<button class="chip" data-say2="${esc(x)}" type="button">${esc(x)}</button>`).join('')}</div>
+  <div class="today"><span>Today is</span>${[1, 2].map(d => `<button class="chip" data-today="${d}" aria-pressed="${st.today === d}" type="button">Day ${d}</button>`).join('')}<button class="btn ghost sm" data-flow="plan" aria-pressed="${st.flow === 'plan'}" type="button">Plan my day</button></div>
   ${st.flow === 'plan' ? planPanel() : ''}
-  <form class="askbox" id="goForm" autocomplete="off"><input type="text" id="goIn" placeholder="Say or type where you want to go" aria-label="Where do you want to go?">${micBtn('Talk', 'data-routemic="1"', 'btn ghost')}<button class="btn" type="submit">Go</button></form>
-  <div class="exs">${['Take me to the keynote', 'Where is Room 206F?', 'What’s happening in Newhouse 2?'].map(x => `<button class="chip" data-say2="${esc(x)}" type="button">${esc(x)}</button>`).join('')}</div>
   <h2 class="sech">Pick a building</h2><div class="bgrid">${cards}</div>
   <h2 class="sech">Not sure where to start?</h2>
   <div class="compass"><div class="dialwrap">${dialSVG()}</div><div><h3>Spin the compass</h3><p>It points at something real from the summit: a talk, a bite, a ride, a room, or the door.</p><button class="btn" data-spin="1" type="button">Spin</button></div></div>
-  <div id="spinOut" aria-live="polite">${spinCard()}</div>`;
+  <div id="spinOut" aria-live="polite">${spinCard()}</div>
+  <footer class="sufoot"><h3>Built for Newhouse, made to grow</h3><p>CuseCompass works for the three Newhouse buildings today. The same approach can cover every building at Syracuse University as floor plans become available.</p><p class="cr">Photos by Kiran891, ${ln('https://creativecommons.org/licenses/by-sa/4.0/', 'CC BY-SA 4.0')}, via Wikimedia Commons: ${credits}.</p></footer>`;
 }
 const roomCard = r => { const here = SESSIONS.filter(s => s.rooms.includes(r.id)); return `<div class="rc" id="room-${r.id}"><b>${esc(r.name)}</b>${here.length ? `<ul>${here.map(s => `<li>Day ${s.day}, ${esc(s.time)}: ${esc(s.title)}</li>`).join('')}</ul>` : ''}${r.note ? `<p class="src">${esc(r.note)}</p>` : ''}</div>`; };
 const dirRow = r => `<li><strong>${esc(r.name)}</strong>. ${r.floor ? `Floor ${r.floor}. ` : ''}${esc(r.note)} <span class="src">Source: ${r.src.map(k => SRC[k]).join('; ')}.</span></li>`;
 function viewBuilding(b){
   const info = BLD_INFO[b], evs = SESSIONS.filter(s => s.b === b).sort((a, c) => a.day - c.day || a.s - c.s);
   const rooms = ROOMS.filter(r => r.b === b), more = DIRECTORY.filter(r => r.b === b);
-  let h = `<button class="back" data-bback="1" type="button">Back</button><div class="bhero">${ART.bld(b)}</div><h2 class="bh">${BUILDINGS[b]}</h2>
+  let h = `<button class="back" data-bback="1" type="button">Back</button><div class="bhero">${photoImg(b, 960)}</div><h2 class="bh">${BUILDINGS[b]}</h2>
   <div class="usecard"><h3>What this building is for</h3><p><strong>${esc(info.tag)}.</strong></p><p>${esc(info.use)}</p>${info.link ? `<p>${esc(info.link)}</p>` : ''}<p class="src">Source: ${esc(info.src)}.</p></div>
   <div class="row" style="margin-top:16px"><button class="btn" data-start="1" data-here="${b}" type="button">Start at the entrance</button></div>
   <h2 class="sech">What’s happening here</h2>`;
@@ -685,16 +728,43 @@ function wireScan(){
 }
 
 /* ===== voice ===== */
-let voicePlayer = null, ttsRemote = true;
+let voicePlayer = null, ttsRemote = true, synthVoice = null;
+const utts = []; // keep references so the browser doesn't drop utterances mid-speech
 const SILENT = 'data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQAAAAA=';
+function pickVoice(){
+  try {
+    const vs = (window.speechSynthesis && window.speechSynthesis.getVoices && window.speechSynthesis.getVoices()) || [];
+    synthVoice = vs.find(v => /^en[-_]US/i.test(v.lang) && /Samantha|Google US English|Aria|Jenny|Alex|Siri/i.test(v.name)) || vs.find(v => /^en/i.test(v.lang)) || vs[0] || null;
+  } catch (e) {}
+}
+try { if ('speechSynthesis' in window) { pickVoice(); if (window.speechSynthesis.addEventListener) window.speechSynthesis.addEventListener('voiceschanged', pickVoice); } } catch (e) {}
 function unlockAudio(){
   try { if (!voicePlayer) voicePlayer = new Audio(); voicePlayer.src = SILENT; const p = voicePlayer.play(); if (p && p.catch) p.catch(() => {}); } catch (e) {}
-  try { if ('speechSynthesis' in window && window.SpeechSynthesisUtterance) { const u = new window.SpeechSynthesisUtterance(' '); u.volume = 0; window.speechSynthesis.speak(u); } } catch (e) {}
+  try { if ('speechSynthesis' in window && window.SpeechSynthesisUtterance) { const u = new window.SpeechSynthesisUtterance(' '); u.volume = 0; utts.push(u); window.speechSynthesis.speak(u); } } catch (e) {}
 }
 function stopSpeak(){ try { if (voicePlayer) voicePlayer.pause(); if ('speechSynthesis' in window) window.speechSynthesis.cancel(); } catch (e) {} }
+function chunkText(t){
+  const out = [], sentences = String(t).replace(/\s+/g, ' ').trim().match(/[^.!?]+[.!?]*/g) || [String(t)];
+  sentences.forEach(s0 => { let s = s0.trim(); while (s.length > 170) { let cut = s.lastIndexOf(' ', 170); if (cut < 60) cut = 170; out.push(s.slice(0, cut)); s = s.slice(cut).trim(); } if (s) out.push(s); });
+  return out;
+}
 function browserSpeak(text){
-  if ('speechSynthesis' in window && window.SpeechSynthesisUtterance) return new Promise(res => { const u = new window.SpeechSynthesisUtterance(String(text)); u.onend = res; u.onerror = res; window.speechSynthesis.speak(u); });
-  return Promise.resolve();
+  const synth = window.speechSynthesis;
+  if (!synth || !window.SpeechSynthesisUtterance) return Promise.resolve();
+  const parts = chunkText(text);
+  return new Promise(resolve => {
+    try { synth.cancel(); } catch (e) {}
+    let i = 0;
+    const next = () => {
+      if (i >= parts.length) { resolve(); return; }
+      const u = new window.SpeechSynthesisUtterance(parts[i++]);
+      u.lang = 'en-US'; u.rate = 1; if (synthVoice) u.voice = synthVoice;
+      u.onend = next; u.onerror = next;
+      utts.push(u); if (utts.length > 40) utts.shift();
+      try { if (synth.paused && synth.resume) synth.resume(); synth.speak(u); } catch (e) { next(); }
+    };
+    setTimeout(next, 150); // Chrome drops a speak() that comes right after cancel()
+  });
 }
 async function speak(text){
   if (!text) return; stopSpeak();
@@ -712,17 +782,34 @@ async function speak(text){
   await browserSpeak(text);
 }
 const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-function updateMics(){ document.querySelectorAll('.micb').forEach(b => { b.setAttribute('aria-pressed', String(st.listening)); const t = b.querySelector('.mt'); if (t) t.textContent = st.listening ? 'Listening…' : (b.dataset.label || 'Talk'); }); }
-function listenOnce(cb){
-  if (!SR || st.listening) return;
+function updateMics(){ document.querySelectorAll('.micb').forEach(b => { b.setAttribute('aria-pressed', String(st.listening)); const t = b.querySelector('.mt'); if (t) t.textContent = st.listening ? 'Listening… tap to send' : (b.dataset.label || 'Talk'); }); }
+let activeRec = null;
+/* Listens until you pause for about two seconds, shows your words as you speak, then sends the whole sentence. Tap again to send early. */
+function listenOnce(cb, onText){
+  if (!SR) return;
+  if (st.listening) { if (activeRec) activeRec.finish(); return; }
   unlockAudio();
-  const rec = new SR(); rec.lang = 'en-US'; rec.interimResults = false; rec.maxAlternatives = 1;
-  st.listening = true; updateMics();
-  rec.onresult = e => { const q = e.results[0][0].transcript; if (q) cb(q); };
-  rec.onerror = () => { st.listening = false; updateMics(); };
-  rec.onend = () => { st.listening = false; updateMics(); };
-  try { rec.start(); } catch (e) { st.listening = false; updateMics(); }
+  const rec = new SR(); rec.lang = 'en-US'; rec.continuous = true; rec.interimResults = true; rec.maxAlternatives = 1;
+  let finalText = '', interim = '', timer = null, done = false;
+  const text = () => (finalText + ' ' + interim).replace(/\s+/g, ' ').trim();
+  const finish = () => {
+    if (done) return; done = true; clearTimeout(timer);
+    try { rec.stop(); } catch (e) {}
+    st.listening = false; activeRec = null; updateMics();
+    const q = text(); if (onText) onText(''); if (q) cb(q);
+  };
+  const arm = ms => { clearTimeout(timer); timer = setTimeout(finish, ms); };
+  rec.onresult = e => {
+    interim = '';
+    for (let i = e.resultIndex; i < e.results.length; i++) { const r = e.results[i]; if (r.isFinal) finalText += ' ' + r[0].transcript; else interim += ' ' + r[0].transcript; }
+    if (onText) onText(text()); arm(2000);
+  };
+  rec.onerror = () => finish();
+  rec.onend = () => finish();
+  st.listening = true; activeRec = {finish}; updateMics(); arm(8000);
+  try { rec.start(); } catch (e) { finish(); }
 }
+const echoTo = id => v => { const i = $(id); if (i) i.value = v; else if (v) setStatus('Hearing: ' + v); };
 
 /* ===== the voice assistant: understands where you want to go ===== */
 const STOPS = new Set('the and for you are what when where which who how can does with from that this have has any near about tell give there will would should could into your our its take bring walk guide show please want need find going head let get room rooms event talk session day'.split(' '));
@@ -741,6 +828,9 @@ function routeUtterance(q){
   const open = !$('cam').hidden;
   const rn = readNums(text);
   if (rn.length) { startGuideTo(targetFromNum(rn[0])); return; }
+  if (!rn.length && /newhouse|new\s*house|\bnh\b/i.test(text) && /(get to|walk to|walk me|directions? to|navigate to|route to|way to|how do i get|take me to the (?:building|entrance))/i.test(text)) {
+    const m = text.match(/\b(1|2|3|one|two|three)\b/i); startWalk(m && /^(2|3|two|three)$/i.test(m[1]) ? 'nh23' : 'nh1'); return;
+  }
   if (/plan|schedule my day|my day/i.test(text)) { if (open) setStage('plan'); else { st.tab = 'home'; st.flow = 'plan'; st.bld = null; render(); window.scrollTo(0, 0); } return; }
   const bm = text.match(/(?:new\s*house|\bnh)\s*(?:#|number)?\s*(1|2|3|one|two|three|iii|ii|i)\b/i);
   if (bm) { const m = {one:'1', two:'2', three:'3', i:'1', ii:'2', iii:'3'}, k = String(bm[1]).toLowerCase(), b = 'nh' + (m[k] || k); if (open) { st.here = b; setStage('events'); } else openBuilding(b); return; }
@@ -765,7 +855,8 @@ function renderTarget(){
 }
 function stageHTML(s){
   const b = st.here;
-  if (s === 'where') return `<h3>Welcome. Which building are you at?</h3><p class="csub">Stand still at the entrance. Tap the building you’re in.</p><div class="cpills">${Object.keys(BUILDINGS).map(k => `<button class="cpill" data-here="${k}" type="button">${BUILDINGS[k]}</button>`).join('')}<button class="cpill" data-here="none" type="button">Not sure</button></div>`;
+  if (s === 'where') return `<h3>Welcome. Which building are you at?</h3><p class="csub">Stand still at the entrance. Tap the building you’re in.</p><div class="cpills">${Object.keys(BUILDINGS).map(k => `<button class="cpill" data-here="${k}" type="button">${BUILDINGS[k]}</button>`).join('')}<button class="cpill" data-here="none" type="button">Not sure</button></div><div class="cpills"><button class="cpill" data-walk="1" type="button">Not here yet? Walk me to Newhouse</button></div>`;
+  if (s === 'walk') { const w = st.walk; return `<h3>Walk to Newhouse</h3><p class="csub">Follow the arrow on the camera. Pick the entrance closest to where you’re going.</p><div class="cpills">${Object.keys(DEST).map(k => `<button class="cpill" data-walkdest="${k}" aria-pressed="${w.dest === k}" type="button">${esc(DEST[k].name)}, ${esc(DEST[k].side)}</button>`).join('')}</div><div class="cpills"><button class="cpill pri" data-mapsdir="1" type="button">Open walking directions in Maps</button><button class="cpill" data-stage="where" type="button">I’m at the entrance</button></div><p class="cinfo"><small>Entrance points are approximate, taken from photo locations on Wikimedia Commons.</small></p>`; }
   if (s === 'ask') { const info = b ? BLD_INFO[b] : BLD_INFO.all; return `<h3>${b ? BUILDINGS[b] : 'Newhouse'}</h3><p class="cinfo"><strong>${esc(info.tag)}.</strong> ${esc(info.use)}<small>Source: ${esc(info.src)}</small></p><p class="cinfo" style="margin-top:12px"><strong>What would you like to do?</strong></p><div class="cpills"><button class="cpill pri" data-stage="plan" type="button">Plan my day</button><button class="cpill pri" data-stage="events" type="button">What’s happening here</button><button class="cpill pri" data-stage="room" type="button">Take me to a room</button></div>${SR ? `<div class="cpills">${micBtn('Say where you want to go', 'data-routemic="1"', 'cpill')}</div>` : ''}`; }
   if (s === 'events') {
     const list = SESSIONS.filter(x => x.day === st.evDay && x.rooms.length && (!b || x.b === b)).sort((a, c) => a.s - c.s);
@@ -782,14 +873,16 @@ function stageHTML(s){
   return '';
 }
 function renderStage(){
-  const s = st.stage, g = s === 'guide', panel = $('camPanel');
-  $('camGuide').hidden = !g; $('camForm').hidden = !g; $('camCtl').hidden = !g; $('reticle').hidden = !g;
+  const s = st.stage, g = s === 'guide', wk = s === 'walk', panel = $('camPanel');
+  $('camGuide').hidden = !(g || wk); $('camForm').hidden = !g; $('camCtl').hidden = !g; $('reticle').hidden = !g;
   panel.hidden = g;
   if (!g) { $('camCard').hidden = true; panel.innerHTML = stageHTML(s); }
   const rf = $('roomForm'); if (rf) rf.onsubmit = e => { e.preventDefault(); const l = readNums($('roomIn').value); if (!l.length) { setStatus('Enter a three-digit room number, like 206F.'); return; } startGuideTo(targetFromNum(l[0])); };
   if (g) renderGuide();
+  if (wk) updateWalk();
 }
 function setStage(s){
+  if (s !== 'walk') stopWalk();
   st.stage = s; renderStage();
   if (s === 'guide') { camScans = 0; camLast = ''; $('camCard').hidden = true; startLine(); }
   else if (st.voice) { const say = {where:'Welcome. Which building are you at?', ask:'What would you like to do?', events:'Tap the event you want, and I’ll guide you.', room:'Which room?', plan:'Pick a day and what you’re into.'}[s]; if (say) speak(say); }
@@ -828,18 +921,24 @@ async function openCam(stage){
   st.stage = stage || 'where'; $('cam').hidden = false; document.body.style.overflow = 'hidden';
   camAuto = true; camScans = 0; camLast = ''; camBusy = false; updateAutoBtn(); updateVoiceBtn();
   $('camCard').hidden = true; $('camCard').innerHTML = '';
+  if (st.stage !== 'walk') stopWalk();
   renderTarget(); renderStage();
   if (st.stage === 'guide') startLine();
+  else if (st.stage === 'walk') { /* guidance speaks once GPS locks */ }
   else if (st.voice) speak(st.stage === 'where' ? 'Welcome. Which building are you at?' : 'What would you like to do?');
   setStatus('Opening the camera…');
   try {
     camStream = await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'}}, audio:false});
     const v = $('camVid'); v.srcObject = camStream; await v.play();
-    setStatus('');
+    setStatus(''); if (st.stage === 'walk') updateWalk();
     camTimer = setInterval(() => { if (st.stage === 'guide' && camAuto && !camBusy) scanOnce(true); }, 3500);
-  } catch (e) { setStatus('The camera isn’t available. You can still use the guide: allow camera access, or type room numbers.'); }
+  } catch (e) {
+    if (st.stage === 'walk') { st.walk.camErr = true; updateWalk(); }
+    else setStatus('The camera isn’t available. You can still use the guide: allow camera access, or type room numbers.');
+  }
 }
 function closeCam(){
+  stopWalk();
   if (camTimer) { clearInterval(camTimer); camTimer = null; }
   if (camStream) { camStream.getTracks().forEach(t => t.stop()); camStream = null; }
   stopSpeak(); $('cam').hidden = true; document.body.style.overflow = ''; st.target = null;
@@ -910,6 +1009,102 @@ async function scanOnce(auto){
   camBusy = false; handleScan(res, auto);
   if (camScans >= MAX_SCANS && camAuto) { camAuto = false; updateAutoBtn(); setStatus('Paused to save data. Tap Scan now, or turn auto-scan back on.'); }
 }
+
+/* ===== outdoors: walk to Newhouse with an arrow on the camera view ===== */
+let compassOn = false, compassH = null, compassF = null, gotAbs = false, geoWatch = null;
+function compassHeading(alpha, beta, gamma){ // direction the back of the phone points
+  const x = beta*Math.PI/180, y = gamma*Math.PI/180, z = alpha*Math.PI/180;
+  const cY = Math.cos(y), cZ = Math.cos(z), sX = Math.sin(x), sY = Math.sin(y), sZ = Math.sin(z);
+  const Vx = -cZ*sY - sZ*sX*cY, Vy = -sZ*sY + cZ*sX*cY;
+  let h = Math.atan(Vx/Vy);
+  if (Vy < 0) h += Math.PI; else if (Vx < 0) h += 2*Math.PI;
+  return h*180/Math.PI;
+}
+function compassFromEvent(e){
+  if (typeof e.webkitCompassHeading === 'number') return e.webkitCompassHeading;
+  if (e.alpha != null && e.beta != null && e.gamma != null) return compassHeading(e.alpha, e.beta, e.gamma);
+  return null;
+}
+function pushCompass(h){
+  const r = h*Math.PI/180, v = {x:Math.cos(r), y:Math.sin(r)};
+  compassF = compassF ? {x:compassF.x*0.8 + v.x*0.2, y:compassF.y*0.8 + v.y*0.2} : v;
+  compassH = (Math.atan2(compassF.y, compassF.x)*180/Math.PI + 360) % 360;
+  if (st.stage === 'walk' && !$('cam').hidden) updateWalk();
+}
+async function startCompass(){
+  if (compassOn) return true;
+  try {
+    if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+      const r = await DeviceOrientationEvent.requestPermission(); if (r !== 'granted') return false;
+    }
+  } catch (e) { return false; }
+  window.addEventListener('deviceorientationabsolute', e => { gotAbs = true; const h = compassFromEvent(e); if (h != null && !isNaN(h)) pushCompass(h); }, true);
+  window.addEventListener('deviceorientation', e => { if (gotAbs && typeof e.webkitCompassHeading !== 'number') return; const h = compassFromEvent(e); if (h != null && !isNaN(h)) pushCompass(h); }, true);
+  compassOn = true; return true;
+}
+const toRad = x => x * Math.PI / 180;
+function bearingTo(lat1, lon1, lat2, lon2){
+  const y = Math.sin(toRad(lon2 - lon1)) * Math.cos(toRad(lat2)), x = Math.cos(toRad(lat1)) * Math.sin(toRad(lat2)) - Math.sin(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.cos(toRad(lon2 - lon1));
+  return (Math.atan2(y, x) * 180 / Math.PI + 360) % 360;
+}
+function distM(lat1, lon1, lat2, lon2){
+  const dLat = toRad(lat2 - lat1), dLon = toRad(lon2 - lon1), a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon/2) * Math.sin(dLon/2);
+  return 2 * 6371000 * Math.asin(Math.sqrt(a));
+}
+const CARD = ['north', 'northeast', 'east', 'southeast', 'south', 'southwest', 'west', 'northwest'];
+const cardinal = b => CARD[Math.round(b / 45) % 8];
+const fmtDist = m => { const ft = m * 3.281; return ft < 1000 ? `${Math.max(10, Math.round(ft / 10) * 10)} feet` : `${(ft / 5280).toFixed(2)} miles`; };
+function walkState(){
+  const w = st.walk, d = DEST[w.dest];
+  if (!w.pos) return {head:'Finding your location…', text:'Allow location access, then hold your phone upright and look around.', rot:0, cat:'wait', dm:0};
+  const dm = distM(w.pos.lat, w.pos.lon, d.lat, d.lon), brg = bearingTo(w.pos.lat, w.pos.lon, d.lat, d.lon);
+  if (dm < 35) return {head:'You’re at Newhouse', text:`The ${d.side} entrance is right here. Tap “I’m at the entrance” to continue inside.`, rot:0, cat:'arrived', dm, brg};
+  const dist = fmtDist(dm), mins = Math.max(1, Math.round(dm / 80));
+  if (compassH == null) return {head:`Head ${cardinal(brg)}`, text:`${dist} to ${d.name}, about ${mins} min. The arrow shows the direction, with north at the top of the screen.`, rot:brg, cat:'north', dm, brg};
+  const diff = ((brg - compassH + 540) % 360) - 180, a = Math.abs(diff), side = diff > 0 ? 'right' : 'left';
+  let head, cat;
+  if (a <= 20) { head = 'Keep going straight'; cat = 'ahead'; }
+  else if (a <= 60) { head = `Bear ${side}`; cat = 'bear' + side; }
+  else if (a <= 135) { head = `Turn ${side}`; cat = 'turn' + side; }
+  else { head = 'Turn around'; cat = 'back'; }
+  return {head, text:`${d.name}, ${d.side}: ${dist}, about ${mins} min.`, rot:diff, cat, dm, brg};
+}
+function updateWalk(){
+  if (st.stage !== 'walk') return;
+  const s = walkState(), w = st.walk;
+  $('camGuide').innerHTML = `<div class="gicon"><svg viewBox="0 0 64 64" aria-hidden="true" style="transform:rotate(${Math.round(s.rot)}deg)"><path d="M32 8L52 30H40V56H24V30H12Z" fill="#0B1146"/></svg></div><div class="gtext"><b>${esc(s.head)}</b><span>${esc(s.text)}</span></div>`;
+  const pre = w.camErr ? 'The camera isn’t available, but the arrow still works. ' : '';
+  if (w.pos) setStatus(pre + `GPS accuracy is about ${Math.round(w.pos.acc)} meters. It can be off near buildings.`);
+  else if (w.err) setStatus(pre + w.err);
+  else if (pre) setStatus(pre);
+  if (s.cat === 'arrived') {
+    if (!w.arrived) { w.arrived = true; burst(window.innerWidth / 2, window.innerHeight * 0.35); if (st.voice) speak(`You’re at ${DEST[w.dest].name}. Tap I’m at the entrance to continue inside.`); }
+    return;
+  }
+  w.arrived = false;
+  if (s.cat === 'wait') return;
+  const now = Date.now(), ft = Math.round(s.dm * 3.281);
+  if (s.cat !== w.curCat) { w.curCat = s.cat; w.catSince = now; } // speak only once the direction has held steady
+  if (st.voice && now - w.catSince >= 1200 && now - w.lastSay > 8000 && (s.cat !== w.lastCat || Math.abs(ft - w.lastDist) >= 150)) {
+    w.lastSay = now; w.lastCat = s.cat; w.lastDist = ft;
+    speak(`${s.head}. ${fmtDist(s.dm)} to ${DEST[w.dest].name}.`);
+  }
+}
+function startGeo(){
+  if (!navigator.geolocation) { st.walk.err = 'This browser can’t share your location. Use the Maps button for walking directions.'; return; }
+  geoWatch = navigator.geolocation.watchPosition(p => { st.walk.err = ''; st.walk.pos = {lat:p.coords.latitude, lon:p.coords.longitude, acc:p.coords.accuracy || 0}; updateWalk(); }, () => { st.walk.err = 'Location is off for this site. Turn it on to see the arrow, or use the Maps button.'; updateWalk(); }, {enableHighAccuracy:true, maximumAge:2000, timeout:20000});
+}
+function stopWalk(){
+  if (geoWatch != null && navigator.geolocation && navigator.geolocation.clearWatch) navigator.geolocation.clearWatch(geoWatch);
+  geoWatch = null; st.walk.active = false;
+}
+function startWalk(dest){
+  const w = st.walk; if (dest) w.dest = dest;
+  w.pos = null; w.err = ''; w.camErr = false; w.curCat = ''; w.catSince = 0; w.lastSay = 0; w.lastCat = ''; w.lastDist = 0; w.arrived = false; w.active = true; st.target = null;
+  startCompass(); unlockAudio(); stopWalk(); w.active = true; startGeo();
+  if ($('cam').hidden) openCam('walk'); else setStage('walk');
+}
+const mapsUrl = k => `https://www.google.com/maps/dir/?api=1&destination=${DEST[k].lat},${DEST[k].lon}&travelmode=walking`;
 
 /* ===== ask AI ===== */
 async function askAI(q){
@@ -1052,6 +1247,7 @@ function render(){
   if (st.tab === 'ask') wireAsk();
   if (st.tab === 'scan') wireScan();
   if (st.tab === 'home') wireHome();
+  document.querySelectorAll('img[data-b]').forEach(im => { im.onerror = () => { const par = im.parentNode; if (par && par.classList && par.classList.contains('hero3')) { par.style.background = 'linear-gradient(160deg,#0B1146,#26358F 62%,#FF6B1A)'; par.removeChild(im); return; } const w = document.createElement('div'); w.innerHTML = ART.bld(im.dataset.b); const sv = w.firstChild; if (sv && sv.setAttribute) sv.setAttribute('preserveAspectRatio', 'xMidYMid slice'); if (sv && im.parentNode) im.parentNode.replaceChild(sv, im); }; });
   const q = $('q');
   if (q) q.oninput = e => { st.q = e.target.value; const pos = e.target.selectionStart; render(); const n = $('q'); if (n) { n.focus(); try { n.setSelectionRange(pos, pos); } catch (err) {} } };
 }
@@ -1073,9 +1269,13 @@ document.addEventListener('click', e => {
   else if (d.optrack) { st.ptrack = d.optrack; st.planOut = []; renderStage(); }
   else if (d.opbuild) { st.planOut = planFor(st.pday, st.ptrack).map(s => s.id); renderStage(); if (st.voice) speak(`Here’s your Day ${st.pday}. Tap Guide me on any event.`); }
   else if (d.opsave) { st.planOut.forEach(id => st.plan.add(id)); persist(); const r = t.getBoundingClientRect(); burst(r.left + r.width / 2, r.top + r.height / 2); t.textContent = 'Saved to My plan'; render(); }
+  else if (d.walk) startWalk(null);
+  else if (d.walkdest) { st.walk.dest = d.walkdest; st.walk.lastCat = ''; st.walk.arrived = false; st.walk.lastSay = 0; renderStage(); }
+  else if (d.mapsdir) window.open(mapsUrl(st.walk.dest), '_blank', 'noopener');
+  else if (d.today) { st.today = st.today === +d.today ? null : +d.today; try { localStorage.setItem('cuse-today', st.today ? String(st.today) : ''); } catch (e) {} if (st.today) { st.evDay = st.today; st.day = st.today; st.pday = st.today; st.mine = false; } render(); }
   else if (d.guide) startGuideSession(d.guide);
   else if (d.guideroom) startGuideTo(targetFromNum(d.guideroom));
-  else if (d.routemic) listenOnce(routeUtterance);
+  else if (d.routemic) listenOnce(routeUtterance, echoTo(!$('cam').hidden ? 'roomIn' : 'goIn'));
   else if (d.say2) routeUtterance(d.say2);
   else if (d.camclose) closeCam();
   else if (d.camread) { unlockAudio(); scanOnce(false); }
@@ -1106,7 +1306,7 @@ document.addEventListener('click', e => {
   else if (d.track) { st.track = d.track; render(); }
   else if (d.around) { st.around = d.around; render(); }
   else if (d.q) { if (!st.busy) askAI(d.q); }
-  else if (d.mic) listenOnce(askAI);
+  else if (d.mic) listenOnce(askAI, echoTo('askIn'));
   else if (d.say) { const m = st.chat[+d.say]; if (m) { unlockAudio(); speak(m.content); } }
   else if (d.near) locate('nearOut', 'bus+stop', 'bus stop near 215 University Pl Syracuse NY');
   else if (d.eat) locate('eatOut', 'restaurants', 'restaurants near 215 University Pl Syracuse NY');
