@@ -296,6 +296,36 @@ body::before{content:"";display:block;height:5px;background:var(--tang);}
 .sufoot .cr{font-size:12.5px;color:#B9C4F0;}
 .sufoot a{color:#fff;text-decoration:underline;text-underline-offset:2px;}
 .gicon svg[style]{width:52px;height:52px;transition:transform .25s linear;}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(96px + env(safe-area-inset-bottom,0px));max-width:min(92vw,520px);background:var(--navy);color:#fff;padding:12px 16px;border-radius:14px;z-index:90;font-size:14.5px;line-height:1.4;box-shadow:0 8px 28px rgba(8,12,51,.35);}
+.toast[hidden]{display:none;}
+.nearcard{margin:0 0 12px;padding:12px 14px;border-radius:16px;background:rgba(255,216,77,.16);border:1px solid rgba(255,216,77,.55);}
+.nearcard b{display:block;font-size:17px;margin-bottom:4px;}
+.nearcard p{margin:4px 0 8px;font-size:14px;}
+.rsum{margin:10px 0 6px;font-size:15px;}
+.rsvg{display:block;width:100%;height:auto;max-height:140px;margin:6px 0;}
+.rsteps{margin:6px 0 4px;padding-left:20px;font-size:14px;line-height:1.45;}
+.rsteps small{opacity:.7;}
+.hero3{display:block;min-height:0;background:var(--navy);}
+.hero3 > svg{position:static;display:block;width:100%;height:auto;}
+.hero3 .cap{padding:4px 18px 22px;background:none;}
+#routeBox{margin-bottom:10px;}
+.igbox{margin-top:8px;}
+.igrow{display:grid;gap:8px;grid-template-columns:1fr 1fr;margin:10px 0;}
+.igrow input{min-width:0;padding:12px 14px;border:1px solid var(--line);border-radius:14px;font:inherit;}
+.igsum{display:flex;flex-direction:column;margin:16px 0 6px;}
+.igsum b{font:600 19px var(--f-display);}
+.igsum span{color:var(--muted);font-size:14.5px;}
+.igsteps{margin:8px 0 12px;padding:0;list-style:none;}
+.igsteps li{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border:1px solid var(--line);border-radius:14px;margin-bottom:8px;font-size:15px;}
+.igsteps li.elv{background:rgba(156,203,255,.25);border-color:#9CCBFF;}
+.igsteps .fl{flex:none;font:700 12px var(--f-body);background:var(--navy);color:#fff;border-radius:8px;padding:3px 7px;margin-top:2px;}
+.igtabs{display:flex;gap:8px;margin:6px 0;}
+.igsvg{display:block;width:100%;height:auto;border-radius:16px;}
+.ig3d{perspective:1100px;height:440px;position:relative;margin:8px 0;overflow:hidden;border-radius:16px;background:linear-gradient(#EEF4FF,#fff);}
+.igstack{position:absolute;inset:0;transform-style:preserve-3d;transform:rotateX(48deg) rotateZ(-12deg) scale(.92);}
+.igplate{position:absolute;left:5%;right:5%;top:16%;transform-style:preserve-3d;transform:translate3d(var(--dx,0px),var(--dy,0px),var(--z,0px));}
+.igplate .igsvg{box-shadow:0 24px 36px rgba(11,17,70,.28);}
+.igtag{position:absolute;left:8px;top:8px;background:#FF6B1A;color:#1A0A00;font:700 13px var(--f-body);padding:3px 10px;border-radius:999px;transform:translateZ(1px);}
 @media (prefers-reduced-motion: reduce){
   *,*::before,*::after{animation:none !important;transition:none !important;}
 }
@@ -327,7 +357,7 @@ body::before{content:"";display:block;height:5px;background:var(--tang);}
     <div class="camcard" id="camCard" hidden></div>
     <div class="camstatus" id="camStatus" aria-live="polite"></div>
     <form class="camform" id="camForm" autocomplete="off" hidden><input id="camNum" type="text" placeholder="Check a room number" aria-label="Check a room number"><button class="btn sm" type="submit">Look up</button></form>
-    <div class="camctl" id="camCtl" hidden><button class="btn" id="camBtn" data-camread="1" type="button">Scan now</button><button class="btn ghost" id="camAuto" data-camauto="1" aria-pressed="true" type="button">Auto-scan on</button></div>
+    <div class="camctl" id="camCtl" hidden><button class="btn" id="camBtn" data-camread="1" type="button">Scan now</button><button class="btn ghost" id="camAuto" data-camauto="1" aria-pressed="true" type="button">Auto-scan on</button><button class="btn ghost" data-routemap="1" type="button">Map</button></div>
   </div>
 </div>
 
@@ -457,11 +487,20 @@ function buildContext(){
 }
 const GREETING = 'Hi! I’m the CuseCompass assistant. Ask me about sessions, rooms, lunch, buses, food, or Gen Jam rules, or tell me what you’re into and I’ll build your day.';
 function parseAI(t){
+  const raw = String(t || '').trim(), fail = 'Sorry, I had trouble answering that.';
   try {
-    const m = String(t).match(/\{[\s\S]*\}/), o = JSON.parse(m ? m[0] : t);
+    const m = raw.match(/\{[\s\S]*\}/), o = JSON.parse(m ? m[0] : raw);
     const ids = (Array.isArray(o.add) ? o.add : []).filter(id => SESSIONS.some(s => s.id === id));
-    return {reply:String(o.reply || '').trim() || 'Sorry, I had trouble answering that.', add:ids};
-  } catch (e) { return {reply:String(t || '').trim() || 'Sorry, I had trouble answering that.', add:[]}; }
+    return {reply:String(o.reply || '').trim() || fail, add:ids};
+  } catch (e) {}
+  // cut-off or slightly broken JSON: pull the reply text out instead of showing raw JSON
+  const m = raw.match(/"reply"\s*:\s*"((?:[^"\\]|\\[\s\S])*)("?)/);
+  if (m) {
+    let r; try { r = JSON.parse('"' + m[1] + '"'); } catch (e) { r = m[1].replace(/\\n/g, '\n').replace(/\\"/g, '"').replace(/\\\\/g, '\\'); }
+    const a = raw.match(/"add"\s*:\s*\[([^\]]*)\]/), ids = a ? (a[1].match(/"([^"]+)"/g) || []).map(x => x.slice(1, -1)).filter(id => SESSIONS.some(s => s.id === id)) : [];
+    return {reply:r.trim() || fail, add:ids, cut:!m[2]};
+  }
+  return {reply:/^\s*[{\[]/.test(raw) ? fail : (raw || fail), add:[]};
 }
 function localAnswer(q){
   if (/plan/i.test(q)) {
@@ -499,7 +538,7 @@ const MOVES = {ahead:'Keep going straight', left:'Turn left', right:'Turn right'
 /* ===== state ===== */
 const roomFor = s => s.rooms.map(id => ROOM[id].name).join(' ');
 const sessText = s => `${s.title} ${s.who} ${s.loc || ''} ${roomFor(s)} ${s.time}`;
-const st = {tab:'home', flow:null, bld:null, hiRoom:null, pday:1, ptrack:'all', day:1, track:'all', q:'', mine:false, around:'eat', plan:new Set(), chat:[], busy:false, openB:{}, spin:{rot:0, busy:false, pick:null, fresh:false, did:false}, roll:{busy:false, i:null}, pop:null, speak:false, voice:true, listening:false, found:[], target:null, here:null, stage:'where', evDay:1, today:null, walk:{dest:'nh1', pos:null, err:'', camErr:false, curCat:'', catSince:0, lastSay:0, lastCat:'', lastDist:0, arrived:false, active:false}, planOut:[], guide:{move:'unknown', head:'', text:'', ts:0, sig:''}};
+const st = {tab:'home', flow:null, bld:null, hiRoom:null, pday:1, ptrack:'all', day:1, track:'all', q:'', mine:false, around:'eat', plan:new Set(), chat:[], busy:false, openB:{}, spin:{rot:0, busy:false, pick:null, fresh:false, did:false}, roll:{busy:false, i:null}, pop:null, speak:false, voice:true, listening:false, found:[], target:null, here:null, stage:'where', evDay:1, today:null, near:null, ig:{from:'', to:'', view:'3d', res:null}, walk:{dest:'nh1', route:null, ri:1, rBusy:false, rFail:false, rAt:0, pos:null, err:'', camErr:false, curCat:'', catSince:0, lastSay:0, lastCat:'', lastDist:0, arrived:false, active:false}, planOut:[], guide:{move:'unknown', head:'', text:'', ts:0, sig:''}};
 try { const raw = localStorage.getItem('cuse-summit-plan'); if (raw) st.plan = new Set(JSON.parse(raw)); } catch (e) {}
 try { st.speak = !!localStorage.getItem('cuse-speak'); } catch (e) {}
 try { const t = Number(localStorage.getItem('cuse-today')); if (t === 1 || t === 2) { st.today = t; st.evDay = t; st.day = t; st.pday = t; } } catch (e) {}
@@ -550,6 +589,7 @@ const DEST = {
   nh23:{name:'Newhouse 2 and 3', side:'Waverly Avenue side', lat:43.04071, lon:-76.13479}
 };
 
+const ROUTE_ART = `<svg viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false"><defs><linearGradient id="hg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2B3B9A"/><stop offset="1" stop-color="#0B1146"/></linearGradient></defs><rect width="400" height="300" fill="url(#hg)"/><rect y="236" width="400" height="64" fill="#fff" fill-opacity=".06"/><rect x="112" y="34" width="262" height="186" rx="16" fill="#fff" fill-opacity=".10" stroke="#fff" stroke-opacity=".5" stroke-width="2"/><g fill="#fff" fill-opacity=".17"><rect x="126" y="48" width="56" height="56" rx="7"/><rect x="190" y="48" width="56" height="56" rx="7"/><rect x="318" y="48" width="42" height="56" rx="7"/><rect x="206" y="138" width="46" height="68" rx="7"/><rect x="260" y="138" width="46" height="68" rx="7"/><rect x="314" y="138" width="46" height="68" rx="7"/></g><rect x="254" y="48" width="56" height="56" rx="7" fill="#FFD84D"/><rect x="126" y="138" width="70" height="68" rx="7" fill="#9CCBFF"/><g fill="#0B1146"><path d="M161 152l-13 15h26z"/><path d="M161 192l13-15h-26z"/></g><rect x="172" y="214" width="34" height="12" rx="3" fill="#0B1146"/><path d="M52 270C84 270 120 246 189 232" fill="none" stroke="#FF6B1A" stroke-width="5" stroke-linecap="round" stroke-dasharray="1 11"/><path d="M189 224V121H282V108" fill="none" stroke="#FF6B1A" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="1 11"/><circle cx="52" cy="270" r="9" fill="#fff"/><circle cx="52" cy="270" r="17" fill="none" stroke="#fff" stroke-opacity=".5" stroke-width="2"/><path d="M282 100c-8-8-13-14-13-20a13 13 0 0126 0c0 6-5 12-13 20z" fill="#FF6B1A"/><circle cx="282" cy="80" r="5" fill="#fff"/></svg>`;
 /* ===== illustrations (original, drawn in code) ===== */
 const ART = {
   hero(){
@@ -622,7 +662,7 @@ function spinCard(){
   const [label, color] = ZONES[p.i], it = p.item; let title = '', body = '', act = '';
   if (p.i === 0) {
     title = esc(it.title); body = `Day ${it.day}, ${esc(it.time)}. ${esc(it.loc || '')}`;
-    act = `<button class="btn sm" data-guide="${it.id}" type="button">Guide me there</button><button class="btn ghost sm" data-save="${it.id}" aria-pressed="${st.plan.has(it.id)}" type="button">${st.plan.has(it.id) ? 'Saved' : 'Save to my plan'}</button>`;
+    act = `<button class="btn sm" data-guide="${it.id}" type="button">${targetFromSession(it) ? 'Guide me there' : 'Where is it?'}</button><button class="btn ghost sm" data-save="${it.id}" aria-pressed="${st.plan.has(it.id)}" type="button">${st.plan.has(it.id) ? 'Saved' : 'Save to my plan'}</button>`;
   } else if (p.i === 1) {
     title = esc(it.name); body = esc(`${it.where}. ${it.note}`.trim());
     act = `<button class="btn sm" data-go="around" data-sub="eat" type="button">See all food</button>`;
@@ -651,12 +691,12 @@ function viewHome(){
   if (st.flow === 'go' && st.bld) return viewBuilding(st.bld);
   const cards = Object.keys(BUILDINGS).map(b => { const n = SESSIONS.filter(s => s.b === b).length; return `<button class="bcard2" data-bld="${b}" type="button"><div class="bart">${photoImg(b, 500)}</div><strong>${BUILDINGS[b]}</strong><em>${n} summit event${n === 1 ? '' : 's'}</em></button>`; }).join('');
   const credits = Object.keys(PHOTOS).map(b => ln(PHOTOS[b].page, BUILDINGS[b])).join(', ');
-  return `<section class="hero3">${photoImg('nh1', 960)}<div class="cap"><h1>Lost in Newhouse? We’ll walk you to your room.</h1><p>Open your camera, say where you’re going, and follow the arrows.</p><div class="row cta"><button class="btn big" data-start="1" type="button">Start at the entrance</button><button class="btn ghost big" data-walk="1" type="button">Walk to Newhouse</button></div></div></section>
+  return `<section class="hero3">${ROUTE_ART}<div class="cap"><h1>From the street to the right room.</h1><p>Walk to the building, then follow camera arrows and a voice to your door.</p><div class="row cta"><button class="btn big" data-start="1" type="button">Start at the entrance</button><button class="btn ghost big" data-walk="1" type="button">Walk to the building</button></div></div></section>
   <form class="askbox" id="goForm" autocomplete="off"><input type="text" id="goIn" placeholder="Say or type where to go" aria-label="Where do you want to go?">${micBtn('Talk', 'data-routemic="1"', 'btn ghost')}<button class="btn" type="submit">Go</button></form>
   <div class="exs">${['Take me to the keynote', 'Where is Room 206F?'].map(x => `<button class="chip" data-say2="${esc(x)}" type="button">${esc(x)}</button>`).join('')}</div>
-  <div class="today"><span>Today is</span>${[1, 2].map(d => `<button class="chip" data-today="${d}" aria-pressed="${st.today === d}" type="button">Day ${d}</button>`).join('')}<button class="btn ghost sm" data-flow="plan" aria-pressed="${st.flow === 'plan'}" type="button">Plan my day</button></div>
+  <div class="today"><span>Today is</span>${[1, 2].map(d => `<button class="chip" data-today="${d}" aria-pressed="${st.today === d}" type="button">Day ${d}</button>`).join('')}<button class="btn ghost sm" data-flow="plan" aria-pressed="${st.flow === 'plan'}" type="button">Plan my day</button><button class="btn ghost sm" data-tab="scan" type="button">Indoor map</button></div>
   ${st.flow === 'plan' ? planPanel() : ''}
-  <h2 class="sech">Pick a building</h2><div class="bgrid">${cards}</div>
+  <h2 class="sech">Buildings ready now</h2><div class="bgrid">${cards}</div>
   <h2 class="sech">Not sure where to start?</h2>
   <div class="compass"><div class="dialwrap">${dialSVG()}</div><div><h3>Spin the compass</h3><p>It points at something real from the summit: a talk, a bite, a ride, a room, or the door.</p><button class="btn" data-spin="1" type="button">Spin</button></div></div>
   <div id="spinOut" aria-live="polite">${spinCard()}</div>
@@ -671,7 +711,7 @@ function viewBuilding(b){
   <div class="usecard"><h3>What this building is for</h3><p><strong>${esc(info.tag)}.</strong></p><p>${esc(info.use)}</p>${info.link ? `<p>${esc(info.link)}</p>` : ''}<p class="src">Source: ${esc(info.src)}.</p></div>
   <div class="row" style="margin-top:16px"><button class="btn" data-start="1" data-here="${b}" type="button">Start at the entrance</button></div>
   <h2 class="sech">What’s happening here</h2>`;
-  h += evs.length ? `<ul class="evl">${evs.map(s => `<li class="evt"><div><div class="ttl">${esc(s.title)}</div><div class="who">Day ${s.day}, ${esc(s.time)}</div><div class="who">${esc(s.loc)}</div></div><button class="btn sm" data-guide="${s.id}" type="button">Guide me</button></li>`).join('')}</ul>` : `<p class="empty">No summit events are listed in ${BUILDINGS[b]}.</p>`;
+  h += evs.length ? `<ul class="evl">${evs.map(s => `<li class="evt"><div><div class="ttl">${esc(s.title)}</div><div class="who">Day ${s.day}, ${esc(s.time)}</div><div class="who">${esc(s.loc)}</div></div><button class="btn sm" data-guide="${s.id}" type="button">${targetFromSession(s) ? 'Guide me' : 'Where is it?'}</button></li>`).join('')}</ul>` : `<p class="empty">No summit events are listed in ${BUILDINGS[b]}.</p>`;
   h += `<details class="more" id="more" ${st.hiRoom ? 'open' : ''}><summary>Every room I know in ${BUILDINGS[b]}</summary><div class="moreb">
     <p class="note">${ln(SU_MAP[b], b === 'nh1' ? 'Open Newhouse 1 on the SU campus map' : 'Open the SU campus map')} for official floor plans.${b === 'nh1' ? ' On that map, floor 1 shows rooms numbered 2xx and floor 2 shows 3xx, so match floors by room number.' : ''}</p>
     ${rooms.length ? `<h3>At the summit</h3>${rooms.map(roomCard).join('')}` : ''}
@@ -708,18 +748,184 @@ function scanCard(list, target){
   return h;
 }
 const readNums = text => [...String(text).toUpperCase().matchAll(/\d{3}[A-Z]{0,2}/g)].map(m => m[0]);
+/* ===== indoor router: floors 2 and 3 of Newhouse, traced by hand from SU's floor plans ===== */
+const INDOOR = {"floors":{"2":{"nodes":{"h1":[330,300],"h2":[450,300],"h3":[580,300],"h4":[700,300],"h5":[820,300],"h9":[790,390],"h8":[745,445],"h6":[440,330],"h7":[600,360],"k1":[365,360],"a1":[330,430],"a2":[450,425],"a3":[600,425],"w2":[240,490],"w3":[185,540],"w4":[130,630],"w5":[85,720],"s1":[150,735],"s2":[300,735],"s3":[450,735],"s4":[600,735],"s5":[722,730],"v1":[730,478],"v2":[725,525],"v3":[722,600],"v4":[722,672],"c1":[800,525],"c2":[900,525],"c3":[960,525],"c4":[1050,525],"c5":[1150,520],"c6":[1295,525],"e1":[1295,600],"m1":[800,672],"m2":[950,672],"m3":[1100,672],"m4":[1300,668],"m5":[1400,665],"m6":[1500,660],"m7":[1600,665],"m8":[1640,700],"h4b":[760,295],"q2":[758,250],"q3":[758,190],"q4":[790,140],"t1":[850,125],"t2":[950,125],"t3":[1050,125],"t4":[1130,125],"t5":[1250,125],"t6":[1350,118],"t7":[1450,112],"d1":[1128,170],"d2":[1128,215],"d3":[1200,215],"d4":[1290,215]},"edges":[["h1","h2"],["h2","h3"],["h3","h4"],["h4","h5"],["h5","h9"],["h9","h8"],["h8","v1"],["h2","h6"],["h3","h7"],["h7","a3"],["a1","a2"],["a2","a3"],["a1","w2"],["w2","w3"],["w3","w4"],["w4","w5"],["w5","s1"],["s1","s2"],["s2","s3"],["s3","s4"],["s4","s5"],["h1","k1"],["k1","a1"],["v1","v2"],["v2","v3"],["v3","v4"],["v4","s5"],["v2","c1"],["c1","c2"],["c2","c3"],["c3","c4"],["c4","c5"],["c5","c6"],["c6","e1"],["e1","m4"],["v4","m1"],["m1","m2"],["m2","m3"],["m3","m4"],["m4","m5"],["m5","m6"],["m6","m7"],["m7","m8"],["h4","h4b"],["h4b","q2"],["q2","q3"],["q3","q4"],["q4","t1"],["t1","t2"],["t2","t3"],["t3","t4"],["t4","t5"],["t5","t6"],["t6","t7"],["t4","d1"],["d1","d2"],["d2","d3"],["d3","d4"]],"pois":[["elevator","NH1 elevator",960,497,"c3"],["elevator","NH2 elevator",822,178,"q4"],["elevator","NH3 elevator A",413,352,"h6"],["elevator","NH3 elevator B",326,417,"a1"],["stairs","Stairs",800,483,"c1"],["stairs","Stairs",1346,491,"c6"],["stairs","Stairs",1230,596,"e1"],["stairs","Stairs",746,731,"s5"],["stairs","Stairs",948,719,"m2"],["stairs","Stairs",190,558,"w3"],["stairs","Stairs",228,773,"s2"],["stairs","Stairs",280,323,"h1"],["stairs","Stairs",376,244,"h1"],["stairs","Stairs",722,191,"q3"],["stairs","Stairs",808,197,"q3"],["stairs","Stairs",1197,157,"d3"],["stairs","Stairs",1448,139,"t7"],["stairs","Stairs",1201,272,"d3"],["restroom","Restroom",704,251,"h4"],["restroom","Restroom",800,241,"q2"],["restroom","Restroom",1399,718,"m5"],["restroom","Accessible restroom",380,375,"k1"],["restroom","Accessible restroom",400,396,"k1"]],"rooms":{"201":[868,480,"c2",0],"202":[960,462,"c3",0],"203":[1030,463,"c4",0],"205A":[1130,477,"c5",0],"205B":[1255,456,"c6",0],"205":[1255,500,"c6",0],"205BA":[1337,454,"c6",0],"205E":[1260,538,"c6",0],"205F":[1200,563,"c5",0],"205D":[1290,585,"e1",0],"204":[1060,565,"c4",0],"213":[1060,622,"m3",0],"211":[1200,628,"e1",0],"210":[1320,654,"m4",0],"209":[1375,634,"m5",0],"206A":[1420,633,"m5",0],"206B":[1385,563,"e1",0],"206C":[1480,545,"m6",0],"206":[1480,572,"m6",0],"206CA":[1430,510,"c6",1],"206D":[1605,568,"m7",0],"206E":[1655,657,"m8",0],"206F":[1665,746,"m8",0],"207N":[1530,735,"m6",0],"207":[1170,725,"m3",0],"207C":[1065,740,"m3",0],"297SA":[1090,712,"m3",0],"212":[839,734,"m1",0],"221":[768,617,"v3",0],"223":[779,573,"c1",0],"208":[1325,692,"m4",0],"241":[313,455,"a1",0],"240":[385,455,"a1",0],"239":[437,449,"a2",0],"238":[487,455,"a2",0],"237":[552,455,"a3",0],"236":[615,455,"a3",0],"235":[682,455,"v1",0],"242":[706,419,"h8",0],"244":[623,363,"h7",0],"245":[498,417,"a2",0],"246":[462,347,"h6",0],"243":[692,301,"h4",0],"224":[503,504,"a2",0],"224C":[595,502,"a3",0],"222":[666,504,"v2",0],"222DC":[599,536,"a3",0],"222DA":[464,564,"a2",1],"222D":[588,565,"v3",1],"214C":[457,628,"s3",0],"214":[599,660,"s4",0],"214A":[493,695,"s3",0],"220":[400,698,"s3",0],"250":[325,540,"w2",0],"251":[266,653,"s2",0],"219":[357,769,"s2",0],"218":[438,769,"s3",0],"217":[518,769,"s3",0],"216":[590,769,"s4",0],"215":[663,769,"s5",0],"254":[44,498,"w3",1],"255":[130,458,"w3",0],"255A":[47,446,"w3",1],"256B":[82,420,"w3",1],"256A":[182,422,"w2",0],"256C":[111,393,"w2",1],"256":[211,395,"w2",0],"256E":[203,354,"h1",1],"257":[192,338,"h1",1],"258":[234,307,"h1",0],"259":[170,313,"h1",1],"273":[614,214,"h3",0],"273A":[572,257,"h3",0],"274":[624,176,"h3",1],"275":[631,152,"q3",1],"276":[719,147,"q3",0],"280":[1070,170,"t3",0],"280A":[1062,197,"d2",0],"284":[1094,235,"d2",0],"283":[1174,169,"d1",0],"282A":[1219,169,"d3",0],"282":[1202,187,"d3",0],"285":[1212,231,"d3",0],"284A":[1216,255,"d3",0],"290":[1289,161,"t5",0],"288":[1293,192,"d4",0],"285A":[1314,222,"d4",0]},"box":[-16,52,1745,849]},"3":{"nodes":{"g1":[610,722],"g2":[700,722],"g3":[800,718],"p1":[595,790],"p2":[585,860],"pA":[640,880],"pB":[640,965],"p3":[600,990],"p4":[555,1020],"e1":[530,1070],"e2":[500,1150],"e3":[460,1240],"e4":[430,1330],"e5":[400,1420],"e6":[330,1455],"sx":[420,1480],"w1":[470,1040],"w2":[405,1090],"w3":[350,1150],"w4":[270,1250],"w5":[250,1350],"w6":[243,1440],"w7":[270,1455],"s1":[860,707],"s2":[1000,708],"s3":[1100,708],"s4":[1200,708],"s5":[1380,708],"s6":[1500,708],"s7":[1650,708],"s8":[1800,708],"s9":[1950,708],"m1":[1000,630],"m2":[1110,630],"mE":[1180,630],"m3":[1250,632],"m4":[1380,632],"m5":[1550,632],"m6":[1664,632],"m7":[1800,632],"m8":[1930,632],"b1":[1650,748],"b2":[1689,894],"b3":[1725,1003],"L1":[1725,1060],"L2":[1600,1150],"L3":[1760,1210],"L4":[1700,1320],"L5":[1480,1110],"L6":[1840,1190],"L7":[1850,1330],"L8":[1560,1385],"L9":[1700,1375],"L10":[1990,1385],"L11":[1520,1290]},"edges":[["g1","g2"],["g2","g3"],["g3","s1"],["g1","p1"],["p1","p2"],["p2","pA"],["pA","pB"],["pB","p3"],["p3","p4"],["p4","e1"],["e1","e2"],["e2","e3"],["e3","e4"],["e4","e5"],["e5","e6"],["e5","sx"],["e6","sx"],["p4","w1"],["w1","w2"],["w2","w3"],["w3","w4"],["w4","w5"],["w5","w6"],["w6","w7"],["w7","e6"],["s1","s2"],["s2","s3"],["s3","s4"],["s4","s5"],["s5","s6"],["s6","s7"],["s7","s8"],["s8","s9"],["m1","m2"],["m2","mE"],["mE","m3"],["m3","m4"],["m4","m5"],["m5","m6"],["m6","m7"],["m7","m8"],["m1","s2"],["m2","s3"],["m4","s5"],["m6","s7"],["s7","b1"],["b1","b2"],["b2","b3"],["b3","L1"],["L1","L2"],["L1","L3"],["L2","L3"],["L2","L5"],["L3","L4"],["L3","L6"],["L4","L7"],["L4","L9"],["L2","L11"],["L11","L8"],["L8","L9"],["L7","L10"]],"pois":[["elevator","NH1 elevator",1430,1090,"L5"],["elevator","NH2 elevator",1180,645,"mE"],["elevator","NH3 elevator A",722,880,"pA"],["elevator","NH3 elevator B",697,970,"pB"],["stairs","Stairs",1909,1080,"L6"],["stairs","Stairs",1823,1184,"L6"],["stairs","Stairs",1860,1297,"L7"],["stairs","Stairs",1478,1423,"L8"],["stairs","Stairs",1065,665,"s3"],["stairs","Stairs",1173,668,"mE"],["stairs","Stairs",1616,615,"m6"],["stairs","Stairs",697,853,"pA"],["stairs","Stairs",475,1180,"e2"],["stairs","Stairs",473,1515,"sx"],["restroom","Restroom",1548,651,"m5"],["restroom","Restroom",1566,682,"m5"],["restroom","Accessible restroom",705,908,"pA"],["restroom","Accessible restroom",688,938,"pB"]],"rooms":{"301":[1542,1051,"L5",0],"301A":[1634,1047,"L1",0],"301B":[1634,1096,"L2",0],"303":[2001,1237,"L10",1],"304":[2051,1421,"L10",0],"305":[1782,1448,"L9",0],"305A":[1634,1376,"L9",0],"305B":[1890,1376,"L7",0],"332A":[942,601,"m1",0],"332":[1015,616,"m1",0],"330A":[942,623,"m1",0],"330":[925,678,"s1",0],"330D":[1005,649,"m1",0],"330C":[1005,669,"s2",0],"330B":[1005,691,"s2",0],"334":[1065,607,"m2",0],"335":[1103,607,"m2",0],"336":[1141,607,"m2",0],"337":[1194,607,"mE",0],"338":[1242,607,"m3",0],"339":[1281,607,"m3",0],"341":[1323,607,"m4",0],"342":[1360,607,"m4",0],"348":[1548,599,"m5",0],"351":[1686,607,"m6",0],"352":[1753,607,"m7",0],"353":[1812,607,"m7",0],"360A":[1866,607,"m8",0],"360B":[1946,607,"m8",0],"340":[1275,666,"m3",0],"343":[1364,649,"m4",0],"379":[1371,680,"s5",0],"345":[1462,666,"s6",0],"350":[1714,666,"m6",0],"355":[1837,666,"m7",0],"360":[1927,669,"m8",0],"360H":[2024,728,"s9",0],"378":[1223,730,"s4",0],"377":[1266,730,"s4",0],"376":[1310,730,"s5",0],"375":[1353,730,"s5",0],"374":[1398,730,"s5",0],"373":[1441,730,"s6",0],"372":[1484,730,"s6",0],"371":[1530,730,"s6",0],"370":[1571,730,"s6",0],"366":[1705,730,"b1",0],"365":[1748,730,"s8",0],"364":[1792,730,"s8",0],"363":[1837,730,"s8",0],"362":[1880,730,"s9",0],"360J":[1916,728,"s9",0],"328":[812,707,"g3",0],"318F":[640,640,"g1",0],"318G":[570,652,"g1",0],"318E":[472,667,"g1",1],"318H":[570,678,"g1",0],"318D":[452,694,"g1",1],"318":[510,728,"g1",0],"318C":[437,773,"p1",1],"318B":[432,807,"p2",1],"318A":[418,843,"p2",1],"317B":[546,815,"p1",0],"316B":[405,943,"w1",0],"315B":[323,968,"w2",1],"316A":[445,982,"w1",0],"315A":[278,1012,"w2",1],"315":[387,1027,"w2",0],"314B":[240,1050,"w3",1],"314":[332,1092,"w3",0],"314A":[188,1107,"w4",1],"310":[656,1080,"p3",0],"311":[572,1323,"e3",1],"312":[538,1418,"sx",1],"313":[160,1418,"w6",0],"327":[736,787,"g2",0],"328A":[725,707,"g2",0]},"box":[100,539,2131,1560]}},"links":[["NH1 elevator","2:c3","3:L5"],["NH2 elevator","2:q4","3:mE"],["NH3 elevator A","2:h6","3:pA"],["NH3 elevator B","2:a1","3:pB"]]};
+const IG = (() => {
+  const adj = {}, pos = {}, rooms = {}, pois = [], add = (a, b, w) => { (adj[a] = adj[a] || []).push([b, w]); (adj[b] = adj[b] || []).push([a, w]); };
+  Object.keys(INDOOR.floors).forEach(f => {
+    const F = INDOOR.floors[f];
+    Object.keys(F.nodes).forEach(n => { pos[f + ':' + n] = F.nodes[n]; });
+    F.edges.forEach(e => { const a = F.nodes[e[0]], b = F.nodes[e[1]]; add(f + ':' + e[0], f + ':' + e[1], Math.hypot(a[0] - b[0], a[1] - b[1])); });
+    Object.keys(F.rooms).forEach(r => { const v = F.rooms[r]; rooms[r] = {f:Number(f), node:f + ':' + v[2], x:v[0], y:v[1], approx:!!v[3]}; });
+    F.pois.forEach(p => pois.push({type:p[0], name:p[1], f:Number(f), x:p[2], y:p[3], node:f + ':' + p[4]}));
+  });
+  INDOOR.links.forEach(l => add(l[1], l[2], 70)); // riding an elevator, in the same units as walking
+  return {adj, pos, rooms, pois};
+})();
+const igFloor = k => Number(String(k).split(':')[0]);
+function igDijkstra(from){
+  const dist = {}, prev = {}, done = {}, q = [[0, from]]; dist[from] = 0;
+  while (q.length) {
+    q.sort((a, b) => a[0] - b[0]); const [d, u] = q.shift(); if (done[u]) continue; done[u] = true;
+    (IG.adj[u] || []).forEach(([v, w]) => { const nd = d + w; if (dist[v] === undefined || nd < dist[v]) { dist[v] = nd; prev[v] = u; q.push([nd, v]); } });
+  }
+  return {dist, prev};
+}
+function igPathTo(res, to){ if (res.dist[to] === undefined) return null; const p = []; for (let u = to; u; u = res.prev[u]) p.unshift(u); return p; }
+function igRoomOf(text){
+  const list = readNums(String(text || '')); const hit = list.find(n => IG.rooms[n]);
+  return {hit, list};
+}
+const igElevName = k => { const l = INDOOR.links.find(x => x[1] === k || x[2] === k); return l ? l[0] : 'elevator'; };
+const igLenWord = len => len < 140 ? 'a few steps' : len < 380 ? 'a short walk' : 'a long hallway';
+function igSteps(path, toNum, fromNum){
+  const steps = [], legs = []; let cur = [path[0]];
+  for (let j = 1; j < path.length; j++) { if (igFloor(path[j]) !== igFloor(path[j - 1])) { legs.push(cur); cur = [path[j]]; } else cur.push(path[j]); }
+  legs.push(cur);
+  const ang = (a, b, c) => { const u = [b[0] - a[0], b[1] - a[1]], v = [c[0] - b[0], c[1] - b[1]]; return Math.atan2(u[0] * v[1] - u[1] * v[0], u[0] * v[0] + u[1] * v[1]) * 180 / Math.PI; };
+  const segs = []; legs.forEach((leg, li) => { for (let j = 0; j < leg.length - 1; j++) segs.push({li, j, f:igFloor(leg[0]), A:IG.pos[leg[j]], B:IG.pos[leg[j + 1]]}); });
+  const assign = {};
+  Object.keys(IG.rooms).forEach(r => {
+    const R = IG.rooms[r]; if (R.approx || r === toNum || r === fromNum) return; let best = null;
+    segs.forEach(sg => {
+      if (sg.f !== R.f) return; const dx = sg.B[0] - sg.A[0], dy = sg.B[1] - sg.A[1], L2 = dx * dx + dy * dy || 1;
+      let t = ((R.x - sg.A[0]) * dx + (R.y - sg.A[1]) * dy) / L2; if (t < -0.05 || t > 1.05) return; t = Math.max(0, Math.min(1, t));
+      const d = Math.hypot(R.x - (sg.A[0] + t * dx), R.y - (sg.A[1] + t * dy));
+      if (d <= 95 && (!best || d < best.d)) best = {d, li:sg.li, j:sg.j, t, side:(dx * (R.y - sg.A[1]) - dy * (R.x - sg.A[0])) > 0 ? 'right' : 'left'};
+    });
+    if (best) assign[r] = best;
+  });
+  legs.forEach((leg, li) => {
+    const f = igFloor(leg[0]), P = leg.map(k => IG.pos[k]);
+    if (li > 0) steps.push({f, text:`Leave the elevator on floor ${f}.`});
+    if (P.length > 1) {
+      const cuts = [0]; for (let j = 1; j < P.length - 1; j++) if (Math.abs(ang(P[j - 1], P[j], P[j + 1])) >= 35) cuts.push(j); cuts.push(P.length - 1);
+      for (let k = 0; k < cuts.length - 1; k++) {
+        const a = cuts[k], b = cuts[k + 1], A = P[a], B = P[b], dx = B[0] - A[0], dy = B[1] - A[1], len = Math.hypot(dx, dy);
+        let turn = ''; if (k > 0) { const t = ang(P[a - 1], P[a], P[a + 1]); turn = (Math.abs(t) < 65 ? 'Bear ' : 'Turn ') + (t > 0 ? 'right' : 'left'); }
+        const sides = {left:[], right:[]};
+        Object.keys(assign).forEach(r => { const q = assign[r]; if (q.li === li && q.j >= a && q.j < b) sides[q.side].push([q.j + q.t, r]); });
+        const say = s => { s.sort((x, y) => x[0] - y[0]); const names = s.map(x => x[1]).slice(0, 3); return names.length ? names.join(', ') : ''; };
+        const passL = say(sides.left), passR = say(sides.right);
+        let text = (k === 0 ? 'Head along the hallway' : turn + ' and continue') + ` for ${igLenWord(len)}`;
+        const bits = []; if (passL) bits.push(`${passL} on your left`); if (passR) bits.push(`${passR} on your right`);
+        if (bits.length) text += `, passing ${bits.join(' and ')}`;
+        steps.push({f, text: text + '.'});
+      }
+    }
+    if (li < legs.length - 1) { const nf = igFloor(legs[li + 1][0]); steps.push({f, text:`Take the ${igElevName(leg[leg.length - 1])} ${nf > f ? 'up' : 'down'} to floor ${nf}.`, elev:true}); }
+  });
+  if (toNum && IG.rooms[toNum]) {
+    const R = IG.rooms[toNum], last = legs[legs.length - 1], P = last.map(k => IG.pos[k]), n = P.length;
+    if (R.approx) steps.push({f:R.f, text:`Room ${toNum} is in this area. Check the door signs.`});
+    else if (n < 2) steps.push({f:R.f, text:`Room ${toNum} is right here. Check the door signs.`});
+    else { const A = P[n - 2], B = P[n - 1], cr = (B[0] - A[0]) * (R.y - B[1]) - (B[1] - A[1]) * (R.x - B[0]); steps.push({f:R.f, text:`Room ${toNum} is on your ${cr > 0 ? 'right' : 'left'}.`}); }
+  }
+  return steps;
+}
+/* ----- drawing: flat floor plates, shown one at a time or stacked in 3D ----- */
+function igFloorSVG(f, o){
+  const F = INDOOR.floors[f]; let box = F.box;
+  if (!o.full && o.pts && o.pts.length) {
+    let x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9; o.pts.forEach(p => { x0 = Math.min(x0, p[0]); y0 = Math.min(y0, p[1]); x1 = Math.max(x1, p[0]); y1 = Math.max(y1, p[1]); });
+    const pad = 150; x0 -= pad; y0 -= pad; x1 += pad; y1 += pad;
+    const w = Math.max(x1 - x0, 620), h = Math.max(y1 - y0, 400), cx = (x0 + x1) / 2, cy = (y0 + y1) / 2; box = [cx - w / 2, cy - h / 2, cx + w / 2, cy + h / 2];
+  }
+  const W = box[2] - box[0], H = box[3] - box[1], fs = Math.max(11, W / (o.full ? 46 : 30)), inb = (x, y) => x > box[0] && x < box[2] && y > box[1] && y < box[3];
+  let s = `<svg class="igsvg" viewBox="${box[0].toFixed(0)} ${box[1].toFixed(0)} ${W.toFixed(0)} ${H.toFixed(0)}" role="img" aria-label="Floor ${f} map"><rect x="${box[0]}" y="${box[1]}" width="${W}" height="${H}" rx="${fs}" fill="#101A5E"/>`;
+  F.edges.forEach(e => { const a = F.nodes[e[0]], b = F.nodes[e[1]]; s += `<line x1="${a[0]}" y1="${a[1]}" x2="${b[0]}" y2="${b[1]}" stroke="#E6EBFF" stroke-opacity=".9" stroke-width="${fs * 1.9}" stroke-linecap="round"/>`; });
+  Object.keys(F.rooms).forEach(r => { const v = F.rooms[r]; if (!inb(v[0], v[1])) return; const hi = o.hi && o.hi[r]; if (o.full && !hi) return; s += `<text x="${v[0]}" y="${v[1] + fs * (hi ? -1.5 : 0.3)}" text-anchor="middle" font-size="${hi ? fs * 1.05 : fs * 0.78}" font-weight="${hi ? 700 : 500}" fill="${hi ? '#FFD84D' : '#8D9AD0'}" ${hi ? `stroke="#101A5E" stroke-width="${fs * 0.25}" paint-order="stroke"` : ''}>${esc(r)}</text>`; });
+  IG.pois.filter(p => p.f === Number(f) && inb(p.x, p.y)).forEach(p => {
+    const c = p.type === 'elevator' ? '#9CCBFF' : p.type === 'restroom' ? '#FF9E6B' : '#7DDC9A', r = fs * 0.95;
+    s += `<g><rect x="${p.x - r}" y="${p.y - r}" width="${r * 2}" height="${r * 2}" rx="${r * 0.35}" fill="${c}" stroke="#101A5E" stroke-width="${fs * 0.2}"/>`;
+    s += p.type === 'elevator' ? `<path d="M${p.x - r * 0.45} ${p.y - r * 0.05}l${r * 0.45} -${r * 0.5}l${r * 0.45} ${r * 0.5}z M${p.x - r * 0.45} ${p.y + r * 0.15}l${r * 0.45} ${r * 0.5}l${r * 0.45} -${r * 0.5}z" fill="#101A5E"/>` : p.type === 'restroom' ? `<circle cx="${p.x}" cy="${p.y - r * 0.4}" r="${r * 0.22}" fill="#101A5E"/><path d="M${p.x - r * 0.3} ${p.y + r * 0.6}v-${r * 0.7}h${r * 0.6}v${r * 0.7}z" fill="#101A5E"/>` : `<path d="M${p.x - r * 0.55} ${p.y + r * 0.5}h${r * 0.35}v-${r * 0.35}h${r * 0.35}v-${r * 0.35}h${r * 0.35}" fill="none" stroke="#101A5E" stroke-width="${r * 0.22}"/>`;
+    s += '</g>';
+  });
+  if (o.pts && o.pts.length > 1) s += `<polyline points="${o.pts.map(p => p[0] + ',' + p[1]).join(' ')}" fill="none" stroke="#FF6B1A" stroke-width="${fs * 0.75}" stroke-linecap="round" stroke-linejoin="round"/>`;
+  (o.marks || []).forEach(m => { if (m.type === 'start') s += `<circle cx="${m.x}" cy="${m.y}" r="${fs * 1.1}" fill="#fff" stroke="#3B82F6" stroke-width="${fs * 0.4}"/>`; else if (m.type === 'end') s += `<circle cx="${m.x}" cy="${m.y}" r="${fs * 1.25}" fill="#FFD84D" stroke="#101A5E" stroke-width="${fs * 0.3}"/>`; else s += `<circle cx="${m.x}" cy="${m.y}" r="${fs * 1.8}" fill="none" stroke="#FF6B1A" stroke-width="${fs * 0.35}" stroke-dasharray="${fs * 0.6} ${fs * 0.6}"/>`; });
+  return s + '</svg>';
+}
+function igPlan(path, fromNum, toNum){
+  const floors = []; path.forEach(k => { const f = igFloor(k); if (!floors.includes(f)) floors.push(f); });
+  const per = {}; path.forEach(k => { const f = igFloor(k); (per[f] = per[f] || []).push(IG.pos[k]); });
+  const hi = {}; if (fromNum) hi[fromNum] = 1; if (toNum) hi[toNum] = 1;
+  const S = IG.rooms[fromNum], T = IG.rooms[toNum];
+  const marks = {}; floors.forEach(f => { marks[f] = []; });
+  if (S) marks[S.f].push({type:'start', x:S.x, y:S.y});
+  if (T) marks[T.f].push({type:'end', x:T.x, y:T.y});
+  path.forEach((k, i) => { if (i > 0 && igFloor(path[i - 1]) !== igFloor(k)) { const p = IG.pos[k], q = IG.pos[path[i - 1]]; marks[igFloor(k)].push({type:'elev', x:p[0], y:p[1]}); marks[igFloor(path[i - 1])].push({type:'elev', x:q[0], y:q[1]}); } });
+  return {floors, per, hi, marks};
+}
+function igMapHTML(plan, view){
+  const fl = Object.keys(INDOOR.floors).map(Number).sort((a, b) => b - a);
+  const one = f => igFloorSVG(f, {pts:plan.per[f] || [], hi:plan.hi, marks:plan.marks[f] || [], full:false});
+  if (view === '3d') {
+    const plates = fl.map((f, i) => `<div class="igplate" data-f="${f}" style="--z:${(fl.length - 1 - i * 2) * 70}px">${igFloorSVG(f, {pts:plan.per[f] || [], hi:plan.hi, marks:plan.marks[f] || [], full:true})}<span class="igtag">Floor ${f}</span></div>`).join('');
+    return `<div class="ig3d" aria-label="3D view of floors ${fl.join(' and ')}"><div class="igstack">${plates}</div></div>`;
+  }
+  const f = Number(view); return `<div class="ig2d">${one(INDOOR.floors[f] ? f : plan.floors[0])}</div>`;
+}
+function igResultHTML(r){
+  if (r.error) return `<p class="empty">${esc(r.error)}</p>`;
+  const tabs = ['3d'].concat(Object.keys(INDOOR.floors).sort((a, b) => b - a)).map(v => `<button class="chip" data-igview="${v}" aria-pressed="${st.ig.view === v}" type="button">${v === '3d' ? '3D' : 'Floor ' + v}</button>`).join('');
+  const steps = r.steps.map(s => `<li${s.elev ? ' class="elv"' : ''}><span class="fl">F${s.f}</span>${esc(s.text)}</li>`).join('');
+  return `<div class="igsum"><b>${esc(r.title)}</b><span>${esc(r.sub)}</span></div><ol class="igsteps">${steps}</ol><div class="igtabs" role="group" aria-label="Map view">${tabs}</div><div id="igMap">${igMapHTML(r.plan, st.ig.view)}</div><p class="note">Traced by hand from SU’s floor plans (floors 2 and 3 so far), so distances and sides are approximate. Always confirm with the door signs. Rides use the elevators only, because we couldn’t match stairs between floors.</p>`;
+}
+function igRoute(fromT, toT){
+  const a = igRoomOf(fromT), b = igRoomOf(toT);
+  const unmapped = (list, hit, label) => { if (hit) return ''; if (!list.length) return `Type ${label} as a room number, like 206F.`; const f = list[0][0]; return `Room ${list[0]} isn’t on a mapped floor yet. Floors 2 and 3 are traced so far${/^[14]$/.test(f) ? `, and floor ${f} is next` : ''}.`; };
+  const e = unmapped(a.list, a.hit, 'where you are') || unmapped(b.list, b.hit, 'where you’re going');
+  if (e) return {error:e};
+  const A = IG.rooms[a.hit], B = IG.rooms[b.hit], res = igDijkstra(A.node), path = igPathTo(res, B.node);
+  if (!path) return {error:'I couldn’t find a connected route between those rooms on the traced floors.'};
+  const plan = igPlan(path, a.hit, b.hit), steps = igSteps(path, b.hit, a.hit), fl = plan.floors;
+  return {title:`Room ${a.hit} to Room ${b.hit}`, sub:fl.length > 1 ? `Floor ${A.f} to floor ${B.f}, by elevator` : `Floor ${A.f}, same floor`, steps, plan};
+}
+function igNearest(fromT, type){
+  const a = igRoomOf(fromT); if (!a.hit) return {error:a.list.length ? `Room ${a.list[0]} isn’t on a mapped floor yet. Floors 2 and 3 are traced so far.` : 'Type the room you’re near first, like 206F.'};
+  const A = IG.rooms[a.hit], res = igDijkstra(A.node);
+  let best = null; IG.pois.filter(p => p.type === type).forEach(p => { const d = res.dist[p.node]; if (d !== undefined && (!best || d < best.d)) best = {p, d}; });
+  if (!best) return {error:'No ' + type + ' found on the traced floors.'};
+  const path = igPathTo(res, best.p.node), plan = igPlan(path, a.hit, ''); plan.marks[best.p.f].push({type:'end', x:best.p.x, y:best.p.y});
+  const steps = igSteps(path, '', a.hit); steps.push({f:best.p.f, text:`The ${best.p.name.toLowerCase()} is here, on floor ${best.p.f}.`});
+  return {title:`${type === 'elevator' ? 'Nearest elevator' : 'Nearest restroom'} from Room ${a.hit}`, sub:`${best.p.name}, floor ${best.p.f}`, steps, plan};
+}
+function viewIndoor(){
+  const ex = [['206F', '305'], ['305', '206F'], ['201', '312'], ['240', '350']].map(p => `<button class="chip" data-igpair="${p[0]}>${p[1]}" type="button">${p[0]} to ${p[1]}</button>`).join('');
+  return `<section class="igbox"><h2 class="sech">Route inside Newhouse</h2><p class="sub">Hallways, elevators, and restrooms on floors 2 and 3, traced from SU’s floor plans. Floors 1 and 4 are next.</p>
+  <form id="igForm" autocomplete="off"><div class="igrow"><input id="igFrom" type="text" placeholder="Where you are, like 206F" aria-label="Where you are" value="${esc(st.ig.from)}"><input id="igTo" type="text" placeholder="Where to, like 305" aria-label="Where to" value="${esc(st.ig.to)}"></div>
+  <div class="row"><button class="btn" type="submit">Show route</button><button class="btn ghost" data-igrest="1" type="button">Nearest restroom</button><button class="btn ghost" data-igelev="1" type="button">Nearest elevator</button></div></form>
+  <div class="exs">${ex}</div><div id="igOut" aria-live="polite">${st.ig.res ? igResultHTML(st.ig.res) : ''}</div></section>`;
+}
+function igAlign(){
+  const st3 = document.querySelectorAll ? document.querySelectorAll('.igplate') : []; if (!st3 || st3.length < 2 || !st.ig.res || !st.ig.res.plan) return;
+  const plan = st.ig.res.plan, plates = Array.prototype.slice.call(st3), w = plates[0].clientWidth; if (!w) return;
+  const top = plates[0], tf = Number(top.dataset.f); plates.slice(1).forEach(p => {
+    const f = Number(p.dataset.f), m3 = (plan.marks[tf] || []).find(m => m.type === 'elev'), m2 = (plan.marks[f] || []).find(m => m.type === 'elev'); if (!m3 || !m2) return;
+    const A = INDOOR.floors[tf].box, B = INDOOR.floors[f].box, ax = (m3.x - A[0]) / (A[2] - A[0]), ay = (m3.y - A[1]) / (A[3] - A[1]), bx = (m2.x - B[0]) / (B[2] - B[0]), by = (m2.y - B[1]) / (B[3] - B[1]);
+    const ha = w * (A[3] - A[1]) / (A[2] - A[0]), hb = w * (B[3] - B[1]) / (B[2] - B[0]);
+    p.style.setProperty('--dx', ((ax - bx) * w).toFixed(1) + 'px'); p.style.setProperty('--dy', ((ay * ha) - (by * hb)).toFixed(1) + 'px');
+  });
+}
+function igVal(){ st.ig.from = ($('igFrom') || {}).value || ''; st.ig.to = ($('igTo') || {}).value || ''; }
+function igRun(r){ st.ig.res = r; const o = $('igOut'); if (o) o.innerHTML = igResultHTML(r); igAlign(); }
+function wireIndoor(){
+  const f = $('igForm'); if (!f) return;
+  f.onsubmit = e => { e.preventDefault(); igVal(); igRun(igRoute(st.ig.from, st.ig.to)); };
+}
 function viewScan(){
-  return `<section class="scanhead"><h2>Your guide at the door</h2><p>Open the camera at the entrance and tell me where you’re going. I’ll show you the way and speak it out loud.</p></section>
+  return viewIndoor() + `<section class="scanhead"><h2>Your guide at the door</h2><p>Open the camera at the entrance and tell me where you’re going. I’ll show you the way and speak it out loud.</p></section>
   <ol class="steps3"><li><span class="n">1</span><div><b>Stand at the entrance</b><span>Tap the building you’re in. I’ll explain what it’s used for.</span></div></li>
   <li><span class="n">2</span><div><b>Say where you’re headed</b><span>Plan your day, see what’s happening in this building, or name a room.</span></div></li>
   <li><span class="n">3</span><div><b>Follow the arrow</b><span>I read the door numbers and signs you pass. Each door pops up with what it’s used for.</span></div></li></ol>
   <div class="row" style="margin-top:18px"><button class="btn big" data-start="1" type="button">Start at the entrance</button></div>
-  <p class="note">How the directions work: I read the building’s own door numbers and directional signs through your camera. No public indoor map of Newhouse exists, so I only point you when a sign shows the way. Always confirm with your own eyes.</p>
+  <p class="note">How the camera directions work: I read the building’s own door numbers and directional signs. Floors 2 and 3 also have the hand-traced map above; other floors rely on the signs. Always confirm with your own eyes.</p>
   <form class="lookup" id="lookForm" autocomplete="off"><input id="lookNum" type="text" placeholder="Or look up a room number, like 206F" aria-label="Look up a room number"><button class="btn" type="submit">Look up</button></form>
   <div id="lookOut" aria-live="polite"></div>
   ${st.found.length ? `<h2 class="sec2">Rooms you’ve passed</h2><div class="found">${st.found.map(f => `<span class="chip">${esc(f.name)}</span>`).join('')}</div>` : ''}`;
 }
 function wireScan(){
+  wireIndoor();
   $('lookForm').onsubmit = e => {
     e.preventDefault();
     const list = readNums($('lookNum').value), out = $('lookOut');
@@ -731,10 +937,16 @@ function wireScan(){
 let voicePlayer = null, ttsRemote = true, synthVoice = null;
 const utts = []; // keep references so the browser doesn't drop utterances mid-speech
 const SILENT = 'data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQAAAAA=';
+function toast(msg){
+  let t = $('toast');
+  if (!t) { t = document.createElement('div'); t.id = 'toast'; t.className = 'toast'; t.setAttribute('role', 'status'); document.body.appendChild(t); }
+  t.textContent = msg; t.hidden = false; clearTimeout(toast._t); toast._t = setTimeout(() => { t.hidden = true; }, 6500);
+}
 function pickVoice(){
   try {
     const vs = (window.speechSynthesis && window.speechSynthesis.getVoices && window.speechSynthesis.getVoices()) || [];
-    synthVoice = vs.find(v => /^en[-_]US/i.test(v.lang) && /Samantha|Google US English|Aria|Jenny|Alex|Siri/i.test(v.name)) || vs.find(v => /^en/i.test(v.lang)) || vs[0] || null;
+    const en = vs.filter(v => /^en/i.test(v.lang)), local = en.filter(v => v.localService !== false), us = v => /^en[-_]US/i.test(v.lang);
+    synthVoice = local.find(v => us(v) && /Samantha|Alex|Aria|Jenny|Siri|Ava|Allison|Susan/i.test(v.name)) || local.find(us) || en.find(us) || en[0] || vs[0] || null; // local voices first: they work offline and don't stall
   } catch (e) {}
 }
 try { if ('speechSynthesis' in window) { pickVoice(); if (window.speechSynthesis.addEventListener) window.speechSynthesis.addEventListener('voiceschanged', pickVoice); } } catch (e) {}
@@ -759,9 +971,19 @@ function browserSpeak(text){
       if (i >= parts.length) { resolve(); return; }
       const u = new window.SpeechSynthesisUtterance(parts[i++]);
       u.lang = 'en-US'; u.rate = 1; if (synthVoice) u.voice = synthVoice;
-      u.onend = next; u.onerror = next;
+      let started = false, done = false;
+      const adv = () => { if (done) return; done = true; clearTimeout(wd); next(); };
+      const wd = setTimeout(() => { if (!started && !done) { toast('No sound started. Check your volume, the silent switch, and that this tab isn’t muted.'); adv(); } }, 3500);
+      u.onstart = () => { started = true; clearTimeout(wd); };
+      u.onend = adv;
+      u.onerror = e => {
+        const er = e && e.error;
+        if (er === 'not-allowed') toast('Your browser blocked sound. Tap the page once, then try again.');
+        else if (er && er !== 'interrupted' && er !== 'canceled') toast('This device has no English voice available. Check its speech settings.');
+        adv();
+      };
       utts.push(u); if (utts.length > 40) utts.shift();
-      try { if (synth.paused && synth.resume) synth.resume(); synth.speak(u); } catch (e) { next(); }
+      try { if (synth.paused && synth.resume) synth.resume(); synth.speak(u); } catch (e) { adv(); }
     };
     setTimeout(next, 150); // Chrome drops a speak() that comes right after cancel()
   });
@@ -804,7 +1026,14 @@ function listenOnce(cb, onText){
     for (let i = e.resultIndex; i < e.results.length; i++) { const r = e.results[i]; if (r.isFinal) finalText += ' ' + r[0].transcript; else interim += ' ' + r[0].transcript; }
     if (onText) onText(text()); arm(2000);
   };
-  rec.onerror = () => finish();
+  rec.onerror = e => {
+    const er = e && e.error;
+    if (er === 'not-allowed' || er === 'service-not-allowed') toast('The microphone is blocked. Allow it from the lock icon next to the address, then tap Talk again.');
+    else if (er === 'no-speech') toast('I didn’t hear anything. Tap Talk and try again.');
+    else if (er === 'audio-capture') toast('No microphone was found on this device.');
+    else if (er === 'network') toast('Speech recognition needs an internet connection.');
+    finish();
+  };
   rec.onend = () => finish();
   st.listening = true; activeRec = {finish}; updateMics(); arm(8000);
   try { rec.start(); } catch (e) { finish(); }
@@ -822,12 +1051,14 @@ function bestSession(text){
   return bs >= 1 ? best : null;
 }
 function targetFromNum(n){ const e = (INDEX[n] || [])[0], all = e ? nums(e.name) : []; return {nums:all.includes(n) ? all : [n], name:e ? e.name : `Room ${n}`, b:e ? e.b : null, title:e && e.sessions[0] ? e.sessions[0].title : `Room ${n}`}; }
-function targetFromSession(s){ const r = ROOM[s.rooms[0]]; if (!r) return null; return {nums:nums(r.name), name:r.name.replace(/^Rooms /, 'Room '), b:s.b || r.b, title:s.title}; }
+function targetFromSession(s){ const id = s.rooms.find(i => ROOM[i] && nums(ROOM[i].name).length); if (!id) return null; const r = ROOM[id]; return {nums:nums(r.name), name:r.name.replace(/^Rooms /, 'Room '), b:s.b || r.b, title:s.title}; }
 function routeUtterance(q){
   const text = String(q).trim(); if (!text) return;
   const open = !$('cam').hidden;
   const rn = readNums(text);
   if (rn.length) { startGuideTo(targetFromNum(rn[0])); return; }
+  if (!rn.length && /\b(restrooms?|bathrooms?|elevators?|lift|indoor map|floor ?plan)\b/i.test(text)) { if (open) closeCam(); go('scan'); toast('Type the room you’re near, then tap Nearest restroom or Nearest elevator.'); return; }
+  if (!rn.length && /\b(bus|buses|shuttle|trolley|centro|transit)\b/i.test(text)) { if (open) closeCam(); go('around', 'ride'); return; }
   if (!rn.length && /newhouse|new\s*house|\bnh\b/i.test(text) && /(get to|walk to|walk me|directions? to|navigate to|route to|way to|how do i get|take me to the (?:building|entrance))/i.test(text)) {
     const m = text.match(/\b(1|2|3|one|two|three)\b/i); startWalk(m && /^(2|3|two|three)$/i.test(m[1]) ? 'nh23' : 'nh1'); return;
   }
@@ -845,22 +1076,37 @@ function wireHome(){
 /* ===== the live guide: the camera reads signs, the app answers from verified data ===== */
 let camStream = null, camTimer = null, camBusy = false, camAuto = true, camScans = 0, camLast = '';
 const MAX_SCANS = 30;
-const floorOf = t => Number(t.nums[0][0]);
+const floorOf = t => { const n = t && t.nums && t.nums[0]; const f = n ? Number(n[0]) : NaN; return isNaN(f) ? null : f; };
 function setStatus(msg, scanning){ const s = $('camStatus'); if (s) s.textContent = msg; const r = $('reticle'); if (r) r.className = 'reticle' + (scanning ? ' scan' : ''); }
 function updateAutoBtn(){ const b = $('camAuto'); if (b) { b.setAttribute('aria-pressed', String(camAuto)); b.textContent = camAuto ? 'Auto-scan on' : 'Auto-scan off'; } }
 function updateVoiceBtn(){ const b = $('camVoice'); if (b) { b.setAttribute('aria-pressed', String(st.voice)); b.textContent = st.voice ? 'Voice on' : 'Voice off'; } }
 function renderTarget(){
   const t = st.target, tb = $('camTarget');
-  if (t) { tb.hidden = false; tb.textContent = `Heading to ${t.name}${t.b ? ', ' + BUILDINGS[t.b] : ''}, floor ${floorOf(t)}`; } else { tb.hidden = true; tb.textContent = ''; }
+  if (t) { tb.hidden = false; tb.textContent = `Heading to ${t.name}${t.b ? ', ' + BUILDINGS[t.b] : ''}${floorOf(t) ? ', floor ' + floorOf(t) : ''}`; } else { tb.hidden = true; tb.textContent = ''; }
+}
+function nearBanner(){
+  const k = st.near; if (!k) return '';
+  if (k === 'nh1') { const i = BLD_INFO.nh1; return `<div class="nearcard"><b>You’re at Newhouse 1</b><p>${esc(i.tag)}. ${esc(i.use)}</p><button class="cpill pri" data-here="nh1" type="button">Continue from here</button></div>`; }
+  const a = BLD_INFO.nh2, c = BLD_INFO.nh3;
+  return `<div class="nearcard"><b>You’re on the Waverly Avenue side: Newhouse 2 and 3</b><p><strong>Newhouse 2:</strong> ${esc(a.use)}</p><p><strong>Newhouse 3:</strong> ${esc(c.use)}</p><div class="cpills"><button class="cpill pri" data-here="nh2" type="button">I’m in Newhouse 2</button><button class="cpill pri" data-here="nh3" type="button">I’m in Newhouse 3</button></div></div>`;
+}
+function detectHere(){
+  if (!navigator.geolocation || !navigator.geolocation.getCurrentPosition) return;
+  navigator.geolocation.getCurrentPosition(p => {
+    let best = null; Object.keys(DEST).forEach(k => { const d = distM(p.coords.latitude, p.coords.longitude, DEST[k].lat, DEST[k].lon); if (!best || d < best.d) best = {k, d}; });
+    if (!best || best.d > 60 || st.stage !== 'where' || $('cam').hidden) return;
+    st.near = best.k; renderStage();
+    if (st.voice) speak(best.k === 'nh1' ? `You’re at Newhouse 1. ${BLD_INFO.nh1.tag}.` : 'You’re on the Waverly Avenue side. Newhouse 2 and Newhouse 3 are here.');
+  }, () => {}, {enableHighAccuracy:true, timeout:8000, maximumAge:10000});
 }
 function stageHTML(s){
   const b = st.here;
-  if (s === 'where') return `<h3>Welcome. Which building are you at?</h3><p class="csub">Stand still at the entrance. Tap the building you’re in.</p><div class="cpills">${Object.keys(BUILDINGS).map(k => `<button class="cpill" data-here="${k}" type="button">${BUILDINGS[k]}</button>`).join('')}<button class="cpill" data-here="none" type="button">Not sure</button></div><div class="cpills"><button class="cpill" data-walk="1" type="button">Not here yet? Walk me to Newhouse</button></div>`;
-  if (s === 'walk') { const w = st.walk; return `<h3>Walk to Newhouse</h3><p class="csub">Follow the arrow on the camera. Pick the entrance closest to where you’re going.</p><div class="cpills">${Object.keys(DEST).map(k => `<button class="cpill" data-walkdest="${k}" aria-pressed="${w.dest === k}" type="button">${esc(DEST[k].name)}, ${esc(DEST[k].side)}</button>`).join('')}</div><div class="cpills"><button class="cpill pri" data-mapsdir="1" type="button">Open walking directions in Maps</button><button class="cpill" data-stage="where" type="button">I’m at the entrance</button></div><p class="cinfo"><small>Entrance points are approximate, taken from photo locations on Wikimedia Commons.</small></p>`; }
+  if (s === 'where') return nearBanner() + `<h3>Welcome. Which building are you at?</h3><p class="csub">Stand still at the entrance. Tap the building you’re in.</p><div class="cpills">${Object.keys(BUILDINGS).map(k => `<button class="cpill" data-here="${k}" type="button">${BUILDINGS[k]}</button>`).join('')}<button class="cpill" data-here="none" type="button">Not sure</button></div><div class="cpills"><button class="cpill" data-walk="1" type="button">Not here yet? Walk me to Newhouse</button></div>`;
+  if (s === 'walk') { const w = st.walk; return `<div id="routeBox" aria-live="polite"></div><h3>Walk to Newhouse</h3><p class="csub">Follow the arrow on the camera. Pick the entrance closest to where you’re going.</p><div class="cpills">${Object.keys(DEST).map(k => `<button class="cpill" data-walkdest="${k}" aria-pressed="${w.dest === k}" type="button">${esc(DEST[k].name)}, ${esc(DEST[k].side)}</button>`).join('')}</div><div class="cpills"><button class="cpill pri" data-mapsdir="1" type="button">Open walking directions in Maps</button><button class="cpill" data-stage="where" type="button">I’m at the entrance</button></div><p class="cinfo"><small>Entrance points are approximate, taken from photo locations on Wikimedia Commons.</small></p>`; }
   if (s === 'ask') { const info = b ? BLD_INFO[b] : BLD_INFO.all; return `<h3>${b ? BUILDINGS[b] : 'Newhouse'}</h3><p class="cinfo"><strong>${esc(info.tag)}.</strong> ${esc(info.use)}<small>Source: ${esc(info.src)}</small></p><p class="cinfo" style="margin-top:12px"><strong>What would you like to do?</strong></p><div class="cpills"><button class="cpill pri" data-stage="plan" type="button">Plan my day</button><button class="cpill pri" data-stage="events" type="button">What’s happening here</button><button class="cpill pri" data-stage="room" type="button">Take me to a room</button></div>${SR ? `<div class="cpills">${micBtn('Say where you want to go', 'data-routemic="1"', 'cpill')}</div>` : ''}`; }
   if (s === 'events') {
     const list = SESSIONS.filter(x => x.day === st.evDay && x.rooms.length && (!b || x.b === b)).sort((a, c) => a.s - c.s);
-    return `<h3>${b ? 'Happening in ' + BUILDINGS[b] : 'Happening at the summit'}</h3><div class="cpills" role="group">${[1, 2].map(d => `<button class="cpill" data-evday="${d}" aria-pressed="${st.evDay === d}" type="button">Day ${d}</button>`).join('')}</div>${list.length ? list.map(x => `<div class="crow"><div><b>${esc(x.title)}</b><span>${esc(x.time)}, ${esc(x.loc)}</span></div><button class="cbtn2" data-guide="${x.id}" type="button">Guide me</button></div>`).join('') : `<p class="csub">Nothing is listed here on Day ${st.evDay}. Try the other day.</p>`}<div class="cpills"><button class="cpill" data-stage="ask" type="button">Back</button></div>`;
+    return `<h3>${b ? 'Happening in ' + BUILDINGS[b] : 'Happening at the summit'}</h3><div class="cpills" role="group">${[1, 2].map(d => `<button class="cpill" data-evday="${d}" aria-pressed="${st.evDay === d}" type="button">Day ${d}</button>`).join('')}</div>${list.length ? list.map(x => `<div class="crow"><div><b>${esc(x.title)}</b><span>${esc(x.time)}, ${esc(x.loc)}</span></div><button class="cbtn2" data-guide="${x.id}" type="button">${targetFromSession(x) ? 'Guide me' : 'Where is it?'}</button></div>`).join('') : `<p class="csub">Nothing is listed here on Day ${st.evDay}. Try the other day.</p>`}<div class="cpills"><button class="cpill" data-stage="ask" type="button">Back</button></div>`;
   }
   if (s === 'room') {
     const rooms = ROOMS.filter(r => r.b && (!b || r.b === b));
@@ -868,7 +1114,7 @@ function stageHTML(s){
   }
   if (s === 'plan') {
     const out = st.planOut.map(id => SESSIONS.find(x => x.id === id)).filter(Boolean);
-    return `<h3>Plan my day</h3><div class="cpills" role="group">${[1, 2].map(d => `<button class="cpill" data-opday="${d}" aria-pressed="${st.pday === d}" type="button">Day ${d}</button>`).join('')}</div><div class="cpills" role="group">${[['creative', 'Image, video, audio'], ['product', 'Building and coding'], ['all', 'A bit of everything']].map(([id, label]) => `<button class="cpill" data-optrack="${id}" aria-pressed="${st.ptrack === id}" type="button">${label}</button>`).join('')}</div><div class="cpills"><button class="cpill pri" data-opbuild="1" type="button">Build my day</button></div>${out.length ? out.map(x => `<div class="crow"><div><b>${esc(x.title)}</b><span>${esc(x.time)}, ${esc(x.loc || 'room not listed')}</span></div>${x.rooms.length ? `<button class="cbtn2" data-guide="${x.id}" type="button">Guide me</button>` : ''}</div>`).join('') + `<div class="cpills"><button class="cpill" data-opsave="1" type="button">Save this day</button></div>` : ''}<div class="cpills"><button class="cpill" data-stage="ask" type="button">Back</button></div>`;
+    return `<h3>Plan my day</h3><div class="cpills" role="group">${[1, 2].map(d => `<button class="cpill" data-opday="${d}" aria-pressed="${st.pday === d}" type="button">Day ${d}</button>`).join('')}</div><div class="cpills" role="group">${[['creative', 'Image, video, audio'], ['product', 'Building and coding'], ['all', 'A bit of everything']].map(([id, label]) => `<button class="cpill" data-optrack="${id}" aria-pressed="${st.ptrack === id}" type="button">${label}</button>`).join('')}</div><div class="cpills"><button class="cpill pri" data-opbuild="1" type="button">Build my day</button></div>${out.length ? out.map(x => `<div class="crow"><div><b>${esc(x.title)}</b><span>${esc(x.time)}, ${esc(x.loc || 'room not listed')}</span></div>${x.rooms.length ? `<button class="cbtn2" data-guide="${x.id}" type="button">${targetFromSession(x) ? 'Guide me' : 'Where is it?'}</button>` : ''}</div>`).join('') + `<div class="cpills"><button class="cpill" data-opsave="1" type="button">Save this day</button></div>` : ''}<div class="cpills"><button class="cpill" data-stage="ask" type="button">Back</button></div>`;
   }
   return '';
 }
@@ -879,7 +1125,7 @@ function renderStage(){
   if (!g) { $('camCard').hidden = true; panel.innerHTML = stageHTML(s); }
   const rf = $('roomForm'); if (rf) rf.onsubmit = e => { e.preventDefault(); const l = readNums($('roomIn').value); if (!l.length) { setStatus('Enter a three-digit room number, like 206F.'); return; } startGuideTo(targetFromNum(l[0])); };
   if (g) renderGuide();
-  if (wk) updateWalk();
+  if (wk) { updateWalk(); renderRouteBox(); }
 }
 function setStage(s){
   if (s !== 'walk') stopWalk();
@@ -896,7 +1142,8 @@ function startLine(){
   const tf = floorOf(t), parts = [];
   if (t.b && st.here && st.here !== t.b) parts.push(`${t.name} is in ${BUILDINGS[t.b]}. The Newhouse buildings connect indoors.`);
   else if (t.b) parts.push(`${t.name} is in ${BUILDINGS[t.b]}.`);
-  parts.push(`It’s on floor ${tf}.`, 'Keep the camera on the door signs and I’ll tell you when to turn.');
+  if (tf) parts.push(`It’s on floor ${tf}. Use the elevator or stairs if you’re not already there.`);
+  parts.push('Keep the camera on the door signs and I’ll tell you when to turn.');
   st.guide = {move:'unknown', head:`Heading to ${t.name}`, text:parts.join(' '), ts:Date.now(), sig:''};
   renderGuide(); renderTarget();
   if (st.voice) speak(`Heading to ${t.name}. ${parts.join(' ')}`);
@@ -923,6 +1170,7 @@ async function openCam(stage){
   $('camCard').hidden = true; $('camCard').innerHTML = '';
   if (st.stage !== 'walk') stopWalk();
   renderTarget(); renderStage();
+  if (st.stage === 'where') { st.near = null; detectHere(); }
   if (st.stage === 'guide') startLine();
   else if (st.stage === 'walk') { /* guidance speaks once GPS locks */ }
   else if (st.voice) speak(st.stage === 'where' ? 'Welcome. Which building are you at?' : 'What would you like to do?');
@@ -999,7 +1247,7 @@ async function scanOnce(auto){
   const img = grabFrame(); if (!img) { if (!auto) setStatus('Waiting for the camera…'); return; }
   camBusy = true; camScans++; setStatus(auto ? 'Looking…' : 'Reading the signs…', true);
   const body = {mode:'scan', messages:[{role:'user', content:'Read the room numbers and signs.'}], image:img};
-  if (st.target) body.target = `${st.target.name} (floor ${floorOf(st.target)})`;
+  if (st.target) body.target = `${st.target.name}${floorOf(st.target) ? ' (floor ' + floorOf(st.target) + ')' : ''}`;
   let res;
   try {
     const r = await fetch('/api/ask', {method:'POST', headers:{'content-type':'application/json'}, body:JSON.stringify(body)});
@@ -1054,11 +1302,73 @@ function distM(lat1, lon1, lat2, lon2){
 const CARD = ['north', 'northeast', 'east', 'southeast', 'south', 'southwest', 'west', 'northwest'];
 const cardinal = b => CARD[Math.round(b / 45) % 8];
 const fmtDist = m => { const ft = m * 3.281; return ft < 1000 ? `${Math.max(10, Math.round(ft / 10) * 10)} feet` : `${(ft / 5280).toFixed(2)} miles`; };
+/* ----- street route when you're away from the building (OpenStreetMap walking route via /api/route) ----- */
+const lc = s => s.charAt(0).toLowerCase() + s.slice(1);
+function nearestOnRoute(pos, coords){ let m = Infinity; for (let i = 0; i < coords.length; i++) { const d = distM(pos.lat, pos.lon, coords[i][0], coords[i][1]); if (d < m) m = d; } return m; }
+async function loadRoute(){
+  const w = st.walk, d = DEST[w.dest]; if (!w.pos || w.rBusy) return;
+  w.rBusy = true; w.rAt = Date.now(); renderRouteBox();
+  try {
+    const r = await fetch(`/api/route?from=${w.pos.lat.toFixed(5)},${w.pos.lon.toFixed(5)}&to=${d.lat},${d.lon}`);
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const j = await r.json(); if (!j || !Array.isArray(j.coords) || !Array.isArray(j.steps) || j.steps.length < 2) throw new Error('bad route');
+    w.route = {coords:j.coords, steps:j.steps, dist:j.distance, dur:j.duration, dest:w.dest}; w.ri = 1; w.rFail = false; w.lastCat = '';
+  } catch (e) { w.rFail = true; }
+  w.rBusy = false; renderRouteBox(); updateWalk();
+}
+function maybeRoute(){
+  const w = st.walk, d = DEST[w.dest]; if (!w.pos || w.rBusy || !w.active) return;
+  if (distM(w.pos.lat, w.pos.lon, d.lat, d.lon) < 120) return; // close enough: the arrow and the door signs take over
+  const age = Date.now() - w.rAt;
+  const need = !w.route || w.route.dest !== w.dest ? (!w.rFail || age > 30000) : (nearestOnRoute(w.pos, w.route.coords) > 80 && age > 15000);
+  if (need) loadRoute();
+}
+function routeNav(){
+  const w = st.walk, r = w.route; if (!w.pos || !r || r.dest !== w.dest || w.rFail) return null;
+  const steps = r.steps; if (steps.length < 2) return null;
+  if (!w.ri || w.ri < 1) w.ri = 1;
+  while (w.ri < steps.length - 1 && distM(w.pos.lat, w.pos.lon, steps[w.ri].lat, steps[w.ri].lon) < 25) w.ri++;
+  const nx = steps[w.ri], dn = distM(w.pos.lat, w.pos.lon, nx.lat, nx.lon), near = dn <= 60;
+  const prev = steps[w.ri - 1];
+  const head = near ? nx.text : (w.ri === 1 ? steps[0].text : `Continue${prev.road ? ' on ' + prev.road : ''}`);
+  const text = near ? `In ${fmtDist(dn)}.` : `${fmtDist(dn)}, then ${lc(nx.text)}.`;
+  return {head, text, near, brg:bearingTo(w.pos.lat, w.pos.lon, nx.lat, nx.lon)};
+}
+function routeSVG(){
+  const w = st.walk, r = w.route, d = DEST[w.dest]; if (!r) return '';
+  const pts = r.coords.map(c => [c[0], c[1]]); if (w.pos) pts.push([w.pos.lat, w.pos.lon]); pts.push([d.lat, d.lon]);
+  const lat0 = pts.reduce((a, p) => a + p[0], 0) / pts.length, kx = Math.cos(toRad(lat0));
+  const xs = pts.map(p => p[1] * kx), ys = pts.map(p => -p[0]);
+  const x0 = Math.min.apply(null, xs), x1 = Math.max.apply(null, xs), y0 = Math.min.apply(null, ys), y1 = Math.max.apply(null, ys);
+  const W = 320, H = 150, P = 16, sc = Math.min((W - 2 * P) / Math.max(x1 - x0, 1e-6), (H - 2 * P) / Math.max(y1 - y0, 1e-6));
+  const ox = (W - sc * (x1 - x0)) / 2, oy = (H - sc * (y1 - y0)) / 2;
+  const X = lon => (ox + sc * (lon * kx - x0)).toFixed(1), Y = lat => (oy + sc * (-lat - y0)).toFixed(1);
+  const line = r.coords.map(c => `${X(c[1])},${Y(c[0])}`).join(' ');
+  const nx = r.steps[Math.min(w.ri, r.steps.length - 1)];
+  return `<svg class="rsvg" viewBox="0 0 ${W} ${H}" role="img" aria-label="Your walking route, north at the top"><rect width="${W}" height="${H}" rx="14" fill="#fff" fill-opacity=".07"/><polyline points="${line}" fill="none" stroke="#FF6B1A" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="${X(nx.lon)}" cy="${Y(nx.lat)}" r="6" fill="none" stroke="#FFD84D" stroke-width="2.5"/><circle cx="${X(d.lon)}" cy="${Y(d.lat)}" r="7" fill="#FFD84D" stroke="#0B1146" stroke-width="2"/>${w.pos ? `<circle cx="${X(w.pos.lon)}" cy="${Y(w.pos.lat)}" r="7" fill="#fff" stroke="#3B82F6" stroke-width="3"/>` : ''}</svg>`;
+}
+function routeBoxHTML(){
+  const w = st.walk, r = w.route; if (w.arrived) return '';
+  if (r && r.dest === w.dest && !w.rFail) {
+    const list = r.steps.slice(Math.max(1, w.ri), Math.max(1, w.ri) + 3).map(s => `<li>${esc(s.text)}${s.type !== 'arrive' ? ` <small>${esc(fmtDist(s.distance))}</small>` : ''}</li>`).join('');
+    return `<div class="rsum"><b>${esc(fmtDist(r.dist))} on foot, about ${Math.max(1, Math.round(r.dur / 60))} min</b></div>${routeSVG()}<ol class="rsteps">${list}</ol><p class="cinfo"><small>Route: OpenStreetMap contributors, via routing.openstreetmap.de. Blue dot is you, yellow is the entrance.</small></p>`;
+  }
+  if (w.rBusy) return '<p class="csub">Finding the street route…</p>';
+  if (w.rFail && w.pos) return '<p class="csub">Couldn’t load the street route, so the arrow points straight at the entrance. Use the Maps button for turn-by-turn directions.</p>';
+  return '';
+}
+function renderRouteBox(){ const b = $('routeBox'); if (b) b.innerHTML = routeBoxHTML(); }
 function walkState(){
   const w = st.walk, d = DEST[w.dest];
   if (!w.pos) return {head:'Finding your location…', text:'Allow location access, then hold your phone upright and look around.', rot:0, cat:'wait', dm:0};
   const dm = distM(w.pos.lat, w.pos.lon, d.lat, d.lon), brg = bearingTo(w.pos.lat, w.pos.lon, d.lat, d.lon);
   if (dm < 35) return {head:'You’re at Newhouse', text:`The ${d.side} entrance is right here. Tap “I’m at the entrance” to continue inside.`, rot:0, cat:'arrived', dm, brg};
+  const rn = routeNav();
+  if (rn) {
+    const cat = `r${w.ri}${rn.near ? 'n' : 'f'}`;
+    if (compassH == null) return {head:rn.head, text:rn.text, rot:rn.brg, cat, dm, brg:rn.brg, route:true};
+    return {head:rn.head, text:rn.text, rot:((rn.brg - compassH + 540) % 360) - 180, cat, dm, brg:rn.brg, route:true};
+  }
   const dist = fmtDist(dm), mins = Math.max(1, Math.round(dm / 80));
   if (compassH == null) return {head:`Head ${cardinal(brg)}`, text:`${dist} to ${d.name}, about ${mins} min. The arrow shows the direction, with north at the top of the screen.`, rot:brg, cat:'north', dm, brg};
   const diff = ((brg - compassH + 540) % 360) - 180, a = Math.abs(diff), side = diff > 0 ? 'right' : 'left';
@@ -1078,7 +1388,7 @@ function updateWalk(){
   else if (w.err) setStatus(pre + w.err);
   else if (pre) setStatus(pre);
   if (s.cat === 'arrived') {
-    if (!w.arrived) { w.arrived = true; burst(window.innerWidth / 2, window.innerHeight * 0.35); if (st.voice) speak(`You’re at ${DEST[w.dest].name}. Tap I’m at the entrance to continue inside.`); }
+    if (!w.arrived) { w.arrived = true; renderRouteBox(); const ks = w.dest === 'nh1' ? ['nh1'] : ['nh2', 'nh3']; $('camCard').hidden = false; $('camCard').innerHTML = `<div class="banner ok">You’ve arrived.</div>` + ks.map(k => `<h3>${esc(BUILDINGS[k])}</h3><div class="tags"><span class="tag">${esc(BLD_INFO[k].tag)}</span></div><p class="sub">${esc(BLD_INFO[k].use)}</p>`).join('') + `<p class="sub">${esc(BLD_INFO[ks[0]].link)}</p>`; burst(window.innerWidth / 2, window.innerHeight * 0.35); if (st.voice) speak(`You’re at ${DEST[w.dest].name}. Tap I’m at the entrance to continue inside.`); }
     return;
   }
   w.arrived = false;
@@ -1087,12 +1397,12 @@ function updateWalk(){
   if (s.cat !== w.curCat) { w.curCat = s.cat; w.catSince = now; } // speak only once the direction has held steady
   if (st.voice && now - w.catSince >= 1200 && now - w.lastSay > 8000 && (s.cat !== w.lastCat || Math.abs(ft - w.lastDist) >= 150)) {
     w.lastSay = now; w.lastCat = s.cat; w.lastDist = ft;
-    speak(`${s.head}. ${fmtDist(s.dm)} to ${DEST[w.dest].name}.`);
+    speak(s.route ? `${s.head}. ${s.text}` : `${s.head}. ${fmtDist(s.dm)} to ${DEST[w.dest].name}.`);
   }
 }
 function startGeo(){
   if (!navigator.geolocation) { st.walk.err = 'This browser can’t share your location. Use the Maps button for walking directions.'; return; }
-  geoWatch = navigator.geolocation.watchPosition(p => { st.walk.err = ''; st.walk.pos = {lat:p.coords.latitude, lon:p.coords.longitude, acc:p.coords.accuracy || 0}; updateWalk(); }, () => { st.walk.err = 'Location is off for this site. Turn it on to see the arrow, or use the Maps button.'; updateWalk(); }, {enableHighAccuracy:true, maximumAge:2000, timeout:20000});
+  geoWatch = navigator.geolocation.watchPosition(p => { st.walk.err = ''; st.walk.pos = {lat:p.coords.latitude, lon:p.coords.longitude, acc:p.coords.accuracy || 0}; maybeRoute(); updateWalk(); renderRouteBox(); }, () => { st.walk.err = 'Location is off for this site. Turn it on to see the arrow, or use the Maps button.'; updateWalk(); }, {enableHighAccuracy:true, maximumAge:2000, timeout:20000});
 }
 function stopWalk(){
   if (geoWatch != null && navigator.geolocation && navigator.geolocation.clearWatch) navigator.geolocation.clearWatch(geoWatch);
@@ -1100,9 +1410,16 @@ function stopWalk(){
 }
 function startWalk(dest){
   const w = st.walk; if (dest) w.dest = dest;
-  w.pos = null; w.err = ''; w.camErr = false; w.curCat = ''; w.catSince = 0; w.lastSay = 0; w.lastCat = ''; w.lastDist = 0; w.arrived = false; w.active = true; st.target = null;
+  w.pos = null; w.route = null; w.ri = 1; w.rBusy = false; w.rFail = false; w.rAt = 0; w.err = ''; w.camErr = false; w.curCat = ''; w.catSince = 0; w.lastSay = 0; w.lastCat = ''; w.lastDist = 0; w.arrived = false; w.active = true; st.target = null;
   startCompass(); unlockAudio(); stopWalk(); w.active = true; startGeo();
   if ($('cam').hidden) openCam('walk'); else setStage('walk');
+}
+function openDirections(k, mode){
+  const m = mode === 'walking' ? 'walking' : 'transit';
+  let dest;
+  if (DEST[k]) dest = `${DEST[k].lat},${DEST[k].lon}`;
+  else { const q = (($('dirIn') || {}).value || '').trim(); if (!q) { toast('Type a building or address first.'); return; } dest = encodeURIComponent(q + ' Syracuse University, Syracuse, NY'); }
+  window.open(`https://www.google.com/maps/dir/?api=1&destination=${dest}&travelmode=${m}`, '_blank', 'noopener');
 }
 const mapsUrl = k => `https://www.google.com/maps/dir/?api=1&destination=${DEST[k].lat},${DEST[k].lon}&travelmode=walking`;
 
@@ -1118,6 +1435,7 @@ async function askAI(q){
     clearTimeout(to);
     if (!r.ok) throw new Error('HTTP ' + r.status);
     out = parseAI((await r.json()).text);
+    if (out.cut) out.reply += ' (That answer was cut short. Ask me for one part at a time.)';
   } catch (e) { out = localAnswer(q); }
   st.chat.push({role:'assistant', content:out.reply, add:out.add || [], offline:!!out.offline});
   st.busy = false; renderChat();
@@ -1142,7 +1460,7 @@ function viewAsk(){
   return `<section class="askhead"><h2>Ask anything</h2><p>Type or talk. I answer from the verified summit info and say so when I don’t know. I can build your day, too. Please don’t type personal information.</p></section>
   <div class="chips">${chips.map(c => `<button class="chip" data-q="${esc(c)}" type="button">${esc(c)}</button>`).join('')}</div>
   <div class="chat" id="chatLog" aria-live="polite"></div>
-  <div class="tools">${micBtn('Talk', 'data-mic="1"')}<label class="ck2"><input type="checkbox" id="speakT"> Read answers aloud</label></div>
+  <div class="tools">${micBtn('Talk', 'data-mic="1"')}<label class="ck2"><input type="checkbox" id="speakT"> Read answers aloud</label><button class="btn ghost sm" data-testvoice="1" type="button">Test voice</button></div>
   <form class="askrow" id="askForm" autocomplete="off"><input type="search" id="askIn" placeholder="Ask CuseCompass…" aria-label="Ask CuseCompass"><button class="btn" type="submit">Ask</button></form>`;
 }
 function wireAsk(){
@@ -1161,7 +1479,7 @@ function ticket(s){
   return `<li class="tix t-${s.track}"><div class="stub">${timeStub(s.time)}</div>
     <div class="tb"><div class="ttl">${esc(s.title)}</div>${s.who ? `<div class="who">${esc(s.who)}</div>` : ''}
       <div class="meta">${s.b ? `<span class="b">${BUILDINGS[s.b].replace('Newhouse ', 'NH')}</span>` : ''}${track ? `<span class="who">${track}</span>` : ''}</div>
-      <div class="meta">${loc}${s.rooms.length ? `<button class="btn ghost sm" data-guide="${s.id}" type="button">Guide me</button>` : ''}</div>${s.tip ? `<div class="tip">${esc(s.tip)}</div>` : ''}</div>
+      <div class="meta">${loc}${s.rooms.length ? `<button class="btn ghost sm" data-guide="${s.id}" type="button">${targetFromSession(s) ? 'Guide me' : 'Where is it?'}</button>` : ''}</div>${s.tip ? `<div class="tip">${esc(s.tip)}</div>` : ''}</div>
     <button class="btn sm${st.pop === s.id ? ' pop' : ''}" data-save="${s.id}" aria-pressed="${saved}" type="button">${saved ? 'Saved' : 'Save'}</button></li>`;
 }
 function planHint(prev, s){
@@ -1218,7 +1536,11 @@ function viewEat(){
 function viewRide(){
   const li = (r, c) => `<li class="rt ${c || ''}"><strong>${esc(r.name)}</strong>${r.note ? '. ' + esc(r.note) : ''}<br>${ln(r.sched, 'Schedule (PDF)')}${r.map ? ' and ' + ln(r.map, 'Route map') : ''}</li>`;
   const loopClass = r => r.name === 'Orange Loop' ? 'rt-orange' : r.name === 'Blue Loop' ? 'rt-blue' : '';
-  return `<p class="note">Find the nearest stop, then pick the loop or route that goes where you’re headed. These are SU’s 2026–2027 academic-year schedules and they change during breaks.</p>
+  return `<div class="sec"><h2>Get there from where you are</h2><p class="sub">Opens Google Maps with directions from your current location. For live bus positions, use the SU tracker below.</p>
+    <div class="row"><button class="btn sm" data-dir="nh1" data-mode="transit" type="button">Bus to Newhouse 1</button><button class="btn sm" data-dir="nh23" data-mode="transit" type="button">Bus to Newhouse 2 and 3</button></div>
+    <div class="row" style="margin-top:8px"><button class="btn ghost sm" data-dir="nh1" data-mode="walking" type="button">Walk to Newhouse 1</button><button class="btn ghost sm" data-dir="nh23" data-mode="walking" type="button">Walk to Newhouse 2 and 3</button></div>
+    <div class="row" style="margin-top:10px"><input type="text" id="dirIn" placeholder="Another building or address" aria-label="Another building or address" style="flex:1;min-width:0;padding:10px 14px;border:1px solid var(--line);border-radius:999px;font:inherit"><button class="btn sm" data-dir="text" data-mode="transit" type="button">By bus</button><button class="btn ghost sm" data-dir="text" data-mode="walking" type="button">On foot</button></div></div>
+  <p class="note">Find the nearest stop, then pick the loop or route that goes where you’re headed. These are SU’s 2026–2027 academic-year schedules and they change during breaks.</p>
   <div class="sec"><h2>Stops near you</h2><p class="sub">Opens your map app. Your location stays on your phone and is only used to center the map.</p>
     <button class="btn sm" data-near="1" type="button">Show bus stops near me</button><p class="note" id="nearOut" aria-live="polite" hidden></p></div>
   <div class="sec"><h2>Live tracking</h2><ul class="plain"><li>${ln('https://subus.syr.edu/', 'SU bus and trolley tracker')} shows ’Cuse Trolleys and Centro’s SU routes with predicted arrivals, per SU. SU has posted outages for it before, so check the schedules too.</li><li>${ln('https://www.centro.org/how-to-ride/transit-tools', 'Centro transit tools')}: real-time bus tracking and the GoCentroBus app.</li></ul></div>
@@ -1269,8 +1591,15 @@ document.addEventListener('click', e => {
   else if (d.optrack) { st.ptrack = d.optrack; st.planOut = []; renderStage(); }
   else if (d.opbuild) { st.planOut = planFor(st.pday, st.ptrack).map(s => s.id); renderStage(); if (st.voice) speak(`Here’s your Day ${st.pday}. Tap Guide me on any event.`); }
   else if (d.opsave) { st.planOut.forEach(id => st.plan.add(id)); persist(); const r = t.getBoundingClientRect(); burst(r.left + r.width / 2, r.top + r.height / 2); t.textContent = 'Saved to My plan'; render(); }
+  else if (d.igrest) { igVal(); igRun(igNearest(st.ig.from, 'restroom')); }
+  else if (d.igelev) { igVal(); igRun(igNearest(st.ig.from, 'elevator')); }
+  else if (d.igview) { st.ig.view = d.igview; const o = $('igOut'); if (o && st.ig.res) o.innerHTML = igResultHTML(st.ig.res); igAlign(); }
+  else if (d.igpair) { const p = d.igpair.split('>'); st.ig.from = p[0]; st.ig.to = p[1]; if ($('igFrom')) $('igFrom').value = p[0]; if ($('igTo')) $('igTo').value = p[1]; igRun(igRoute(p[0], p[1])); }
+  else if (d.routemap) { if (st.target && st.target.nums[0]) st.ig.to = st.target.nums[0]; closeCam(); go('scan'); }
+  else if (d.testvoice) { unlockAudio(); toast('Playing a test sentence…'); speak('Voice is working. I can read answers and directions out loud.'); }
+  else if (d.dir) openDirections(d.dir, d.mode);
   else if (d.walk) startWalk(null);
-  else if (d.walkdest) { st.walk.dest = d.walkdest; st.walk.lastCat = ''; st.walk.arrived = false; st.walk.lastSay = 0; renderStage(); }
+  else if (d.walkdest) { const w = st.walk; w.dest = d.walkdest; w.lastCat = ''; w.arrived = false; w.lastSay = 0; w.route = null; w.ri = 1; w.rFail = false; w.rAt = 0; renderStage(); maybeRoute(); }
   else if (d.mapsdir) window.open(mapsUrl(st.walk.dest), '_blank', 'noopener');
   else if (d.today) { st.today = st.today === +d.today ? null : +d.today; try { localStorage.setItem('cuse-today', st.today ? String(st.today) : ''); } catch (e) {} if (st.today) { st.evDay = st.today; st.day = st.today; st.pday = st.today; st.mine = false; } render(); }
   else if (d.guide) startGuideSession(d.guide);

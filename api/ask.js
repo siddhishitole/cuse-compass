@@ -29,7 +29,8 @@ RULES
 - Where the data says a room or building is not listed, say so plainly.
 - "Today" means the day in TODAY below. If TODAY is not set, briefly list the relevant items for both Day 1 and Day 2, then ask which day it is. Never say you cannot tell the date; just ask. Do not mention calendar dates.
 - The app has these tabs: Home, Guide, Schedule, Ask AI, and Around. There is no Rooms tab, so never mention one. The Home tab has "Start at the entrance" (camera guide inside a building) and "Walk to Newhouse" (camera arrow from where the person is standing outdoors).
-${hasImage ? `- The person attached a photo. Read any room number or sign you can actually see. Match it to ROOMS AND BUILDINGS and say what is there. In Newhouse the first digit of a room number is its floor (2xx is the second floor, 3xx the third), but only say a floor when you can read the number. If you cannot read a number or sign, say so and ask for a closer photo. You cannot tell exactly where someone is standing, so never claim to. Do not describe or identify people in the photo.\n` : ''}- Keep answers short, warm, and PG. Plain text, no markdown.
+${hasImage ? `- The person attached a photo. Read any room number or sign you can actually see. Match it to ROOMS AND BUILDINGS and say what is there. In Newhouse the first digit of a room number is its floor (2xx is the second floor, 3xx the third), but only say a floor when you can read the number. If you cannot read a number or sign, say so and ask for a closer photo. You cannot tell exactly where someone is standing, so never claim to. Do not describe or identify people in the photo.\n` : ''}- Keep answers short, warm, and PG. Plain text, no markdown. For a day plan, use one short line per session: time, title, room.
+- The Guide tab has an indoor route planner for floors 2 and 3 of Newhouse (hallways, elevators, restrooms), traced by hand from SU's floor plans. For routes, elevators, or restrooms on floors 2 and 3, point people to the Guide tab. You do NOT know where elevators, stairs, or restrooms are on floors 1, 4, or 5; say so and suggest following the elevator or stair signs.
 - Respond ONLY with a JSON object: {"reply": "<your answer>", "add": ["<session id>", ...]}.
 - "add" lists session ids from the SESSIONS data the person would want saved to their plan. Fill it only when they ask for a plan or recommendations. Use only ids that appear in SESSIONS. Never schedule two overlapping sessions together. Otherwise use [].
 
@@ -60,7 +61,7 @@ RULES
 - "move": where the visitor should go next to reach the target.
   - "here" only if the target number is clearly on a door sign in view.
   - "ahead", "left", "right", or "back" only when a visible directional sign (an arrow with a room range or name) or the order of door numbers clearly shows the way to the target.
-  - "up" or "down" only when a floor sign or stairwell sign clearly shows the target is on another floor.
+  - "up" or "down" only when a floor sign, stairwell sign, or elevator sign clearly shows the target is on another floor.
   - Otherwise "unknown". Never guess.${target ? '' : ' With no target, always use "unknown".'}
 - "why": at most 14 words naming what in the image tells you, or an empty string.
 - Ignore people. Do not describe the scene.
@@ -155,7 +156,7 @@ module.exports = async function handler(req, res) {
   try {
     const target = clip(String(body.target || '').replace(/[^\w\s/.,'’()-]/g, ''), 80).trim();
     const system = mode === 'scan' ? scanPrompt(target) : chatPrompt(body.context || {}, !!image);
-    const maxTokens = mode === 'scan' ? 200 : 600;
+    const maxTokens = mode === 'scan' ? 200 : 1500;
     const provider = (process.env.AI_PROVIDER || 'anthropic').toLowerCase();
     const text = provider === 'anthropic'
       ? await callAnthropic(system, messages, image, maxTokens)
