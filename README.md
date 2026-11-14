@@ -105,7 +105,7 @@ The camera scans automatically every few seconds, and you can tap **Scan now** a
 
 ## Live map, locate-me, and voice
 
-- **Map tab (home):** a live map with your blue dot, the Newhouse pins (tap one to start walking), and your distance to the building. The walking screen shows the street route on the map with your dot moving, the next turn ringed, and a voice for each turn. Map data is OpenStreetMap, tiles are CARTO; the map is our own small tile viewer, so there is no map library to fail.
+- **Map tab (home):** a live map with your blue dot, the Newhouse pins (tap one to start walking), and your distance to the building. The walking screen shows the street route on the map with your dot moving, the next turn ringed, and a voice for each turn. Map data is OpenStreetMap, tiles are OpenStreetMap's standard tiles; the map is our own small tile viewer, so there is no map library to fail.
 - **Where am I inside?** Open the camera, point it at any door number, and the app places you on the floor plan (floors 2 to 5) and, if you have a destination, shows the route from where you are with the next step spoken. Scan another door and it updates.
 - **Voice:** set `ELEVENLABS_API_KEY` in Vercel (Settings, Environment Variables, then redeploy) to use the ElevenLabs voice from the summit's tool list. Short lines use ElevenLabs (repeated lines are cached to save credits); long answers use the device voice. The Ask AI tab shows which voice is active. Without a key the app uses the device voice and says so if none is available.
 

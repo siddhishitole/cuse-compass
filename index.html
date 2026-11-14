@@ -764,7 +764,7 @@ function viewHome(){
   <details class="more"><summary>Not sure where to start? Spin the compass</summary>
   <div class="compass"><div class="dialwrap">${dialSVG()}</div><div><h3>Spin the compass</h3><p>It points at something real from the summit: a talk, a bite, a ride, a room, or the door.</p><button class="btn" data-spin="1" type="button">Spin</button></div></div>
   <div id="spinOut" aria-live="polite">${spinCard()}</div></details>
-  <footer class="sufoot"><h3>Built for Newhouse, made to grow</h3><p>CuseCompass works for the three Newhouse buildings today. The same approach can cover every building at Syracuse University as floor plans become available.</p><p class="cr">Photos by Kiran891, ${ln('https://creativecommons.org/licenses/by-sa/4.0/', 'CC BY-SA 4.0')}, via Wikimedia Commons: ${credits}. Map data © OpenStreetMap contributors, tiles © CARTO.</p></footer>`;
+  <footer class="sufoot"><h3>Built for Newhouse, made to grow</h3><p>CuseCompass works for the three Newhouse buildings today. The same approach can cover every building at Syracuse University as floor plans become available.</p><p class="cr">Photos by Kiran891, ${ln('https://creativecommons.org/licenses/by-sa/4.0/', 'CC BY-SA 4.0')}, via Wikimedia Commons: ${credits}. Map data and tiles © OpenStreetMap contributors.</p></footer>`;
 }
 function initHomeMap(){
   homeMap = makeMap($('homeMap'), {zoom:16, lat:(DEST.nh1.lat + DEST.nh23.lat) / 2, lon:(DEST.nh1.lon + DEST.nh23.lon) / 2});
@@ -830,7 +830,7 @@ function scanCard(list, target){
   return h;
 }
 const readNums = text => [...String(text).toUpperCase().matchAll(/\d{3}[A-Z]{0,2}/g)].map(m => m[0]);
-/* ===== live map: a tiny tile map (OpenStreetMap data, CARTO tiles). Draws your dot, the route, and pins. No map library needed. ===== */
+/* ===== live map: a tiny tile map (OpenStreetMap data and tiles). Draws your dot, the route, and pins. No map library needed. ===== */
 const TILE_PX = 256;
 const mapProj = (lat, lon, z) => { const s = TILE_PX * Math.pow(2, z), sn = Math.sin(lat * Math.PI / 180); return [(lon + 180) / 360 * s, (0.5 - Math.log((1 + sn) / (1 - sn)) / (4 * Math.PI)) * s]; };
 const mapUnproj = (x, y, z) => { const s = TILE_PX * Math.pow(2, z), n = Math.PI - 2 * Math.PI * y / s; return [180 / Math.PI * Math.atan(0.5 * (Math.exp(n) - Math.exp(-n))), x / s * 360 - 180]; };
@@ -843,10 +843,10 @@ function makeMap(el, o){
   const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg'); svg.setAttribute('class', 'lm-svg');
   const marks = document.createElement('div'); marks.className = 'lm-marks';
   const ctl = document.createElement('div'); ctl.className = 'lm-ctl'; ctl.innerHTML = '<button type="button" data-lm="in" aria-label="Zoom in">+</button><button type="button" data-lm="out" aria-label="Zoom out">−</button><button type="button" data-lm="me" aria-label="Follow my location">◎</button>';
-  const attr = document.createElement('div'); attr.className = 'lm-attr'; attr.textContent = '© OpenStreetMap contributors © CARTO';
+  const attr = document.createElement('div'); attr.className = 'lm-attr'; attr.textContent = '© OpenStreetMap contributors';
   [tiles, svg, marks, ctl, attr].forEach(n => el.appendChild(n));
   const cache = {}, dpr = (window.devicePixelRatio || 1) > 1.25 ? '@2x' : '';
-  const urlFor = (x, y, z, alt) => alt ? `https://tile.openstreetmap.org/${z}/${x}/${y}.png` : `https://${'abc'[(x + y) % 3]}.basemaps.cartocdn.com/rastertiles/voyager/${z}/${x}/${y}${dpr}.png`;
+  const urlFor = (x, y, z, alt) => alt ? `https://${'abc'[(x + y) % 3]}.tile.openstreetmap.fr/hot/${z}/${x}/${y}.png` : `https://tile.openstreetmap.org/${z}/${x}/${y}.png`;
   let raf = 0, alive = true;
   const draw = () => {
     raf = 0; if (!alive) return; M.w = el.clientWidth || M.w; M.h = el.clientHeight || M.h;
@@ -1140,7 +1140,8 @@ function pickVoice(){
 try { if ('speechSynthesis' in window) { pickVoice(); if (window.speechSynthesis.addEventListener) window.speechSynthesis.addEventListener('voiceschanged', pickVoice); } } catch (e) {}
 function unlockAudio(){
   try { if (!voicePlayer) voicePlayer = new Audio(); voicePlayer.src = SILENT; const p = voicePlayer.play(); if (p && p.catch) p.catch(() => {}); } catch (e) {}
-  try { if ('speechSynthesis' in window && window.SpeechSynthesisUtterance) { const u = new window.SpeechSynthesisUtterance(' '); u.volume = 0; utts.push(u); window.speechSynthesis.speak(u); } } catch (e) {}
+  const ios = /iP(hone|ad|od)/.test(navigator.userAgent || '') || ((navigator.platform || '') === 'MacIntel' && navigator.maxTouchPoints > 1);
+  try { if (ios && 'speechSynthesis' in window && window.SpeechSynthesisUtterance) { const u = new window.SpeechSynthesisUtterance(' '); u.volume = 0; utts.push(u); window.speechSynthesis.speak(u); } } catch (e) {}
 }
 function stopSpeak(){ try { if (voicePlayer) voicePlayer.pause(); if ('speechSynthesis' in window) window.speechSynthesis.cancel(); } catch (e) {} }
 function chunkText(t){
@@ -1160,9 +1161,10 @@ function browserSpeak(text){
       const u = new window.SpeechSynthesisUtterance(parts[i++]);
       u.lang = 'en-US'; u.rate = 1; if (synthVoice) u.voice = synthVoice;
       let started = false, done = false;
-      const adv = () => { if (done) return; done = true; clearTimeout(wd); next(); };
+      const adv = () => { if (done) return; done = true; clearTimeout(wd); clearTimeout(rt); next(); };
+      const rt = setTimeout(() => { if (!started && !done && !synth.speaking) { try { synth.cancel(); synth.speak(u); } catch (e) {} } }, 700); // some browsers drop the first utterance: try once more
       const wd = setTimeout(() => { if (!started && !done) { toast('No sound started. Check your volume, the silent switch, and that this tab isn’t muted.'); adv(); } }, 3500);
-      u.onstart = () => { started = true; clearTimeout(wd); };
+      u.onstart = () => { started = true; clearTimeout(wd); clearTimeout(rt); };
       u.onend = adv;
       u.onerror = e => {
         const er = e && e.error;
@@ -1178,7 +1180,8 @@ function browserSpeak(text){
 }
 const ttsCache = new Map();
 let voiceMode = 'checking';
-function updateVoiceBadge(){ const b = $('vbadge'); if (b) b.textContent = voiceMode === 'elevenlabs' ? 'Voice: ElevenLabs' : voiceMode === 'browser' ? 'Voice: this device' : 'Voice: checking…'; }
+const voiceBadgeText = () => voiceMode === 'elevenlabs' ? 'Voice: ElevenLabs' : voiceMode === 'browser' ? 'Voice: this device' : 'Voice: checking…';
+function updateVoiceBadge(){ const b = $('vbadge'); if (b) b.textContent = voiceBadgeText(); }
 async function checkVoice(){
   try { const r = await fetch('/api/speak'); const j = r && r.ok ? await r.json() : null; ttsRemote = !!(j && j.ready); voiceMode = ttsRemote ? 'elevenlabs' : 'browser'; }
   catch (e) { ttsRemote = false; voiceMode = 'browser'; }
@@ -1223,7 +1226,7 @@ function listenOnce(cb, onText){
     if (done) return; done = true; clearTimeout(timer);
     try { rec.stop(); } catch (e) {}
     st.listening = false; activeRec = null; updateMics();
-    const q = text(); if (onText) onText(''); if (q) cb(q);
+    const q = text(); if (onText) onText(''); if (q) cb(fixSpeech(q));
   };
   const arm = ms => { clearTimeout(timer); timer = setTimeout(finish, ms); };
   rec.onresult = e => {
@@ -1245,6 +1248,13 @@ function listenOnce(cb, onText){
 }
 const echoTo = id => v => { const i = $(id); if (i) i.value = v; else if (v) setStatus('Hearing: ' + v); };
 
+function fixSpeech(t){
+  return String(t)
+    .replace(/\bnew\s*house\s*(?:number\s*)?(?:(2|two|2nd|second)\b|(?:too|to)(?=\s*[.!?]?\s*$))/gi, 'Newhouse 2')
+    .replace(/\bnew\s*house\s*(?:number\s*)?(?:(3|three|3rd|third)\b|(?:tree|free)(?=\s*[.!?]?\s*$))/gi, 'Newhouse 3')
+    .replace(/\bnew\s*house\s*(?:number\s*)?(?:(1|one|1st|first)\b|won(?=\s*[.!?]?\s*$))/gi, 'Newhouse 1')
+    .replace(/\bnew\s*house\b/gi, 'Newhouse');
+}
 /* ===== the voice assistant: understands where you want to go ===== */
 const STOPS = new Set('the and for you are what when where which who how can does with from that this have has any near about tell give there will would should could into your our its take bring walk guide show please want need find going head let get room rooms event talk session day'.split(' '));
 function bestSession(text){
@@ -1258,13 +1268,13 @@ function bestSession(text){
 function targetFromNum(n){ const e = (INDEX[n] || [])[0], all = e ? nums(e.name) : []; return {nums:all.includes(n) ? all : [n], name:e ? e.name : `Room ${n}`, b:e ? e.b : null, title:e && e.sessions[0] ? e.sessions[0].title : `Room ${n}`}; }
 function targetFromSession(s){ const id = s.rooms.find(i => ROOM[i] && nums(ROOM[i].name).length); if (!id) return null; const r = ROOM[id]; return {nums:nums(r.name), name:r.name.replace(/^Rooms /, 'Room '), b:s.b || r.b, title:s.title}; }
 function routeUtterance(q){
-  const text = String(q).trim(); if (!text) return;
+  const text = fixSpeech(String(q).trim()); if (!text) return;
   const open = !$('cam').hidden;
   const rn = readNums(text);
   if (rn.length) { startGuideTo(targetFromNum(rn[0])); return; }
   if (!rn.length && /\b(restrooms?|bathrooms?|elevators?|lift|indoor map|floor ?plan)\b/i.test(text)) { if (open) closeCam(); go('scan'); toast('Type the room you’re near, then tap Nearest restroom or Nearest elevator.'); return; }
   if (!rn.length && /\b(bus|buses|shuttle|trolley|centro|transit)\b/i.test(text)) { if (open) closeCam(); go('around', 'ride'); return; }
-  if (!rn.length && /newhouse|new\s*house|\bnh\b/i.test(text) && /(get to|walk to|walk me|directions? to|navigate to|route to|way to|how do i get|take me to the (?:building|entrance))/i.test(text)) {
+  if (!rn.length && /newhouse|new\s*house|\bnh\b/i.test(text) && /(get to|walk to|walk me|directions? to|navigate to|route to|way to|how do i get|take me to the (?:building|entrance)|(?:take|bring|lead|guide) me to (?:the )?newhouse|go to (?:the )?newhouse)/i.test(text)) {
     const m = text.match(/\b(1|2|3|one|two|three)\b/i); startWalk(m && /^(2|3|two|three)$/i.test(m[1]) ? 'nh23' : 'nh1'); return;
   }
   if (/plan|schedule my day|my day/i.test(text)) { if (open) setStage('plan'); else { st.tab = 'home'; st.flow = 'plan'; st.bld = null; render(); window.scrollTo(0, 0); } return; }
@@ -1400,12 +1410,14 @@ function closeCam(){
   if (camStream) { camStream.getTracks().forEach(t => t.stop()); camStream = null; }
   stopSpeak(); $('cam').hidden = true; document.body.style.overflow = ''; st.target = null; igLiveRender();
 }
-function grabFrame(){
+function grabFrame(zoom){
   const v = $('camVid'); if (!v.videoWidth) return null;
-  const k = Math.min(1, 1024 / Math.max(v.videoWidth, v.videoHeight)), c = document.createElement('canvas');
-  c.width = Math.round(v.videoWidth * k); c.height = Math.round(v.videoHeight * k);
-  c.getContext('2d').drawImage(v, 0, 0, c.width, c.height);
-  const url = c.toDataURL('image/jpeg', 0.7); return {media_type:'image/jpeg', data:url.split(',')[1]};
+  // zoom = the middle of the picture at full camera resolution (where the viewfinder corners are), so small door signs stay readable
+  const sw = zoom ? v.videoWidth * 0.56 : v.videoWidth, sh = zoom ? v.videoHeight * 0.56 : v.videoHeight, sx = (v.videoWidth - sw) / 2, sy = (v.videoHeight - sh) / 2;
+  const k = Math.min(1, 1600 / Math.max(sw, sh)), c = document.createElement('canvas');
+  c.width = Math.round(sw * k); c.height = Math.round(sh * k);
+  c.getContext('2d').drawImage(v, sx, sy, sw, sh, 0, 0, c.width, c.height);
+  const url = c.toDataURL('image/jpeg', 0.85); return {media_type:'image/jpeg', data:url.split(',')[1]};
 }
 function parseScan(t){
   const out = {numbers:[], move:'unknown', why:''};
@@ -1454,7 +1466,7 @@ function handleScan(res, auto){
 }
 async function scanOnce(auto){
   if (camBusy || !camStream) return;
-  const img = grabFrame(); if (!img) { if (!auto) setStatus('Waiting for the camera…'); return; }
+  const img = grabFrame(!auto || camScans % 2 === 1); if (!img) { if (!auto) setStatus('Waiting for the camera…'); return; }
   camBusy = true; camScans++; setStatus(auto ? 'Looking…' : 'Reading the signs…', true);
   const body = {mode:'scan', messages:[{role:'user', content:'Read the room numbers and signs.'}], image:img};
   if (st.target) body.target = `${st.target.name}${floorOf(st.target) ? ' (floor ' + floorOf(st.target) + ')' : ''}`;
@@ -1668,7 +1680,7 @@ const mapsUrl = k => `https://www.google.com/maps/dir/?api=1&destination=${DEST[
 
 /* ===== ask AI ===== */
 async function askAI(q){
-  stopSpeak();
+  q = fixSpeech(q); stopSpeak();
   st.chat.push({role:'user', content:q}); st.busy = true; renderChat();
   const history = st.chat.slice(-8).map(m => ({role:m.role, content:m.content}));
   let out;
@@ -1703,7 +1715,7 @@ function viewAsk(){
   return `<section class="askhead"><h2>Ask anything</h2><p>Type or talk. I answer from the verified summit info and say so when I don’t know. I can build your day, too. Please don’t type personal information.</p></section>
   <div class="chips">${chips.map(c => `<button class="chip" data-q="${esc(c)}" type="button">${esc(c)}</button>`).join('')}</div>
   <div class="chat" id="chatLog" aria-live="polite"></div>
-  <div class="tools">${micBtn('Talk', 'data-mic="1"')}<label class="ck2"><input type="checkbox" id="speakT"> Read answers aloud</label><button class="btn ghost sm" data-testvoice="1" type="button">Test voice</button><span class="vbadge" id="vbadge">Voice: checking…</span></div>
+  <div class="tools">${micBtn('Talk', 'data-mic="1"')}<label class="ck2"><input type="checkbox" id="speakT"> Read answers aloud</label><button class="btn ghost sm" data-testvoice="1" type="button">Test voice</button><span class="vbadge" id="vbadge">${voiceBadgeText()}</span></div>
   <form class="askrow" id="askForm" autocomplete="off"><input type="search" id="askIn" placeholder="Ask CuseCompass…" aria-label="Ask CuseCompass"><button class="btn" type="submit">Ask</button></form>`;
 }
 function wireAsk(){

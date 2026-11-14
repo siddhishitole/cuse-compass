@@ -63,6 +63,7 @@ RULES
   - "ahead", "left", "right", or "back" only when a visible directional sign (an arrow with a room range or name) or the order of door numbers clearly shows the way to the target.
   - "up" or "down" only when a floor sign, stairwell sign, or elevator sign clearly shows the target is on another floor.
   - Otherwise "unknown". Never guess.${target ? '' : ' With no target, always use "unknown".'}
+- Read small, blurry, angled, or partly hidden text carefully. Many signs show a room name and a number, like "BARTLETT ROOM 113". Return the three-digit number whenever you can read it, even if the name is unfamiliar.
 - "why": at most 14 words naming what in the image tells you, or an empty string.
 - Ignore people. Do not describe the scene.
 - Respond ONLY with JSON, no markdown: {"numbers": ["206F"], "move": "unknown", "why": ""}`;
