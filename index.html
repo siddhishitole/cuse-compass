@@ -3,132 +3,138 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light">
 <title>CuseCompass</title>
-<meta name="description" content="Find the room, not just the building. Plan your day, pick an event, and point your camera at a door number to see what's happening inside.">
+<meta name="description" content="Find the room, not just the building. Stand at the entrance, open the camera, and get directions you can see and hear.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='30' fill='%230B1146'/%3E%3Cpath d='M32 10l6 22H26z' fill='%23FF6B1A'/%3E%3Cpath d='M32 54l-6-22h12z' fill='%23F3F5FF'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{
-  --paper:#F3F5FF; --surface:#FFFFFF; --ink:#0B1146; --muted:#5A6396; --line:#DADFF3;
-  --tang:#FF6B1A; --lemon:#FFD84D; --sky:#9CCBFF; --on-tang:#1A0A00; --dial:#0B1146;
-  --c-creative:rgba(255,107,26,.16); --c-product:rgba(156,203,255,.34); --c-all:rgba(255,216,77,.30);
+  color-scheme:light;
+  --paper:#FFFFFF; --tint:#EEF4FF; --surface:#FFFFFF; --ink:#0B1146; --muted:#55608F; --line:#DCE4F5;
+  --tang:#FF6B1A; --tang-ink:#C24100; --lemon:#FFD84D; --sky:#9CCBFF; --on-tang:#1A0A00; --dial:#0B1146;
+  --c-creative:rgba(255,107,26,.14); --c-product:rgba(156,203,255,.38); --c-all:rgba(255,216,77,.34);
   --f-display:"Bricolage Grotesque","Trebuchet MS",system-ui,sans-serif;
   --f-body:"Instrument Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
   box-sizing:border-box;
   padding-top:env(safe-area-inset-top,0px);
   padding-bottom:env(safe-area-inset-bottom,0px);
 }
-@media (prefers-color-scheme: dark){
-  :root:not([data-theme="light"]){
-    color-scheme:dark;
-    --paper:#080C33; --surface:#0F1654; --ink:#F3F5FF; --muted:#A5AFE6; --line:#252E7A; --dial:#05082B;
-    --c-creative:rgba(255,107,26,.20); --c-product:rgba(156,203,255,.18); --c-all:rgba(255,216,77,.16);
-  }
-}
-:root[data-theme="dark"]{
-  color-scheme:dark;
-  --paper:#080C33; --surface:#0F1654; --ink:#F3F5FF; --muted:#A5AFE6; --line:#252E7A; --dial:#05082B;
-  --c-creative:rgba(255,107,26,.20); --c-product:rgba(156,203,255,.18); --c-all:rgba(255,216,77,.16);
-}
 html{scroll-padding-top:env(safe-area-inset-top,0px);}
 *,*::before,*::after{box-sizing:inherit;}
-body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.55;-webkit-tap-highlight-color:transparent;}
-h1,h2,h3{font-family:var(--f-display);font-weight:500;letter-spacing:-0.02em;line-height:1.1;margin:0;}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.55;-webkit-tap-highlight-color:transparent;overflow-x:hidden;}
+h1,h2,h3{font-family:var(--f-display);font-weight:500;letter-spacing:-0.02em;line-height:1.12;margin:0;}
 p{margin:0;}
+svg{max-width:100%;}
 :focus-visible{outline:2px solid var(--tang);outline-offset:3px;}
 .ln{color:inherit;font-weight:500;text-decoration:underline;text-decoration-color:var(--tang);text-decoration-thickness:1.5px;text-underline-offset:3px;}
 
 /* shell */
-.top{display:flex;align-items:center;justify-content:space-between;gap:12px;max-width:720px;margin:0 auto;padding:16px 20px 0;}
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;max-width:760px;margin:0 auto;padding:14px 20px 4px;}
 .logo{display:flex;align-items:center;gap:10px;background:none;border:0;padding:0;color:var(--ink);cursor:pointer;font:600 19px var(--f-display);letter-spacing:-0.02em;}
 .logo svg{width:30px;height:30px;transition:transform .6s cubic-bezier(.3,1.5,.5,1);}
 .logo:hover svg,.logo:focus-visible svg{transform:rotate(60deg);}
 .hnote{color:var(--muted);font-size:13.5px;}
-main{max-width:720px;margin:0 auto;padding:8px 20px 130px;}
-.nav{position:fixed;left:0;right:0;bottom:0;z-index:40;display:flex;justify-content:center;gap:2px;padding:8px 8px calc(8px + env(safe-area-inset-bottom,0px));background:var(--paper);background:color-mix(in srgb,var(--paper) 88%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-top:1px solid var(--line);}
+main{max-width:760px;margin:0 auto;padding:6px 20px 130px;}
+.nav{position:fixed;left:0;right:0;bottom:0;z-index:40;display:flex;justify-content:center;gap:2px;padding:8px 8px calc(8px + env(safe-area-inset-bottom,0px));background:var(--paper);border-top:1px solid var(--line);}
 .nav button{position:relative;flex:1;max-width:116px;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 4px;border:0;border-radius:14px;background:transparent;color:var(--muted);font:500 12px var(--f-body);cursor:pointer;transition:color .2s;}
 .nav button svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;}
-.nav button.on{color:var(--tang);}
+.nav button.on{color:var(--tang-ink);}
 .nav button.on::after{content:"";position:absolute;bottom:-2px;width:5px;height:5px;border-radius:50%;background:var(--tang);}
 .cnt{position:absolute;top:-1px;right:16px;min-width:18px;height:18px;padding:0 5px;border-radius:99px;background:var(--tang);color:var(--on-tang);font:600 11px/18px var(--f-body);font-style:normal;text-align:center;}
-#fx{position:fixed;inset:0;pointer-events:none;z-index:80;overflow:hidden;}
+#fx{position:fixed;inset:0;pointer-events:none;z-index:90;overflow:hidden;}
 .cf{position:absolute;width:8px;height:8px;border-radius:2px;}
 
 /* buttons and controls */
-.btn{display:inline-block;text-decoration:none;font:600 15px var(--f-body);cursor:pointer;padding:11px 22px;border:1px solid var(--tang);border-radius:999px;background:var(--tang);color:var(--on-tang);transition:transform .12s,background .2s;}
+.btn{display:inline-block;text-decoration:none;font:600 15px var(--f-body);cursor:pointer;padding:11px 22px;border:1px solid var(--tang);border-radius:999px;background:var(--tang);color:var(--on-tang);transition:transform .12s,background .2s,border-color .2s;}
 .btn:active{transform:scale(.97);}
-.btn.ghost{background:transparent;color:var(--ink);border-color:var(--line);}
+.btn.ghost{background:transparent;color:var(--ink);border-color:#C5D0EC;}
 .btn.ghost:hover{border-color:var(--tang);}
 .btn.sm{padding:7px 15px;font-size:14px;}
-.btn.big{padding:14px 30px;font-size:16.5px;}
+.btn.big{padding:14px 28px;font-size:16.5px;}
 .btn[disabled]{opacity:.45;cursor:default;}
-.btn[aria-pressed=true]{background:rgba(255,107,26,.16);color:var(--ink);border-color:var(--tang);}
+.btn[aria-pressed=true]{background:rgba(255,107,26,.14);color:var(--ink);border-color:var(--tang);}
 .btn.pop{animation:stampin .4s cubic-bezier(.3,1.6,.5,1);}
 @keyframes stampin{0%{transform:scale(1.35);}100%{transform:scale(1);}}
 .row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;}
 .chip{font:500 14px var(--f-body);cursor:pointer;padding:7px 15px;border:1px solid var(--line);border-radius:999px;background:var(--surface);color:var(--ink);transition:border-color .2s,background .2s;}
 .chip:hover{border-color:var(--tang);}
-.chip[aria-pressed=true]{background:rgba(255,107,26,.16);border-color:var(--tang);}
+.chip[aria-pressed=true]{background:rgba(255,107,26,.14);border-color:var(--tang);}
 .chip .dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:7px;}
 .d-creative{background:var(--tang);} .d-product{background:var(--sky);} .d-all{background:var(--lemon);}
-.sticker{font-size:14.5px;}
 .seg{display:flex;border:1px solid var(--line);border-radius:999px;overflow:hidden;background:var(--surface);margin:14px 0;}
 .seg button{flex:1;font:500 14.5px var(--f-body);padding:9px 8px;border:0;background:transparent;color:var(--muted);cursor:pointer;}
-.seg button[aria-pressed=true]{background:rgba(255,107,26,.16);color:var(--ink);}
+.seg button[aria-pressed=true]{background:rgba(255,107,26,.14);color:var(--ink);}
+.seg button+button{border-left:1px solid var(--line);}
 .ctl{display:flex;gap:8px;margin:10px 0 0;}
-.ctl input,#askIn,.lookup input{flex:1;min-width:0;font:400 16px var(--f-body);padding:12px 18px;border:1px solid var(--line);border-radius:999px;background:var(--surface);color:var(--ink);}
-.ctl input::placeholder,#askIn::placeholder,.lookup input::placeholder{color:var(--muted);}
-.note{margin:14px 0;padding:11px 15px;border-left:3px solid var(--lemon);background:var(--surface);font-size:14.5px;border-radius:4px 14px 14px 4px;color:var(--muted);}
+input[type=text],input[type=search]{font-family:var(--f-body);}
+.ctl input,#askIn,.lookup input,.askbox input{flex:1;min-width:0;font:400 16px var(--f-body);padding:12px 18px;border:1px solid #C5D0EC;border-radius:999px;background:var(--surface);color:var(--ink);}
+.ctl input::placeholder,#askIn::placeholder,.lookup input::placeholder,.askbox input::placeholder{color:var(--muted);}
+.ctl input:focus,#askIn:focus,.lookup input:focus,.askbox input:focus{border-color:var(--tang);outline:none;}
+.note{margin:14px 0;padding:11px 15px;border-left:3px solid var(--lemon);background:var(--tint);font-size:14.5px;border-radius:4px 14px 14px 4px;color:var(--muted);}
 .empty{margin:24px 0;color:var(--muted);font-size:16.5px;}
 .src{color:var(--muted);font-size:13px;}
 .back{background:none;border:0;color:var(--muted);font:500 14.5px var(--f-body);cursor:pointer;padding:8px 0;}
 .back::before{content:"‹  ";}
-.lead{margin:10px auto 0;max-width:34ch;color:var(--muted);font-size:16.5px;}
-.lead.left{margin:8px 0 0;max-width:46ch;}
+.lead{margin:10px 0 0;max-width:46ch;color:var(--muted);font-size:16.5px;}
+.sech{font-size:23px;margin:34px 0 12px;}
+.micb{display:inline-flex;align-items:center;gap:6px;}
+.micb svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
 
 /* home */
-.hero{padding:18px 0 4px;text-align:center;}
-.dialwrap{width:min(56vw,210px);margin:0 auto 8px;}
+.hero2{margin-top:10px;padding:16px 16px 24px;border-radius:30px;background:var(--tint);}
+.heroart svg{display:block;width:100%;height:auto;border-radius:22px;}
+.hero2 h1{font-size:clamp(30px,7.4vw,44px);margin:20px 4px 0;}
+.hero2 .lead{margin:10px 4px 0;}
+.hero2 .cta{margin:18px 4px 0;}
+.askbox{display:flex;gap:8px;align-items:center;margin:20px 0 0;}
+.exs{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 0;}
+.bgrid{display:grid;gap:12px;}
+@media (min-width:600px){.bgrid{grid-template-columns:repeat(3,1fr);}}
+.bcard2{display:flex;flex-direction:column;gap:2px;text-align:left;padding:0 0 14px;border:1px solid var(--line);border-radius:22px;background:var(--surface);color:var(--ink);cursor:pointer;overflow:hidden;transition:border-color .2s,transform .15s;}
+.bcard2:hover{border-color:var(--tang);}
+.bcard2 .bart svg{display:block;width:100%;height:auto;}
+.bcard2 strong{font:500 19px var(--f-display);padding:12px 16px 0;}
+.bcard2 em{font-style:normal;color:var(--muted);font-size:14px;padding:0 16px;}
+.compass{display:grid;gap:16px;align-items:center;padding:18px;border:1px solid var(--line);border-radius:26px;background:var(--surface);}
+@media (min-width:600px){.compass{grid-template-columns:200px 1fr;}}
+.dialwrap{width:min(52vw,190px);margin:0 auto;}
 #dial{display:block;width:100%;height:auto;overflow:visible;}
 #needle{transform-origin:150px 150px;transition:transform 2.6s cubic-bezier(.12,.7,.15,1);}
 #needle.idle{animation:sway 6s ease-in-out infinite alternate;}
 @keyframes sway{from{transform:rotate(-7deg);}to{transform:rotate(7deg);}}
-.hero h1{font-size:clamp(34px,8vw,48px);margin-top:14px;}
-.sur{margin-top:14px;}
-.res{margin:18px auto 0;max-width:520px;text-align:left;border:1px solid var(--line);border-left:3px solid var(--zone,var(--tang));border-radius:6px 22px 22px 6px;padding:16px 20px 18px;background:var(--surface);}
+.compass h3{font-size:21px;}
+.compass p{color:var(--muted);margin:6px 0 12px;}
+.res{margin:14px 0 0;text-align:left;border:1px solid var(--line);border-left:4px solid var(--zone,var(--tang));border-radius:6px 20px 20px 6px;padding:14px 18px 16px;background:var(--paper);}
 .res.fresh{animation:rise .5s cubic-bezier(.2,.8,.2,1);}
 @keyframes rise{from{transform:translateY(10px);opacity:0;}to{transform:none;opacity:1;}}
-.tagc{display:inline-block;margin-bottom:6px;color:var(--zone,var(--tang));font:600 14px var(--f-display);}
-.res h2{font-size:23px;}
-.res p{margin:6px 0 14px;color:var(--muted);}
-.choices{display:grid;gap:12px;margin:26px 0 0;}
-@media (min-width:560px){.choices{grid-template-columns:1fr 1fr;}}
-.choice{display:flex;flex-direction:column;gap:4px;text-align:left;padding:18px 20px;border:1px solid var(--line);border-radius:22px;background:var(--surface);color:var(--ink);cursor:pointer;transition:border-color .2s,transform .15s;}
-.choice:hover{border-color:var(--tang);}
-.choice[aria-pressed=true]{border-color:var(--tang);background:rgba(255,107,26,.10);}
-.choice strong{font:500 21px var(--f-display);letter-spacing:-0.02em;}
-.choice em{font-style:normal;color:var(--muted);font-size:14.5px;}
-.choice svg{width:26px;height:26px;fill:none;stroke:var(--tang);stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;margin-bottom:6px;}
-.below{margin:14px 0 0;text-align:center;color:var(--muted);font-size:14.5px;}
-.below button{background:none;border:0;padding:0;color:var(--ink);font:inherit;font-weight:500;cursor:pointer;text-decoration:underline;text-decoration-color:var(--tang);text-underline-offset:3px;}
+.tagc{display:inline-block;margin-bottom:4px;color:var(--tang-ink);font:600 14px var(--f-display);}
+.res h2{font-size:22px;}
+.res p{margin:6px 0 12px;color:var(--muted);}
 .panel{margin:16px 0 0;padding:18px 20px;border:1px solid var(--line);border-radius:22px;background:var(--surface);}
 .panel h3{font-size:19px;margin-bottom:4px;}
-.blds{display:grid;gap:10px;margin-top:12px;}
-.bcard{display:flex;align-items:center;gap:14px;text-align:left;padding:14px 16px;border:1px solid var(--line);border-radius:18px;background:var(--paper);color:var(--ink);cursor:pointer;transition:border-color .2s;}
-.bcard:hover{border-color:var(--tang);}
-.bcard strong{font:500 19px var(--f-display);display:block;}
-.bcard em{font-style:normal;color:var(--muted);font-size:14px;}
-.bdot{flex:none;width:12px;height:12px;border-radius:50%;}
-.bd-nh1{background:var(--tang);} .bd-nh2{background:var(--sky);} .bd-nh3{background:var(--lemon);}
-.bh{font-size:32px;margin-top:4px;}
-.evl{list-style:none;margin:18px 0 0;padding:0;display:grid;gap:10px;}
+.steps3{display:grid;gap:12px;margin:18px 0 0;padding:0;list-style:none;}
+.steps3 li{display:flex;gap:14px;align-items:flex-start;padding:14px 16px;border:1px solid var(--line);border-radius:18px;background:var(--surface);}
+.steps3 .n{flex:none;width:30px;height:30px;border-radius:50%;background:var(--lemon);display:grid;place-items:center;font:600 15px var(--f-display);}
+.steps3 b{font:500 17px var(--f-display);display:block;}
+.steps3 span{color:var(--muted);font-size:15px;}
+
+/* building page */
+.bh{font-size:32px;margin-top:2px;}
+.bhero{margin-top:8px;border-radius:24px;overflow:hidden;border:1px solid var(--line);}
+.bhero svg{display:block;width:100%;height:auto;}
+.usecard{margin:16px 0 0;padding:16px 18px;border:1px solid var(--line);border-radius:20px;background:var(--tint);}
+.usecard h3{font-size:19px;margin-bottom:6px;}
+.usecard p{margin:4px 0;font-size:15.5px;}
+.usecard .src{margin-top:6px;}
+.evl{list-style:none;margin:16px 0 0;padding:0;display:grid;gap:10px;}
 .evt{display:flex;align-items:center;gap:14px;justify-content:space-between;padding:14px 16px;border:1px solid var(--line);border-radius:18px;background:var(--surface);}
 details.more{margin:22px 0 0;border:1px solid var(--line);border-radius:18px;background:var(--surface);}
 details.more summary{cursor:pointer;padding:14px 18px;font:500 16px var(--f-display);list-style:none;}
 details.more summary::-webkit-details-marker{display:none;}
-details.more summary::after{content:"+";float:right;color:var(--tang);font-size:20px;line-height:1;}
+details.more summary::after{content:"+";float:right;color:var(--tang-ink);font-size:20px;line-height:1;}
 details.more[open] summary::after{content:"–";}
 .moreb{padding:0 18px 16px;}
 .moreb h3{font-size:17px;margin:14px 0 4px;}
@@ -137,18 +143,18 @@ details.more[open] summary::after{content:"–";}
 .rc ul,.plain{margin:4px 0 0;padding-left:20px;}
 .plain li{margin:8px 0;}
 
-/* scan page and results */
+/* guide tab and results */
 .scanhead h2{font-size:32px;}
 .scanhead p{margin-top:8px;color:var(--muted);max-width:44ch;}
 .lookup{display:flex;gap:8px;margin:18px 0 0;}
-.sres{margin:16px 0 0;padding:16px 18px;border:1px solid var(--line);border-left:3px solid var(--tang);border-radius:6px 20px 20px 6px;background:var(--surface);}
+.sres{margin:16px 0 0;padding:16px 18px;border:1px solid var(--line);border-left:4px solid var(--tang);border-radius:6px 20px 20px 6px;background:var(--surface);}
 .sres h3{font-size:22px;}
 .sres .tags{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 10px;}
 .tag{padding:2px 12px;border:1px solid var(--line);border-radius:999px;font-size:13.5px;color:var(--muted);}
 .sres ul{margin:6px 0 0;padding-left:18px;}
 .sres li{margin:5px 0;}
 .sres .sub{color:var(--muted);font-size:14.5px;margin-top:6px;}
-.banner{margin:0 0 10px;padding:8px 12px;border-radius:12px;font-size:14.5px;background:rgba(255,216,77,.22);}
+.banner{margin:0 0 10px;padding:8px 12px;border-radius:12px;font-size:14.5px;background:rgba(255,216,77,.34);}
 .banner.ok{background:rgba(255,107,26,.2);}
 .found{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;}
 h2.sec2{font-size:20px;margin:26px 0 0;}
@@ -159,8 +165,8 @@ h2.sec2{font-size:20px;margin:26px 0 0;}
 .chips{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0 4px;}
 .chat{display:flex;flex-direction:column;gap:10px;margin:14px 0;}
 .msg{max-width:88%;padding:11px 16px;white-space:pre-wrap;font-size:16px;line-height:1.5;}
-.msg.u{align-self:flex-end;background:rgba(255,107,26,.18);border-radius:20px 20px 4px 20px;}
-.msg.a{align-self:flex-start;background:var(--surface);border:1px solid var(--line);border-radius:20px 20px 20px 4px;}
+.msg.u{align-self:flex-end;background:rgba(255,107,26,.16);border-radius:20px 20px 4px 20px;}
+.msg.a{align-self:flex-start;background:var(--tint);border-radius:20px 20px 20px 4px;}
 .msg small{display:block;margin-top:6px;color:var(--muted);font-size:13px;}
 .msg .btn{margin-top:10px;margin-right:6px;}
 .dots{display:inline-flex;gap:5px;padding:5px 0;}
@@ -175,7 +181,7 @@ h2.sec2{font-size:20px;margin:26px 0 0;}
 /* schedule */
 .tl{list-style:none;margin:14px 0 0;padding:0;display:grid;gap:10px;}
 .tix{display:grid;grid-template-columns:96px 1fr auto;align-items:center;border:1px solid var(--line);border-radius:20px;background:var(--surface);overflow:hidden;}
-.stub{align-self:stretch;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:10px 6px;border-right:1px dashed var(--line);}
+.stub{align-self:stretch;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:10px 6px;border-right:1px dashed #C5D0EC;}
 .stub b{font:500 16px var(--f-display);line-height:1.15;}
 .stub i{font-style:normal;font-size:12.5px;line-height:1.2;margin-top:3px;color:var(--muted);}
 .t-creative .stub{background:var(--c-creative);} .t-product .stub{background:var(--c-product);} .t-all .stub{background:var(--c-all);}
@@ -188,7 +194,7 @@ h2.sec2{font-size:20px;margin:26px 0 0;}
 .loc.none{text-decoration:none;color:var(--muted);cursor:default;}
 .tix .btn{margin-right:14px;}
 .tip{margin-top:6px;font-size:14px;color:var(--muted);}
-.hint{margin:0;padding:9px 14px;border-left:3px solid var(--tang);background:var(--surface);border-radius:4px 14px 14px 4px;font-size:14.5px;color:var(--muted);}
+.hint{margin:0;padding:9px 14px;border-left:3px solid var(--tang);background:var(--tint);border-radius:4px 14px 14px 4px;font-size:14.5px;color:var(--muted);}
 h2.day{font-size:22px;margin:22px 0 2px;}
 @media (max-width:540px){
   .tix{grid-template-columns:80px 1fr;}
@@ -196,26 +202,27 @@ h2.day{font-size:22px;margin:22px 0 2px;}
 }
 
 /* around */
-.roll{border:1px solid var(--line);border-left:3px solid var(--lemon);border-radius:6px 22px 22px 6px;padding:18px 20px;background:var(--surface);margin:12px 0 18px;}
+.roll{border:1px solid var(--line);border-left:4px solid var(--lemon);border-radius:6px 22px 22px 6px;padding:18px 20px;background:var(--tint);margin:12px 0 18px;}
 .rollname{font:500 clamp(26px,7vw,34px) var(--f-display);letter-spacing:-0.02em;line-height:1.05;min-height:1.1em;}
 .roll p{margin:8px 0 14px;color:var(--muted);font-size:15.5px;}
 .sec{margin:26px 0 0;}
 .sec h2{font-size:22px;margin-bottom:4px;}
 .sec .sub{color:var(--muted);font-size:14.5px;margin-bottom:6px;}
 .rts{list-style:none;margin:8px 0 0;padding:0;}
-.rt{margin:8px 0;padding:10px 14px;background:var(--surface);border-left:4px solid var(--c,var(--line));border-radius:4px 16px 16px 4px;font-size:15px;}
+.rt{margin:8px 0;padding:10px 14px;background:var(--surface);border:1px solid var(--line);border-left:5px solid var(--c,var(--line));border-radius:4px 16px 16px 4px;font-size:15px;}
 .rt strong{font-family:var(--f-display);font-weight:500;font-size:16.5px;}
 .rt-orange{--c:var(--tang);} .rt-blue{--c:var(--sky);}
 
-/* live scanner */
+/* live guide (dark glass over the camera) */
 .cam{position:fixed;inset:0;z-index:70;background:#000;color:#F3F5FF;}
 .cam[hidden]{display:none;}
 .cam video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
-.camtop{position:absolute;top:calc(14px + env(safe-area-inset-top,0px));left:14px;right:14px;display:flex;align-items:center;gap:10px;}
-.cam .btn.ghost{color:#F3F5FF;border-color:rgba(243,245,255,.55);background:rgba(5,8,43,.5);}
-.camtarget{flex:1;padding:7px 14px;border-radius:999px;background:rgba(5,8,43,.7);font-size:14px;line-height:1.3;}
-.reticle{position:absolute;left:12%;right:12%;top:20%;height:24%;pointer-events:none;}
-.reticle i{position:absolute;width:26px;height:26px;border:3px solid var(--tang);}
+.camtop{position:absolute;top:calc(12px + env(safe-area-inset-top,0px));left:12px;right:12px;display:flex;align-items:center;gap:8px;}
+.cbtn{font:600 14px var(--f-body);cursor:pointer;padding:8px 15px;border:1px solid rgba(243,245,255,.55);border-radius:999px;background:rgba(8,12,51,.62);color:#F3F5FF;white-space:nowrap;}
+.camtarget{flex:1;min-width:0;padding:7px 14px;border-radius:999px;background:rgba(8,12,51,.74);font-size:13.5px;line-height:1.3;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.reticle{position:absolute;left:12%;right:12%;top:22%;height:22%;pointer-events:none;}
+.reticle[hidden]{display:none;}
+.reticle i{position:absolute;width:24px;height:24px;border:3px solid var(--tang);}
 .reticle i:nth-child(1){top:0;left:0;border-right:0;border-bottom:0;border-radius:10px 0 0 0;}
 .reticle i:nth-child(2){top:0;right:0;border-left:0;border-bottom:0;border-radius:0 10px 0 0;}
 .reticle i:nth-child(3){bottom:0;left:0;border-right:0;border-top:0;border-radius:0 0 0 10px;}
@@ -223,17 +230,45 @@ h2.day{font-size:22px;margin:22px 0 2px;}
 .sweep{position:absolute;left:6px;right:6px;top:0;height:2px;background:var(--tang);opacity:0;}
 .reticle.scan .sweep{opacity:.9;animation:sweep 1.4s ease-in-out infinite alternate;}
 @keyframes sweep{from{top:6%;}to{top:94%;}}
-.camdock{position:absolute;left:0;right:0;bottom:0;padding:16px 14px calc(16px + env(safe-area-inset-bottom,0px));background:linear-gradient(transparent,rgba(5,8,43,.9) 22%);}
-.camstatus{font-size:15px;margin-bottom:8px;text-shadow:0 1px 8px rgba(0,0,0,.8);}
-.camcard{max-height:34vh;overflow:auto;margin-bottom:10px;padding:14px 16px;border-radius:20px;background:rgba(15,22,84,.94);border:1px solid rgba(243,245,255,.18);color:#F3F5FF;}
-.camcard h3{font-size:21px;}
-.camcard .tag{border-color:rgba(243,245,255,.3);color:#C9D0F5;}
-.camcard .sub{color:#C9D0F5;}
-.camcard .banner{color:#F3F5FF;}
+.camdock{position:absolute;left:0;right:0;bottom:0;max-height:66vh;overflow:auto;padding:14px 12px calc(14px + env(safe-area-inset-bottom,0px));background:linear-gradient(transparent,rgba(8,12,51,.92) 18%);}
+.camguide{display:flex;gap:14px;align-items:center;margin-bottom:10px;padding:12px 14px;border-radius:22px;background:rgba(8,12,51,.86);border:1px solid rgba(243,245,255,.2);}
+.camguide[hidden]{display:none;}
+.gicon{flex:none;width:68px;height:68px;border-radius:20px;background:var(--lemon);display:grid;place-items:center;}
+.gicon svg{width:46px;height:46px;transition:transform .3s;}
+.gicon .pulse circle{animation:pulse 1.1s infinite ease-in-out;}
+.gicon .pulse circle:nth-child(2){animation-delay:.18s;} .gicon .pulse circle:nth-child(3){animation-delay:.36s;}
+@keyframes pulse{0%,100%{opacity:.25;}50%{opacity:1;}}
+.gtext b{display:block;font:500 22px var(--f-display);line-height:1.15;}
+.gtext span{display:block;margin-top:3px;font-size:14.5px;color:#C9D0F5;}
+.campanel{margin-bottom:10px;padding:16px 16px 14px;border-radius:22px;background:rgba(8,12,51,.88);border:1px solid rgba(243,245,255,.2);}
+.campanel[hidden]{display:none;}
+.campanel h3{font-size:21px;margin-bottom:4px;}
+.csub{color:#C9D0F5;font-size:14.5px;margin:4px 0 10px;}
+.cpills{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;}
+.cpill{font:500 15px var(--f-body);cursor:pointer;padding:9px 16px;border:1px solid rgba(243,245,255,.4);border-radius:999px;background:rgba(243,245,255,.08);color:#F3F5FF;}
+.cpill:hover{border-color:var(--tang);}
+.cpill.pri{background:var(--tang);border-color:var(--tang);color:var(--on-tang);font-weight:600;}
+.cpill[aria-pressed=true]{background:rgba(255,107,26,.3);border-color:var(--tang);}
+.cinfo{margin:8px 0 0;font-size:15px;line-height:1.45;}
+.cinfo small{display:block;margin-top:6px;color:#A5AFE6;font-size:12.5px;}
+.crow{display:flex;gap:12px;align-items:center;justify-content:space-between;padding:10px 0;border-top:1px solid rgba(243,245,255,.15);}
+.crow div{min-width:0;}
+.crow b{display:block;font:500 16px var(--f-display);}
+.crow span{display:block;font-size:13.5px;color:#C9D0F5;}
+.cbtn2{flex:none;font:600 13.5px var(--f-body);cursor:pointer;padding:7px 14px;border:1px solid var(--tang);border-radius:999px;background:var(--tang);color:var(--on-tang);}
+.camcard{margin-bottom:10px;padding:14px 16px;border-radius:20px;background:rgba(243,245,255,.96);color:#0B1146;}
+.camcard[hidden]{display:none;}
+.camcard h3{font-size:20px;}
+.camcard .tag{border-color:#C5D0EC;color:#55608F;}
+.camcard .sub{color:#55608F;}
+.camcard .banner{color:#0B1146;}
+.camstatus{font-size:14.5px;margin-bottom:8px;color:#E4E8FF;}
 .camform{display:flex;gap:8px;margin-bottom:10px;}
-.camform input{flex:1;min-width:0;font:400 15px var(--f-body);padding:9px 16px;border:1px solid rgba(243,245,255,.35);border-radius:999px;background:rgba(5,8,43,.6);color:#F3F5FF;}
+.camform[hidden],.camctl[hidden]{display:none;}
+.camform input{flex:1;min-width:0;font:400 15px var(--f-body);padding:9px 16px;border:1px solid rgba(243,245,255,.4);border-radius:999px;background:rgba(8,12,51,.6);color:#F3F5FF;}
 .camform input::placeholder{color:#A5AFE6;}
 .camctl{display:flex;gap:10px;justify-content:center;}
+.cam .btn.ghost{color:#F3F5FF;border-color:rgba(243,245,255,.5);}
 
 @media (prefers-reduced-motion: reduce){
   *,*::before,*::after{animation:none !important;transition:none !important;}
@@ -252,15 +287,21 @@ h2.day{font-size:22px;margin:22px 0 2px;}
 <nav class="nav" id="nav" aria-label="Main"></nav>
 <div id="fx" aria-hidden="true"></div>
 
-<div class="cam" id="cam" hidden role="dialog" aria-label="Live room scanner">
+<div class="cam" id="cam" hidden role="dialog" aria-label="Live guide">
   <video id="camVid" playsinline muted autoplay></video>
-  <div class="camtop"><button class="btn ghost sm" data-camclose="1" type="button">Close</button><div class="camtarget" id="camTarget" hidden></div></div>
-  <div class="reticle" id="reticle" aria-hidden="true"><i></i><i></i><i></i><i></i><span class="sweep"></span></div>
+  <div class="camtop">
+    <button class="cbtn" data-camclose="1" type="button">Close</button>
+    <div class="camtarget" id="camTarget" hidden></div>
+    <button class="cbtn" id="camVoice" data-camvoice="1" aria-pressed="true" type="button" style="margin-left:auto">Voice on</button>
+  </div>
+  <div class="reticle" id="reticle" hidden aria-hidden="true"><i></i><i></i><i></i><i></i><span class="sweep"></span></div>
   <div class="camdock">
-    <div class="camstatus" id="camStatus" aria-live="polite"></div>
+    <div class="camguide" id="camGuide" hidden aria-live="polite"></div>
+    <div class="campanel" id="camPanel"></div>
     <div class="camcard" id="camCard" hidden></div>
-    <form class="camform" id="camForm" autocomplete="off"><input id="camNum" type="text" placeholder="Or type a room number" aria-label="Type a room number"><button class="btn sm" type="submit">Look up</button></form>
-    <div class="camctl"><button class="btn" id="camBtn" data-camread="1" type="button">Scan now</button><button class="btn ghost" id="camAuto" data-camauto="1" aria-pressed="true" type="button">Auto-scan on</button></div>
+    <div class="camstatus" id="camStatus" aria-live="polite"></div>
+    <form class="camform" id="camForm" autocomplete="off" hidden><input id="camNum" type="text" placeholder="Check a room number" aria-label="Check a room number"><button class="btn sm" type="submit">Look up</button></form>
+    <div class="camctl" id="camCtl" hidden><button class="btn" id="camBtn" data-camread="1" type="button">Scan now</button><button class="btn ghost" id="camAuto" data-camauto="1" aria-pressed="true" type="button">Auto-scan on</button></div>
   </div>
 </div>
 
@@ -399,9 +440,7 @@ function localAnswer(q){
   if (/plan/i.test(q)) {
     const day = /day\s*2/i.test(q) ? 2 : 1;
     const track = /product|coding|building|vibe/i.test(q) ? 'product' : /creative|image|audio|video|firefly/i.test(q) ? 'creative' : 'all';
-    const pool = SESSIONS.filter(s => s.day === day && (track === 'all' || s.track === 'all' || s.track === track)).sort((a, b) => a.s - b.s || (a.track === 'all' ? -1 : 1));
-    const picks = []; let end = 0;
-    pool.forEach(s => { if (s.s >= end) { picks.push(s); end = s.e; } });
+    const picks = planFor(day, track);
     if (picks.length) return {reply:'The AI isn’t connected right now, so here’s a plan built from the schedule:\n' + picks.map(s => `${s.time}: ${s.title} (${s.loc || 'room not listed'})`).join('\n'), add:picks.map(s => s.id), offline:true};
   }
   const stop = new Set('the and for you are what when where which who how can does with from that this have has any near about tell give there will would should could into your our its'.split(' '));
@@ -412,7 +451,7 @@ function localAnswer(q){
 }
 
 
-/* ===== facts for the compass and the food roller ===== */
+/* ===== verified facts for the guide ===== */
 const FOOD_SPOTS = [
   {name:'food.com café', where:'Newhouse 3, Room 244', note:'Choolaah and Yella’s were announced there in 2025. Check current hours.'},
   {name:'Schine Dining', where:'Schine Student Center, second floor', note:'SU has listed Dunkin’, CoreLife Eatery, Halal Shack, Tavola 44, Panda Express, and Biscotti Cafe.'},
@@ -422,16 +461,23 @@ const FOOD_SPOTS = [
   {name:'BBBistro', where:'Brockway Hall, basement', note:''}
 ];
 const ZONES = [['Talk','#FF6B1A'], ['Eat','#FFD84D'], ['Ride','#9CCBFF'], ['Rooms','#F3F5FF'], ['Scan','#FF9E6B']];
+const BLD_INFO = {
+  nh1:{tag:'The original Newhouse building, dedicated in 1964', use:'Classrooms, lecture halls, a photo studio, computer labs, and faculty offices. It also holds a Special Events Room and the Office of Academic Affairs.', link:'Linked to Newhouse 2 on its lower north side and to Newhouse 3 on its lower west side.', src:'SU campus map'},
+  nh2:{tag:'Built in 1974', use:'Classrooms. SU IT lists rooms 340, 345, 350, 355, and 469.', link:'Linked to Newhouse 1.', src:'SU campus map and SU IT'},
+  nh3:{tag:'The newest building, from 2007', use:'Classrooms, a Collaborative Media Room, a café, and a 350-seat auditorium. The food.com café is in Room 244.', link:'Linked to Newhouse 1.', src:'SU campus map, SU IT, and SU Campus Dining'},
+  all:{tag:'Three connected buildings', use:'Newhouse 1, 2, and 3 connect indoors. In every Newhouse building, the first digit of a room number is its floor.', link:'', src:'SU campus map and SU floor plans'}
+};
+const MOVES = {ahead:'Keep going straight', left:'Turn left', right:'Turn right', back:'Turn around', here:'You’re here', unknown:'Keep walking'};
 
 /* ===== state ===== */
 const roomFor = s => s.rooms.map(id => ROOM[id].name).join(' ');
 const sessText = s => `${s.title} ${s.who} ${s.loc || ''} ${roomFor(s)} ${s.time}`;
-const st = {tab:'home', flow:null, bld:null, hiRoom:null, pday:1, ptrack:'all', day:1, track:'all', q:'', mine:false, around:'eat', plan:new Set(), chat:[], busy:false, openB:{}, spin:{rot:0, busy:false, pick:null, fresh:false, did:false}, roll:{busy:false, i:null}, pop:null, speak:false, listening:false, found:[], target:null};
+const st = {tab:'home', flow:null, bld:null, hiRoom:null, pday:1, ptrack:'all', day:1, track:'all', q:'', mine:false, around:'eat', plan:new Set(), chat:[], busy:false, openB:{}, spin:{rot:0, busy:false, pick:null, fresh:false, did:false}, roll:{busy:false, i:null}, pop:null, speak:false, voice:true, listening:false, found:[], target:null, here:null, stage:'where', evDay:1, planOut:[], guide:{move:'unknown', head:'', text:'', ts:0, sig:''}};
 try { const raw = localStorage.getItem('cuse-summit-plan'); if (raw) st.plan = new Set(JSON.parse(raw)); } catch (e) {}
 try { st.speak = !!localStorage.getItem('cuse-speak'); } catch (e) {}
 const persist = () => { try { localStorage.setItem('cuse-summit-plan', JSON.stringify([...st.plan])); } catch (e) {} };
 
-/* ===== room index: every verified room number, with its building, floor, and events ===== */
+/* ===== room index: every verified room number with its building, floor, and events ===== */
 const nums = s => [...String(s).matchAll(/\b(\d{3}[A-Z]{0,2})\b/g)].map(m => m[1]);
 const INDEX = {};
 function addIdx(n, e){ (INDEX[n] = INDEX[n] || []).push(e); }
@@ -441,11 +487,17 @@ DIRECTORY.forEach(r => nums(r.name).forEach(n => {
   if (ex) { if (r.note) ex.notes.push(r.note); if (r.floor) ex.floor = r.floor; }
   else addIdx(n, {name:r.name, b:r.b, id:null, floor:r.floor || null, notes:r.note ? [r.note] : [], sessions:[]});
 }));
+function planFor(day, track){
+  const pool = SESSIONS.filter(s => s.day === day && (track === 'all' || s.track === 'all' || s.track === track)).sort((a, b) => a.s - b.s || (a.track === 'all' ? -1 : 1));
+  const picks = []; let end = 0;
+  pool.forEach(s => { if (s.s >= end) { picks.push(s); end = s.e; } });
+  return picks;
+}
 
 /* ===== confetti that answers a tap ===== */
 function burst(x, y){
   if (reduce) return;
-  const fx = $('fx'), colors = ['#FF6B1A', '#FFD84D', '#9CCBFF', '#F3F5FF'];
+  const fx = $('fx'), colors = ['#FF6B1A', '#FFD84D', '#9CCBFF', '#0B1146'];
   for (let i = 0; i < 14; i++) {
     const p = document.createElement('span'); p.className = 'cf'; p.style.left = x + 'px'; p.style.top = y + 'px'; p.style.background = colors[i % 4];
     fx.appendChild(p);
@@ -455,16 +507,42 @@ function burst(x, y){
   }
 }
 
+/* ===== illustrations (original, drawn in code) ===== */
+const ART = {
+  hero(){
+    let w1 = '', w2 = '';
+    for (let j = 0; j < 3; j++) for (let i = 0; i < 4; i++) w1 += `<rect x="${104 + i*38}" y="${100 + j*32}" width="24" height="18" rx="2" fill="#FFE3D2"/>`;
+    for (let j = 0; j < 3; j++) for (let i = 0; i < 6; i++) w2 += `<rect x="${266 + i*35}" y="${126 + j*25}" width="22" height="14" rx="2" fill="#F3F8FF"/>`;
+    return `<svg viewBox="0 0 720 250" role="img" aria-label="Illustration of the three connected Newhouse buildings with a path leading to the entrance"><rect width="720" height="250" rx="26" fill="#DDEBFF"/><circle cx="604" cy="62" r="26" fill="#FFD84D"/><circle cx="604" cy="62" r="40" fill="none" stroke="#FFD84D" stroke-opacity=".55" stroke-width="3"/><path d="M40 70q30-22 60 0q28-18 56 0" fill="none" stroke="#fff" stroke-width="10" stroke-linecap="round" opacity=".85"/><path d="M300 44q24-18 48 0q22-14 44 0" fill="none" stroke="#fff" stroke-width="8" stroke-linecap="round" opacity=".7"/><rect y="206" width="720" height="44" fill="#C9DBF7"/><rect x="250" y="112" width="230" height="94" fill="#9CCBFF"/>${w2}<rect x="86" y="82" width="170" height="124" fill="#FF6B1A"/><rect x="130" y="66" width="82" height="18" fill="#E65A0C"/>${w1}<rect x="157" y="170" width="26" height="36" rx="3" fill="#0B1146"/><path d="M470 206V138C520 84 610 76 668 120V206Z" fill="#0B1146"/><path d="M488 206V150C530 108 604 98 654 128" fill="none" stroke="#9CCBFF" stroke-opacity=".75" stroke-width="3"/><path d="M488 206V170C530 128 604 118 654 148" fill="none" stroke="#9CCBFF" stroke-opacity=".6" stroke-width="3"/><path d="M488 206V190C530 150 604 140 654 168" fill="none" stroke="#9CCBFF" stroke-opacity=".45" stroke-width="3"/><path d="M24 232C92 232 118 216 168 210" fill="none" stroke="#FF6B1A" stroke-width="5" stroke-dasharray="2 11" stroke-linecap="round"/><g transform="translate(170 150)"><path d="M0 0c11 0 19 8 19 19 0 15-19 31-19 31S-19 34-19 19C-19 8-11 0 0 0z" fill="#FFD84D" stroke="#0B1146" stroke-width="3"/><circle cx="0" cy="19" r="6" fill="#fff" stroke="#0B1146" stroke-width="2"/></g></svg>`;
+  },
+  bld(b){
+    const open = bg => `<svg viewBox="0 0 160 100" role="img" aria-label="Illustration of ${BUILDINGS[b]}"><rect width="160" height="100" fill="${bg[0]}"/><rect y="86" width="160" height="14" fill="${bg[1]}"/>`;
+    if (b === 'nh1') { let w = ''; for (let j = 0; j < 2; j++) for (let i = 0; i < 3; i++) w += `<rect x="${44 + i*30}" y="${42 + j*20}" width="18" height="12" rx="1.5" fill="#FFE3D2"/>`; return open(['#FFE9DC', '#F6D2BC']) + `<rect x="34" y="30" width="92" height="56" fill="#FF6B1A"/><rect x="62" y="22" width="36" height="10" fill="#E65A0C"/>${w}<rect x="72" y="66" width="16" height="20" rx="2" fill="#0B1146"/></svg>`; }
+    if (b === 'nh2') { let w = ''; for (let j = 0; j < 2; j++) for (let i = 0; i < 6; i++) w += `<rect x="${22 + i*21}" y="${52 + j*16}" width="13" height="9" rx="1.5" fill="#F3F8FF"/>`; return open(['#E3F0FF', '#C9DBF7']) + `<rect x="12" y="44" width="136" height="42" fill="#9CCBFF"/>${w}<rect x="72" y="70" width="16" height="16" rx="2" fill="#0B1146"/></svg>`; }
+    return open(['#FFF4CC', '#F0E2A8']) + `<path d="M16 86V58C44 22 112 20 144 52V86Z" fill="#0B1146"/><path d="M28 86V64C52 38 102 36 130 60" fill="none" stroke="#9CCBFF" stroke-opacity=".75" stroke-width="2"/><path d="M28 86V74C52 48 102 46 130 70" fill="none" stroke="#9CCBFF" stroke-opacity=".5" stroke-width="2"/></svg>`;
+  }
+};
+const aSvg = deg => `<svg viewBox="0 0 64 64" aria-hidden="true" style="transform:rotate(${deg}deg)"><path d="M32 8L52 30H40V56H24V30H12Z" fill="#0B1146"/></svg>`;
+const ARROW = {
+  ahead:aSvg(0), left:aSvg(-90), right:aSvg(90), back:aSvg(180),
+  up:'<svg viewBox="0 0 64 64" aria-hidden="true"><path d="M10 52h13V39h13V26h13V13" fill="none" stroke="#0B1146" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/><path d="M40 8h16v16" fill="none" stroke="#0B1146" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  down:'<svg viewBox="0 0 64 64" aria-hidden="true"><path d="M10 12h13v13h13v13h13v13" fill="none" stroke="#0B1146" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/><path d="M40 56h16V40" fill="none" stroke="#0B1146" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  here:'<svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="26" fill="#0B1146"/><path d="M19 33l9 9 17-20" fill="none" stroke="#FFD84D" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  unknown:'<svg class="pulse" viewBox="0 0 64 64" aria-hidden="true"><circle cx="14" cy="32" r="6" fill="#0B1146"/><circle cx="32" cy="32" r="6" fill="#0B1146"/><circle cx="50" cy="32" r="6" fill="#0B1146"/></svg>'
+};
+const MIC = '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0014 0M12 18v3"/></svg>';
+
 /* ===== nav ===== */
 const ICONS = {
   home:'<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2 5-5 2 2-5z"/></svg>',
-  scan:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8V5h3M17 5h3v3M20 16v3h-3M7 19H4v-3"/><circle cx="12" cy="12" r="3"/></svg>',
+  scan:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s7-6.2 7-11a7 7 0 10-14 0c0 4.8 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>',
   schedule:'<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/></svg>',
   ask:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v11H9l-5 4z"/></svg>',
   around:'<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="13" rx="3"/><path d="M4 12h16M8 20v-3M16 20v-3M8 14.5h.01M16 14.5h.01"/></svg>'
 };
-const NAV = [['home','Home'], ['scan','Scan'], ['schedule','Schedule'], ['ask','Ask AI'], ['around','Around']];
+const NAV = [['home','Home'], ['scan','Guide'], ['schedule','Schedule'], ['ask','Ask AI'], ['around','Around']];
 const navHTML = () => NAV.map(([id, label]) => `<button type="button" data-tab="${id}" class="${st.tab === id ? 'on' : ''}" aria-current="${st.tab === id ? 'page' : 'false'}">${ICONS[id]}<span>${label}</span>${id === 'schedule' && st.plan.size ? `<em class="cnt">${st.plan.size}</em>` : ''}</button>`).join('');
+const micBtn = (label, attr, cls) => SR ? `<button class="${cls || 'btn ghost sm'} micb" data-label="${label}" ${attr} aria-pressed="false" type="button">${MIC}<span class="mt">${label}</span></button>` : '';
 
 /* ===== the compass ===== */
 function dialSVG(){
@@ -481,9 +559,9 @@ function dialSVG(){
       `<text x="${tx.toFixed(1)}" y="${(ty + 4.5).toFixed(1)}" text-anchor="middle" font-size="13" font-weight="${lit === i ? 600 : 500}" fill="#F3F5FF" style="font-family:var(--f-display)" opacity="${lit === -1 || lit === i ? 1 : .55}">${n}</text>`;
   });
   const idle = !st.spin.did && st.spin.rot === 0;
-  return `<svg id="dial" viewBox="0 0 300 300" role="img" aria-label="Compass with five destinations: Talk, Eat, Ride, Rooms, Scan"><circle cx="150" cy="150" r="141" fill="var(--dial)" stroke="#F3F5FF" stroke-opacity=".3" stroke-width="1.5"/><circle cx="150" cy="150" r="136" fill="none" stroke="#FF6B1A" stroke-opacity=".45" stroke-width="1"/>${ticks}${zones}<g id="needle" class="${idle ? 'idle' : ''}" style="transform:rotate(${st.spin.rot}deg)"><polygon points="150,52 157,150 143,150" fill="#FF6B1A"/><polygon points="150,248 157,150 143,150" fill="#F3F5FF" opacity=".9"/></g><circle cx="150" cy="150" r="6.5" fill="#F3F5FF" stroke="#0B1146" stroke-width="2"/></svg>`;
+  return `<svg id="dial" viewBox="0 0 300 300" role="img" aria-label="Compass with five destinations: Talk, Eat, Ride, Rooms, Scan"><circle cx="150" cy="150" r="141" fill="var(--dial)"/><circle cx="150" cy="150" r="136" fill="none" stroke="#FF6B1A" stroke-opacity=".6" stroke-width="1.2"/>${ticks}${zones}<g id="needle" class="${idle ? 'idle' : ''}" style="transform:rotate(${st.spin.rot}deg)"><polygon points="150,52 157,150 143,150" fill="#FF6B1A"/><polygon points="150,248 157,150 143,150" fill="#F3F5FF" opacity=".9"/></g><circle cx="150" cy="150" r="6.5" fill="#F3F5FF" stroke="#0B1146" stroke-width="2"/></svg>`;
 }
-const pickFor = i => [() => pick(SESSIONS), () => pick(FOOD_SPOTS), () => pick([...TRANSIT.loops, ...TRANSIT.centro]), () => pick(ROOMS.filter(r => r.b)), () => ({})][i]();
+const pickFor = i => [() => pick(SESSIONS.filter(s => s.rooms.length)), () => pick(FOOD_SPOTS), () => pick([...TRANSIT.loops, ...TRANSIT.centro]), () => pick(ROOMS.filter(r => r.b)), () => ({})][i]();
 function spin(){
   if (st.spin.busy) return;
   st.spin.busy = true; st.spin.pick = null; st.spin.fresh = false; st.spin.did = true;
@@ -500,8 +578,8 @@ function spinCard(){
   const p = st.spin.pick; if (!p) return '';
   const [label, color] = ZONES[p.i], it = p.item; let title = '', body = '', act = '';
   if (p.i === 0) {
-    title = esc(it.title); body = `Day ${it.day}, ${esc(it.time)}. ${esc(it.loc || 'Room not listed in the deck.')}`;
-    act = `<button class="btn sm" data-save="${it.id}" aria-pressed="${st.plan.has(it.id)}" type="button">${st.plan.has(it.id) ? 'Saved' : 'Save to my plan'}</button><button class="btn ghost sm" data-tab="schedule" type="button">Open schedule</button>`;
+    title = esc(it.title); body = `Day ${it.day}, ${esc(it.time)}. ${esc(it.loc || '')}`;
+    act = `<button class="btn sm" data-guide="${it.id}" type="button">Guide me there</button><button class="btn ghost sm" data-save="${it.id}" aria-pressed="${st.plan.has(it.id)}" type="button">${st.plan.has(it.id) ? 'Saved' : 'Save to my plan'}</button>`;
   } else if (p.i === 1) {
     title = esc(it.name); body = esc(`${it.where}. ${it.note}`.trim());
     act = `<button class="btn sm" data-go="around" data-sub="eat" type="button">See all food</button>`;
@@ -513,47 +591,45 @@ function spinCard(){
     title = esc(it.name); body = `${BUILDINGS[it.b]}. ${n ? n + ' summit session' + (n > 1 ? 's' : '') + ' here.' : ''}`;
     act = `<button class="btn sm" data-bld="${it.b}" data-room="${it.id}" type="button">Show me this room</button>`;
   } else {
-    title = 'Scan a room'; body = 'Point your camera at any door number. I’ll tell you what’s happening inside.';
-    act = `<button class="btn sm" data-live="1" type="button">Open the camera</button>`;
+    title = 'Start at the entrance'; body = 'Open the camera at the door. I’ll tell you what the building is for, then guide you to your room.';
+    act = `<button class="btn sm" data-start="1" type="button">Open the camera</button>`;
   }
   return `<div class="res${st.spin.fresh ? ' fresh' : ''}" style="--zone:${color}"><span class="tagc">${label}</span><h2>${title}</h2><p>${body}</p><div class="row">${act}</div></div>`;
 }
 
-/* ===== home: a short conversation ===== */
-const EV_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/></svg>';
-const GO_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s7-6.2 7-11a7 7 0 10-14 0c0 4.8 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>';
+/* ===== home ===== */
 function planPanel(){
   return `<div class="panel"><h3>Which day, and what are you into?</h3>
     <div class="seg" role="group" aria-label="Day"><button data-pday="1" aria-pressed="${st.pday === 1}" type="button">Day 1</button><button data-pday="2" aria-pressed="${st.pday === 2}" type="button">Day 2</button></div>
     <div class="row" role="group" aria-label="Interest" style="margin-bottom:16px">${[['creative', 'Image, video, audio'], ['product', 'Building and coding'], ['all', 'A bit of everything']].map(([id, label]) => `<button class="chip" data-ptrack="${id}" aria-pressed="${st.ptrack === id}" type="button">${label}</button>`).join('')}</div>
     <button class="btn" data-build="1" type="button">Build my day</button></div>`;
 }
-function buildingPicker(){
-  return `<div class="panel"><h3>Which building are you heading to?</h3><div class="blds">${Object.keys(BUILDINGS).map(b => { const n = SESSIONS.filter(s => s.b === b).length; return `<button class="bcard" data-bld="${b}" type="button"><span class="bdot bd-${b}"></span><span><strong>${BUILDINGS[b]}</strong><em>${n} summit event${n === 1 ? '' : 's'}</em></span></button>`; }).join('')}</div></div>`;
-}
 function viewHome(){
   if (st.flow === 'go' && st.bld) return viewBuilding(st.bld);
-  return `<section class="hero"><div class="dialwrap">${dialSVG()}</div>
-    <button class="btn ghost sm" data-spin="1" type="button">Surprise me</button>
-    <div id="spinOut" aria-live="polite" class="sur">${spinCard()}</div>
-    <h1>Where to today?</h1><p class="lead">Would you like to plan your day, or head somewhere? I’ll help you find the room.</p></section>
-  <div class="choices">
-    <button class="choice" data-flow="plan" aria-pressed="${st.flow === 'plan'}" type="button">${EV_ICON}<strong>Plan my day</strong><em>Pick a day and what you’re into</em></button>
-    <button class="choice" data-flow="go" aria-pressed="${st.flow === 'go'}" type="button">${GO_ICON}<strong>Take me somewhere</strong><em>Pick a building, then an event</em></button>
-  </div>
-  ${st.flow === 'plan' ? planPanel() : st.flow === 'go' ? buildingPicker() : ''}
-  <p class="below">Already inside? <button data-live="1" type="button">Scan a room with your camera</button></p>`;
+  const cards = Object.keys(BUILDINGS).map(b => { const n = SESSIONS.filter(s => s.b === b).length; return `<button class="bcard2" data-bld="${b}" type="button"><div class="bart">${ART.bld(b)}</div><strong>${BUILDINGS[b]}</strong><em>${n} summit event${n === 1 ? '' : 's'}</em></button>`; }).join('');
+  return `<section class="hero2"><div class="heroart">${ART.hero()}</div>
+    <h1>Find the room, not just the building.</h1>
+    <p class="lead">Stand at the entrance and open the camera. I’ll tell you what the building is for, then guide you to your room with directions you can see and hear.</p>
+    <div class="row cta"><button class="btn big" data-start="1" type="button">Start at the entrance</button><button class="btn ghost big" data-flow="plan" aria-pressed="${st.flow === 'plan'}" type="button">Plan my day</button></div></section>
+  ${st.flow === 'plan' ? planPanel() : ''}
+  <form class="askbox" id="goForm" autocomplete="off"><input type="text" id="goIn" placeholder="Say or type where you want to go" aria-label="Where do you want to go?">${micBtn('Talk', 'data-routemic="1"', 'btn ghost')}<button class="btn" type="submit">Go</button></form>
+  <div class="exs">${['Take me to the keynote', 'Where is Room 206F?', 'What’s happening in Newhouse 2?'].map(x => `<button class="chip" data-say2="${esc(x)}" type="button">${esc(x)}</button>`).join('')}</div>
+  <h2 class="sech">Pick a building</h2><div class="bgrid">${cards}</div>
+  <h2 class="sech">Not sure where to start?</h2>
+  <div class="compass"><div class="dialwrap">${dialSVG()}</div><div><h3>Spin the compass</h3><p>It points at something real from the summit: a talk, a bite, a ride, a room, or the door.</p><button class="btn" data-spin="1" type="button">Spin</button></div></div>
+  <div id="spinOut" aria-live="polite">${spinCard()}</div>`;
 }
 const roomCard = r => { const here = SESSIONS.filter(s => s.rooms.includes(r.id)); return `<div class="rc" id="room-${r.id}"><b>${esc(r.name)}</b>${here.length ? `<ul>${here.map(s => `<li>Day ${s.day}, ${esc(s.time)}: ${esc(s.title)}</li>`).join('')}</ul>` : ''}${r.note ? `<p class="src">${esc(r.note)}</p>` : ''}</div>`; };
 const dirRow = r => `<li><strong>${esc(r.name)}</strong>. ${r.floor ? `Floor ${r.floor}. ` : ''}${esc(r.note)} <span class="src">Source: ${r.src.map(k => SRC[k]).join('; ')}.</span></li>`;
 function viewBuilding(b){
-  const evs = SESSIONS.filter(s => s.b === b).sort((a, c) => a.day - c.day || a.s - c.s);
+  const info = BLD_INFO[b], evs = SESSIONS.filter(s => s.b === b).sort((a, c) => a.day - c.day || a.s - c.s);
   const rooms = ROOMS.filter(r => r.b === b), more = DIRECTORY.filter(r => r.b === b);
-  let h = `<button class="back" data-bback="1" type="button">Back</button><h2 class="bh">${BUILDINGS[b]}</h2>
-  <p class="lead left">What are you looking for? Tap an event and I’ll help you find its room with your camera.</p>`;
-  h += evs.length ? `<ul class="evl">${evs.map(s => `<li class="evt"><div><div class="ttl">${esc(s.title)}</div><div class="who">Day ${s.day}, ${esc(s.time)}</div><div class="who">${esc(s.loc)}</div></div><button class="btn sm" data-find="${s.id}" type="button">Find it</button></li>`).join('')}</ul>` : `<p class="empty">No summit events are listed in ${BUILDINGS[b]}.</p>`;
-  h += `<div class="row" style="margin-top:18px"><button class="btn ghost" data-live="1" type="button">Open the camera</button></div>
-  <details class="more" id="more" ${st.hiRoom ? 'open' : ''}><summary>Every room I know in ${BUILDINGS[b]}</summary><div class="moreb">
+  let h = `<button class="back" data-bback="1" type="button">Back</button><div class="bhero">${ART.bld(b)}</div><h2 class="bh">${BUILDINGS[b]}</h2>
+  <div class="usecard"><h3>What this building is for</h3><p><strong>${esc(info.tag)}.</strong></p><p>${esc(info.use)}</p>${info.link ? `<p>${esc(info.link)}</p>` : ''}<p class="src">Source: ${esc(info.src)}.</p></div>
+  <div class="row" style="margin-top:16px"><button class="btn" data-start="1" data-here="${b}" type="button">Start at the entrance</button></div>
+  <h2 class="sech">What’s happening here</h2>`;
+  h += evs.length ? `<ul class="evl">${evs.map(s => `<li class="evt"><div><div class="ttl">${esc(s.title)}</div><div class="who">Day ${s.day}, ${esc(s.time)}</div><div class="who">${esc(s.loc)}</div></div><button class="btn sm" data-guide="${s.id}" type="button">Guide me</button></li>`).join('')}</ul>` : `<p class="empty">No summit events are listed in ${BUILDINGS[b]}.</p>`;
+  h += `<details class="more" id="more" ${st.hiRoom ? 'open' : ''}><summary>Every room I know in ${BUILDINGS[b]}</summary><div class="moreb">
     <p class="note">${ln(SU_MAP[b], b === 'nh1' ? 'Open Newhouse 1 on the SU campus map' : 'Open the SU campus map')} for official floor plans.${b === 'nh1' ? ' On that map, floor 1 shows rooms numbered 2xx and floor 2 shows 3xx, so match floors by room number.' : ''}</p>
     ${rooms.length ? `<h3>At the summit</h3>${rooms.map(roomCard).join('')}` : ''}
     ${more.length ? `<h3>More rooms</h3><ul class="plain">${more.map(dirRow).join('')}</ul>` : ''}</div></details>`;
@@ -564,14 +640,8 @@ function openBuilding(b, room){
   const el = room ? document.getElementById('room-' + room) : null;
   if (el && el.scrollIntoView) el.scrollIntoView({block:'center'}); else window.scrollTo(0, 0);
 }
-function findEvent(id){
-  const s = SESSIONS.find(x => x.id === id); if (!s) return;
-  const r = ROOM[s.rooms[0]]; if (!r) return;
-  st.target = {nums:nums(r.name), name:r.name, b:s.b || r.b, title:s.title};
-  openCam();
-}
 
-/* ===== scan: results shared by the page and the live camera ===== */
+/* ===== scan results: shared by the guide and the room lookup ===== */
 function scanCard(list, target){
   const n = list.find(x => INDEX[x]) || list[0], es = INDEX[n] || [];
   const fl = es[0] && es[0].floor ? es[0].floor : Number(n[0]);
@@ -580,8 +650,8 @@ function scanCard(list, target){
     if (target.nums.includes(n)) h += `<div class="banner ok">You found it. ${esc(target.title)} is in this room.</div>`;
     else {
       const tf = Number(target.nums[0][0]), b0 = es[0] && es[0].b;
-      let msg = `Your room is ${esc(target.name)} in ${BUILDINGS[target.b]}, floor ${tf}.`;
-      if (b0 && b0 !== target.b) msg += ` This one is in ${BUILDINGS[b0]}. The Newhouse buildings connect indoors.`;
+      let msg = `You’re looking for ${esc(target.name)}${target.b ? ' in ' + BUILDINGS[target.b] : ''}, floor ${tf}.`;
+      if (b0 && target.b && b0 !== target.b) msg += ` This one is in ${BUILDINGS[b0]}. The Newhouse buildings connect indoors.`;
       else if (fl !== tf) msg += ` This is floor ${fl}, so go ${tf > fl ? 'up' : 'down'} ${Math.abs(tf - fl)} floor${Math.abs(tf - fl) > 1 ? 's' : ''}.`;
       else msg += ` Same floor. Keep looking for ${esc(target.nums.join(' or '))}.`;
       h += `<div class="banner">${msg}</div>`;
@@ -596,11 +666,15 @@ function scanCard(list, target){
 }
 const readNums = text => [...String(text).toUpperCase().matchAll(/\d{3}[A-Z]{0,2}/g)].map(m => m[0]);
 function viewScan(){
-  return `<section class="scanhead"><h2>Point at a door. See what’s inside.</h2><p>Open the camera and aim at a room number. I read it and pop up the building, the floor, and what’s happening there.</p></section>
-  <div class="row" style="margin-top:18px"><button class="btn big" data-live="1" type="button">Open the camera</button></div>
-  <form class="lookup" id="lookForm" autocomplete="off"><input id="lookNum" type="text" placeholder="Or type a room number, like 206F" aria-label="Type a room number"><button class="btn" type="submit">Look up</button></form>
+  return `<section class="scanhead"><h2>Your guide at the door</h2><p>Open the camera at the entrance and tell me where you’re going. I’ll show you the way and speak it out loud.</p></section>
+  <ol class="steps3"><li><span class="n">1</span><div><b>Stand at the entrance</b><span>Tap the building you’re in. I’ll explain what it’s used for.</span></div></li>
+  <li><span class="n">2</span><div><b>Say where you’re headed</b><span>Plan your day, see what’s happening in this building, or name a room.</span></div></li>
+  <li><span class="n">3</span><div><b>Follow the arrow</b><span>I read the door numbers and signs you pass. Each door pops up with what it’s used for.</span></div></li></ol>
+  <div class="row" style="margin-top:18px"><button class="btn big" data-start="1" type="button">Start at the entrance</button></div>
+  <p class="note">How the directions work: I read the building’s own door numbers and directional signs through your camera. No public indoor map of Newhouse exists, so I only point you when a sign shows the way. Always confirm with your own eyes.</p>
+  <form class="lookup" id="lookForm" autocomplete="off"><input id="lookNum" type="text" placeholder="Or look up a room number, like 206F" aria-label="Look up a room number"><button class="btn" type="submit">Look up</button></form>
   <div id="lookOut" aria-live="polite"></div>
-  ${st.found.length ? `<h2 class="sec2">Rooms you’ve found</h2><div class="found">${st.found.map(f => `<span class="chip">${esc(f.name)}</span>`).join('')}</div>` : ''}`;
+  ${st.found.length ? `<h2 class="sec2">Rooms you’ve passed</h2><div class="found">${st.found.map(f => `<span class="chip">${esc(f.name)}</span>`).join('')}</div>` : ''}`;
 }
 function wireScan(){
   $('lookForm').onsubmit = e => {
@@ -610,29 +684,165 @@ function wireScan(){
   };
 }
 
-/* ===== live camera: reads door numbers as you move ===== */
+/* ===== voice ===== */
+let voicePlayer = null, ttsRemote = true;
+const SILENT = 'data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQAAAAA=';
+function unlockAudio(){
+  try { if (!voicePlayer) voicePlayer = new Audio(); voicePlayer.src = SILENT; const p = voicePlayer.play(); if (p && p.catch) p.catch(() => {}); } catch (e) {}
+  try { if ('speechSynthesis' in window && window.SpeechSynthesisUtterance) { const u = new window.SpeechSynthesisUtterance(' '); u.volume = 0; window.speechSynthesis.speak(u); } } catch (e) {}
+}
+function stopSpeak(){ try { if (voicePlayer) voicePlayer.pause(); if ('speechSynthesis' in window) window.speechSynthesis.cancel(); } catch (e) {} }
+function browserSpeak(text){
+  if ('speechSynthesis' in window && window.SpeechSynthesisUtterance) return new Promise(res => { const u = new window.SpeechSynthesisUtterance(String(text)); u.onend = res; u.onerror = res; window.speechSynthesis.speak(u); });
+  return Promise.resolve();
+}
+async function speak(text){
+  if (!text) return; stopSpeak();
+  if (ttsRemote) {
+    try {
+      const r = await fetch('/api/speak', {method:'POST', headers:{'content-type':'application/json'}, body:JSON.stringify({text:String(text).slice(0, 600)})});
+      if (!r.ok) { ttsRemote = false; throw new Error('HTTP ' + r.status); }
+      const url = URL.createObjectURL(await r.blob());
+      if (!voicePlayer) voicePlayer = new Audio();
+      voicePlayer.src = url;
+      await new Promise((res, rej) => { voicePlayer.onended = res; voicePlayer.onerror = rej; const p = voicePlayer.play(); if (p && p.catch) p.catch(rej); });
+      return;
+    } catch (e) {}
+  }
+  await browserSpeak(text);
+}
+const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+function updateMics(){ document.querySelectorAll('.micb').forEach(b => { b.setAttribute('aria-pressed', String(st.listening)); const t = b.querySelector('.mt'); if (t) t.textContent = st.listening ? 'Listening…' : (b.dataset.label || 'Talk'); }); }
+function listenOnce(cb){
+  if (!SR || st.listening) return;
+  unlockAudio();
+  const rec = new SR(); rec.lang = 'en-US'; rec.interimResults = false; rec.maxAlternatives = 1;
+  st.listening = true; updateMics();
+  rec.onresult = e => { const q = e.results[0][0].transcript; if (q) cb(q); };
+  rec.onerror = () => { st.listening = false; updateMics(); };
+  rec.onend = () => { st.listening = false; updateMics(); };
+  try { rec.start(); } catch (e) { st.listening = false; updateMics(); }
+}
+
+/* ===== the voice assistant: understands where you want to go ===== */
+const STOPS = new Set('the and for you are what when where which who how can does with from that this have has any near about tell give there will would should could into your our its take bring walk guide show please want need find going head let get room rooms event talk session day'.split(' '));
+function bestSession(text){
+  const t = text.toLowerCase().replace(/[^a-z0-9 ]/g, ' ').split(/\s+/).filter(w => w.length > 2 && !STOPS.has(w));
+  if (!t.length) return null;
+  const dm = text.match(/day\s*([12])/i), pool = SESSIONS.filter(s => s.rooms.length && (!dm || s.day === Number(dm[1])));
+  let best = null, bs = 0;
+  pool.forEach(s => { const h = `${s.title} ${s.who}`.toLowerCase(), sc = t.filter(w => h.includes(w)).length; if (sc > bs) { bs = sc; best = s; } });
+  return bs >= 1 ? best : null;
+}
+function targetFromNum(n){ const e = (INDEX[n] || [])[0], all = e ? nums(e.name) : []; return {nums:all.includes(n) ? all : [n], name:e ? e.name : `Room ${n}`, b:e ? e.b : null, title:e && e.sessions[0] ? e.sessions[0].title : `Room ${n}`}; }
+function targetFromSession(s){ const r = ROOM[s.rooms[0]]; if (!r) return null; return {nums:nums(r.name), name:r.name.replace(/^Rooms /, 'Room '), b:s.b || r.b, title:s.title}; }
+function routeUtterance(q){
+  const text = String(q).trim(); if (!text) return;
+  const open = !$('cam').hidden;
+  const rn = readNums(text);
+  if (rn.length) { startGuideTo(targetFromNum(rn[0])); return; }
+  if (/plan|schedule my day|my day/i.test(text)) { if (open) setStage('plan'); else { st.tab = 'home'; st.flow = 'plan'; st.bld = null; render(); window.scrollTo(0, 0); } return; }
+  const bm = text.match(/(?:new\s*house|\bnh)\s*(?:#|number)?\s*(1|2|3|one|two|three|iii|ii|i)\b/i);
+  if (bm) { const m = {one:'1', two:'2', three:'3', i:'1', ii:'2', iii:'3'}, k = String(bm[1]).toLowerCase(), b = 'nh' + (m[k] || k); if (open) { st.here = b; setStage('events'); } else openBuilding(b); return; }
+  const s = bestSession(text);
+  if (s) { startGuideTo(targetFromSession(s)); return; }
+  st.tab = 'ask'; render(); window.scrollTo(0, 0); askAI(text);
+}
+function wireHome(){
+  const gf = $('goForm'); if (gf) gf.onsubmit = e => { e.preventDefault(); const i = $('goIn'), q = i.value.trim(); if (!q) return; i.value = ''; routeUtterance(q); };
+}
+
+/* ===== the live guide: the camera reads signs, the app answers from verified data ===== */
 let camStream = null, camTimer = null, camBusy = false, camAuto = true, camScans = 0, camLast = '';
-const MAX_SCANS = 24;
+const MAX_SCANS = 30;
+const floorOf = t => Number(t.nums[0][0]);
 function setStatus(msg, scanning){ const s = $('camStatus'); if (s) s.textContent = msg; const r = $('reticle'); if (r) r.className = 'reticle' + (scanning ? ' scan' : ''); }
 function updateAutoBtn(){ const b = $('camAuto'); if (b) { b.setAttribute('aria-pressed', String(camAuto)); b.textContent = camAuto ? 'Auto-scan on' : 'Auto-scan off'; } }
-async function openCam(){
-  $('cam').hidden = false; document.body.style.overflow = 'hidden';
-  camAuto = true; camScans = 0; camLast = ''; camBusy = false; updateAutoBtn();
-  $('camCard').hidden = true; $('camCard').innerHTML = '';
+function updateVoiceBtn(){ const b = $('camVoice'); if (b) { b.setAttribute('aria-pressed', String(st.voice)); b.textContent = st.voice ? 'Voice on' : 'Voice off'; } }
+function renderTarget(){
   const t = st.target, tb = $('camTarget');
-  if (t) { tb.hidden = false; tb.textContent = `Looking for ${t.name} · ${BUILDINGS[t.b]} · floor ${t.nums[0][0]}`; } else { tb.hidden = true; tb.textContent = ''; }
+  if (t) { tb.hidden = false; tb.textContent = `Heading to ${t.name}${t.b ? ', ' + BUILDINGS[t.b] : ''}, floor ${floorOf(t)}`; } else { tb.hidden = true; tb.textContent = ''; }
+}
+function stageHTML(s){
+  const b = st.here;
+  if (s === 'where') return `<h3>Welcome. Which building are you at?</h3><p class="csub">Stand still at the entrance. Tap the building you’re in.</p><div class="cpills">${Object.keys(BUILDINGS).map(k => `<button class="cpill" data-here="${k}" type="button">${BUILDINGS[k]}</button>`).join('')}<button class="cpill" data-here="none" type="button">Not sure</button></div>`;
+  if (s === 'ask') { const info = b ? BLD_INFO[b] : BLD_INFO.all; return `<h3>${b ? BUILDINGS[b] : 'Newhouse'}</h3><p class="cinfo"><strong>${esc(info.tag)}.</strong> ${esc(info.use)}<small>Source: ${esc(info.src)}</small></p><p class="cinfo" style="margin-top:12px"><strong>What would you like to do?</strong></p><div class="cpills"><button class="cpill pri" data-stage="plan" type="button">Plan my day</button><button class="cpill pri" data-stage="events" type="button">What’s happening here</button><button class="cpill pri" data-stage="room" type="button">Take me to a room</button></div>${SR ? `<div class="cpills">${micBtn('Say where you want to go', 'data-routemic="1"', 'cpill')}</div>` : ''}`; }
+  if (s === 'events') {
+    const list = SESSIONS.filter(x => x.day === st.evDay && x.rooms.length && (!b || x.b === b)).sort((a, c) => a.s - c.s);
+    return `<h3>${b ? 'Happening in ' + BUILDINGS[b] : 'Happening at the summit'}</h3><div class="cpills" role="group">${[1, 2].map(d => `<button class="cpill" data-evday="${d}" aria-pressed="${st.evDay === d}" type="button">Day ${d}</button>`).join('')}</div>${list.length ? list.map(x => `<div class="crow"><div><b>${esc(x.title)}</b><span>${esc(x.time)}, ${esc(x.loc)}</span></div><button class="cbtn2" data-guide="${x.id}" type="button">Guide me</button></div>`).join('') : `<p class="csub">Nothing is listed here on Day ${st.evDay}. Try the other day.</p>`}<div class="cpills"><button class="cpill" data-stage="ask" type="button">Back</button></div>`;
+  }
+  if (s === 'room') {
+    const rooms = ROOMS.filter(r => r.b && (!b || r.b === b));
+    return `<h3>Which room?</h3><p class="csub">Type a room number, say it, or pick one.</p><form id="roomForm" class="camform" autocomplete="off"><input id="roomIn" type="text" placeholder="Room number, like 206F" aria-label="Room number"><button class="btn sm" type="submit">Go</button></form><div class="cpills">${rooms.map(r => `<button class="cpill" data-guideroom="${nums(r.name)[0]}" type="button">${esc(r.name)}</button>`).join('')}${micBtn('Say it', 'data-routemic="1"', 'cpill')}</div><div class="cpills"><button class="cpill" data-stage="ask" type="button">Back</button></div>`;
+  }
+  if (s === 'plan') {
+    const out = st.planOut.map(id => SESSIONS.find(x => x.id === id)).filter(Boolean);
+    return `<h3>Plan my day</h3><div class="cpills" role="group">${[1, 2].map(d => `<button class="cpill" data-opday="${d}" aria-pressed="${st.pday === d}" type="button">Day ${d}</button>`).join('')}</div><div class="cpills" role="group">${[['creative', 'Image, video, audio'], ['product', 'Building and coding'], ['all', 'A bit of everything']].map(([id, label]) => `<button class="cpill" data-optrack="${id}" aria-pressed="${st.ptrack === id}" type="button">${label}</button>`).join('')}</div><div class="cpills"><button class="cpill pri" data-opbuild="1" type="button">Build my day</button></div>${out.length ? out.map(x => `<div class="crow"><div><b>${esc(x.title)}</b><span>${esc(x.time)}, ${esc(x.loc || 'room not listed')}</span></div>${x.rooms.length ? `<button class="cbtn2" data-guide="${x.id}" type="button">Guide me</button>` : ''}</div>`).join('') + `<div class="cpills"><button class="cpill" data-opsave="1" type="button">Save this day</button></div>` : ''}<div class="cpills"><button class="cpill" data-stage="ask" type="button">Back</button></div>`;
+  }
+  return '';
+}
+function renderStage(){
+  const s = st.stage, g = s === 'guide', panel = $('camPanel');
+  $('camGuide').hidden = !g; $('camForm').hidden = !g; $('camCtl').hidden = !g; $('reticle').hidden = !g;
+  panel.hidden = g;
+  if (!g) { $('camCard').hidden = true; panel.innerHTML = stageHTML(s); }
+  const rf = $('roomForm'); if (rf) rf.onsubmit = e => { e.preventDefault(); const l = readNums($('roomIn').value); if (!l.length) { setStatus('Enter a three-digit room number, like 206F.'); return; } startGuideTo(targetFromNum(l[0])); };
+  if (g) renderGuide();
+}
+function setStage(s){
+  st.stage = s; renderStage();
+  if (s === 'guide') { camScans = 0; camLast = ''; $('camCard').hidden = true; startLine(); }
+  else if (st.voice) { const say = {where:'Welcome. Which building are you at?', ask:'What would you like to do?', events:'Tap the event you want, and I’ll guide you.', room:'Which room?', plan:'Pick a day and what you’re into.'}[s]; if (say) speak(say); }
+}
+function renderGuide(){
+  const g = st.guide, m = g.move || 'unknown', t = st.target;
+  $('camGuide').innerHTML = `<div class="gicon">${ARROW[m]}</div><div class="gtext"><b>${esc(g.head || (t ? `Heading to ${t.name}` : 'Looking for signs'))}</b><span>${esc(g.text || 'Keep the camera on the door signs. I’ll tell you when to turn.')}</span></div>`;
+}
+function startLine(){
+  const t = st.target; if (!t) { renderGuide(); return; }
+  const tf = floorOf(t), parts = [];
+  if (t.b && st.here && st.here !== t.b) parts.push(`${t.name} is in ${BUILDINGS[t.b]}. The Newhouse buildings connect indoors.`);
+  else if (t.b) parts.push(`${t.name} is in ${BUILDINGS[t.b]}.`);
+  parts.push(`It’s on floor ${tf}.`, 'Keep the camera on the door signs and I’ll tell you when to turn.');
+  st.guide = {move:'unknown', head:`Heading to ${t.name}`, text:parts.join(' '), ts:Date.now(), sig:''};
+  renderGuide(); renderTarget();
+  if (st.voice) speak(`Heading to ${t.name}. ${parts.join(' ')}`);
+}
+function startGuideTo(t){
+  if (!t) return;
+  st.target = t; st.guide = {move:'unknown', head:'', text:'', ts:0, sig:''};
+  unlockAudio();
+  if ($('cam').hidden) openCam('guide'); else { renderTarget(); setStage('guide'); }
+}
+function startGuideSession(id){
+  const s = SESSIONS.find(x => x.id === id); if (!s) return;
+  const t = targetFromSession(s);
+  if (!t) { st.tab = 'ask'; render(); askAI(`Where is ${s.title}?`); return; }
+  startGuideTo(t);
+}
+function startEntrance(here){
+  st.target = null; st.here = here || null; unlockAudio();
+  openCam(here ? 'ask' : 'where');
+}
+async function openCam(stage){
+  st.stage = stage || 'where'; $('cam').hidden = false; document.body.style.overflow = 'hidden';
+  camAuto = true; camScans = 0; camLast = ''; camBusy = false; updateAutoBtn(); updateVoiceBtn();
+  $('camCard').hidden = true; $('camCard').innerHTML = '';
+  renderTarget(); renderStage();
+  if (st.stage === 'guide') startLine();
+  else if (st.voice) speak(st.stage === 'where' ? 'Welcome. Which building are you at?' : 'What would you like to do?');
   setStatus('Opening the camera…');
   try {
     camStream = await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'}}, audio:false});
     const v = $('camVid'); v.srcObject = camStream; await v.play();
-    setStatus('Point at a room number. I’ll read it automatically.');
-    camTimer = setInterval(() => { if (camAuto && !camBusy) scanOnce(true); }, 3500);
-  } catch (e) { setStatus('The camera isn’t available. Allow camera access, or type a room number below.'); }
+    setStatus('');
+    camTimer = setInterval(() => { if (st.stage === 'guide' && camAuto && !camBusy) scanOnce(true); }, 3500);
+  } catch (e) { setStatus('The camera isn’t available. You can still use the guide: allow camera access, or type room numbers.'); }
 }
 function closeCam(){
   if (camTimer) { clearInterval(camTimer); camTimer = null; }
   if (camStream) { camStream.getTracks().forEach(t => t.stop()); camStream = null; }
-  $('cam').hidden = true; document.body.style.overflow = ''; st.target = null;
+  stopSpeak(); $('cam').hidden = true; document.body.style.overflow = ''; st.target = null;
 }
 function grabFrame(){
   const v = $('camVid'); if (!v.videoWidth) return null;
@@ -642,73 +852,63 @@ function grabFrame(){
   const url = c.toDataURL('image/jpeg', 0.7); return {media_type:'image/jpeg', data:url.split(',')[1]};
 }
 function parseScan(t){
+  const out = {numbers:[], move:'unknown', why:''};
   try {
     const m = String(t).match(/\{[\s\S]*\}/), o = JSON.parse(m ? m[0] : t);
-    return [...new Set((Array.isArray(o.numbers) ? o.numbers : []).map(x => String(x).toUpperCase().replace(/[^0-9A-Z]/g, '')).filter(x => /^\d{3}[A-Z]{0,2}$/.test(x)))];
-  } catch (e) { return []; }
-}
-function spokenFor(n, es, hit){
-  if (!es.length) return `I read room ${n}. It isn't in our verified list yet.`;
-  const s = es.flatMap(x => x.sessions)[0];
-  return `${hit ? 'You found it. ' : ''}${es[0].name}. ${s ? `${s.title}, Day ${s.day}, ${s.time}.` : 'No summit sessions here.'}`;
+    out.numbers = [...new Set((Array.isArray(o.numbers) ? o.numbers : []).map(x => String(x).toUpperCase().replace(/[^0-9A-Z]/g, '')).filter(x => /^\d{3}[A-Z]{0,2}$/.test(x)))];
+    if (['here', 'ahead', 'left', 'right', 'back', 'up', 'down'].includes(o.move)) out.move = o.move;
+    out.why = String(o.why || '').slice(0, 120);
+  } catch (e) {}
+  return out;
 }
 function showFound(list){
   const key = list.join(','), n = list.find(x => INDEX[x]) || list[0], es = INDEX[n] || [], card = $('camCard');
   if (key !== camLast) {
     camLast = key; card.innerHTML = scanCard(list, st.target); card.hidden = false;
-    const isNew = es.length > 0 && !st.found.some(f => f.n === n);
-    if (isNew) st.found.push({n, name:es[0].name});
-    const hit = !!(st.target && st.target.nums.includes(n));
-    if (hit || isNew) burst(window.innerWidth / 2, window.innerHeight * 0.5);
-    if (st.speak) speak(spokenFor(n, es, hit));
+    if (es.length && !st.found.some(f => f.n === n)) st.found.push({n, name:es[0].name});
   }
-  setStatus(es.length ? `Found ${es[0].name}` : `I read ${n}`, false);
+  setStatus(es.length ? `Passing ${es[0].name}` : `I read ${n}`, false);
+}
+function applyMove(move, why){
+  const t = st.target; if (!t) return;
+  const tf = floorOf(t), g = st.guide;
+  if (move === 'unknown') { if (Date.now() - g.ts > 9000) { g.move = 'unknown'; g.head = 'Keep walking'; g.text = 'I’m watching the signs. Hold the camera steady.'; renderGuide(); } return; }
+  const head = move === 'here' ? `You’re here: ${t.name}` : move === 'up' ? `Go up to floor ${tf}` : move === 'down' ? `Go down to floor ${tf}` : MOVES[move];
+  const text = move === 'here' ? (t.title || '') : (why || '');
+  const sig = move + '|' + t.name, changed = g.sig !== sig;
+  g.move = move; g.head = head; g.text = text; g.ts = Date.now(); g.sig = sig;
+  renderGuide();
+  if (changed) {
+    if (move === 'here') burst(window.innerWidth / 2, window.innerHeight * 0.35);
+    if (st.voice) speak(move === 'here' ? `You’re here. ${t.name}. ${t.title || ''}` : `${head}. ${why || ''}`);
+  }
+}
+function handleScan(res, auto){
+  const list = res.numbers;
+  if (list.length) showFound(list);
+  const t = st.target;
+  if (t) {
+    const hit = list.some(n => t.nums.includes(n));
+    if (hit) applyMove('here', '');
+    else if (res.move !== 'unknown') applyMove(res.move, res.why);
+    else if (!list.length) setStatus(auto ? 'Looking for signs…' : 'I couldn’t read a sign. Move closer and hold steady.', false);
+    else applyMove('unknown', '');
+  } else if (!list.length) setStatus(auto ? 'Looking for signs…' : 'I couldn’t read a sign. Move closer and hold steady.', false);
 }
 async function scanOnce(auto){
   if (camBusy || !camStream) return;
   const img = grabFrame(); if (!img) { if (!auto) setStatus('Waiting for the camera…'); return; }
-  camBusy = true; camScans++; setStatus(auto ? 'Scanning…' : 'Reading the sign…', true);
-  let list = [];
+  camBusy = true; camScans++; setStatus(auto ? 'Looking…' : 'Reading the signs…', true);
+  const body = {mode:'scan', messages:[{role:'user', content:'Read the room numbers and signs.'}], image:img};
+  if (st.target) body.target = `${st.target.name} (floor ${floorOf(st.target)})`;
+  let res;
   try {
-    const r = await fetch('/api/ask', {method:'POST', headers:{'content-type':'application/json'}, body:JSON.stringify({mode:'scan', messages:[{role:'user', content:'Read the room numbers.'}], image:img})});
+    const r = await fetch('/api/ask', {method:'POST', headers:{'content-type':'application/json'}, body:JSON.stringify(body)});
     if (!r.ok) throw new Error('HTTP ' + r.status);
-    list = parseScan((await r.json()).text);
-  } catch (e) { setStatus('I can’t reach the AI right now. Type a room number below.'); camBusy = false; return; }
-  camBusy = false;
-  if (list.length) showFound(list); else setStatus(auto ? 'Looking for a room number…' : 'I couldn’t read a number. Move closer and hold steady.');
+    res = parseScan((await r.json()).text);
+  } catch (e) { setStatus('I can’t reach the AI right now. You can type a room number below.'); camBusy = false; return; }
+  camBusy = false; handleScan(res, auto);
   if (camScans >= MAX_SCANS && camAuto) { camAuto = false; updateAutoBtn(); setStatus('Paused to save data. Tap Scan now, or turn auto-scan back on.'); }
-}
-
-/* ===== voice ===== */
-let voicePlayer = null;
-const SILENT = 'data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQAAAAA=';
-function unlockAudio(){ try { if (!voicePlayer) voicePlayer = new Audio(); voicePlayer.src = SILENT; const p = voicePlayer.play(); if (p && p.catch) p.catch(() => {}); } catch (e) {} }
-function stopSpeak(){ try { if (voicePlayer) voicePlayer.pause(); if ('speechSynthesis' in window) window.speechSynthesis.cancel(); } catch (e) {} }
-async function speak(text){
-  if (!text) return; stopSpeak();
-  try {
-    const r = await fetch('/api/speak', {method:'POST', headers:{'content-type':'application/json'}, body:JSON.stringify({text:String(text).slice(0, 600)})});
-    if (!r.ok) throw new Error('HTTP ' + r.status);
-    const url = URL.createObjectURL(await r.blob());
-    if (!voicePlayer) voicePlayer = new Audio();
-    voicePlayer.src = url;
-    await new Promise((res, rej) => { voicePlayer.onended = res; voicePlayer.onerror = rej; const p = voicePlayer.play(); if (p && p.catch) p.catch(rej); });
-  } catch (e) {
-    if ('speechSynthesis' in window && window.SpeechSynthesisUtterance) {
-      await new Promise(res => { const u = new window.SpeechSynthesisUtterance(String(text)); u.onend = res; u.onerror = res; window.speechSynthesis.speak(u); });
-    }
-  }
-}
-const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-function updateMic(){ const m = $('micBtn'); if (m) { m.setAttribute('aria-pressed', String(st.listening)); m.textContent = st.listening ? 'Listening…' : 'Talk'; } }
-function listen(){
-  if (!SR || st.listening || st.busy) return;
-  const rec = new SR(); rec.lang = 'en-US'; rec.interimResults = false; rec.maxAlternatives = 1;
-  st.listening = true; updateMic();
-  rec.onresult = e => { const q = e.results[0][0].transcript; if (q) askAI(q); };
-  rec.onerror = () => { st.listening = false; updateMic(); };
-  rec.onend = () => { st.listening = false; updateMic(); };
-  try { rec.start(); } catch (e) { st.listening = false; updateMic(); }
 }
 
 /* ===== ask AI ===== */
@@ -734,7 +934,7 @@ function renderChat(){
   st.chat.forEach((m, idx) => {
     if (m.role === 'user') { h += `<div class="msg u">${esc(m.content)}</div>`; return; }
     const fresh = (m.add || []).filter(id => !st.plan.has(id));
-    h += `<div class="msg a">${esc(m.content)}${m.offline ? '<small>Offline mode: answered from the schedule without AI.</small>' : ''}` +
+    h += `<div class="msg a">${esc(m.content)}${m.offline ? '<small>Offline mode: answered without AI.</small>' : ''}` +
       (fresh.length ? `<button class="btn sm" data-addplan="${fresh.join(',')}" type="button">Add ${fresh.length} session${fresh.length > 1 ? 's' : ''} to my plan</button>` : (m.add && m.add.length ? '<small>Added to your plan.</small>' : '')) +
       `<button class="btn ghost sm" data-say="${idx}" type="button">Play voice</button></div>`;
   });
@@ -745,13 +945,13 @@ function renderChat(){
 function viewAsk(){
   const chips = ['Plan my Day 1 if I like image generation', 'What’s happening in Newhouse 2?', 'Where is lunch on Day 2?', 'Where can I eat near Newhouse?', 'Which bus goes to South Campus?', 'Give me 3 ideas for Campus, Upgraded'];
   return `<section class="askhead"><h2>Ask anything</h2><p>Type or talk. I answer from the verified summit info and say so when I don’t know. I can build your day, too. Please don’t type personal information.</p></section>
-  <div class="chips">${chips.map(c => `<button class="chip sticker" data-q="${esc(c)}" type="button">${esc(c)}</button>`).join('')}</div>
+  <div class="chips">${chips.map(c => `<button class="chip" data-q="${esc(c)}" type="button">${esc(c)}</button>`).join('')}</div>
   <div class="chat" id="chatLog" aria-live="polite"></div>
-  <div class="tools">${SR ? `<button class="btn ghost sm" id="micBtn" data-mic="1" aria-pressed="false" type="button">Talk</button>` : ''}<label class="ck2"><input type="checkbox" id="speakT"> Read answers aloud</label></div>
+  <div class="tools">${micBtn('Talk', 'data-mic="1"')}<label class="ck2"><input type="checkbox" id="speakT"> Read answers aloud</label></div>
   <form class="askrow" id="askForm" autocomplete="off"><input type="search" id="askIn" placeholder="Ask CuseCompass…" aria-label="Ask CuseCompass"><button class="btn" type="submit">Ask</button></form>`;
 }
 function wireAsk(){
-  renderChat(); updateMic();
+  renderChat(); updateMics();
   const sp = $('speakT');
   if (sp) { sp.checked = st.speak; sp.onchange = () => { st.speak = sp.checked; try { localStorage.setItem('cuse-speak', st.speak ? '1' : ''); } catch (e) {} if (st.speak) unlockAudio(); else stopSpeak(); }; }
   $('askForm').onsubmit = e => { e.preventDefault(); const i = $('askIn'), q = i.value.trim(); if (!q || st.busy) return; i.value = ''; askAI(q); };
@@ -766,7 +966,7 @@ function ticket(s){
   return `<li class="tix t-${s.track}"><div class="stub">${timeStub(s.time)}</div>
     <div class="tb"><div class="ttl">${esc(s.title)}</div>${s.who ? `<div class="who">${esc(s.who)}</div>` : ''}
       <div class="meta">${s.b ? `<span class="b">${BUILDINGS[s.b].replace('Newhouse ', 'NH')}</span>` : ''}${track ? `<span class="who">${track}</span>` : ''}</div>
-      <div class="meta">${loc}</div>${s.tip ? `<div class="tip">${esc(s.tip)}</div>` : ''}</div>
+      <div class="meta">${loc}${s.rooms.length ? `<button class="btn ghost sm" data-guide="${s.id}" type="button">Guide me</button>` : ''}</div>${s.tip ? `<div class="tip">${esc(s.tip)}</div>` : ''}</div>
     <button class="btn sm${st.pop === s.id ? ' pop' : ''}" data-save="${s.id}" aria-pressed="${saved}" type="button">${saved ? 'Saved' : 'Save'}</button></li>`;
 }
 function planHint(prev, s){
@@ -851,6 +1051,7 @@ function render(){
   $('view').innerHTML = views[st.tab]();
   if (st.tab === 'ask') wireAsk();
   if (st.tab === 'scan') wireScan();
+  if (st.tab === 'home') wireHome();
   const q = $('q');
   if (q) q.oninput = e => { st.q = e.target.value; const pos = e.target.selectionStart; render(); const n = $('q'); if (n) { n.focus(); try { n.setSelectionRange(pos, pos); } catch (err) {} } };
 }
@@ -864,6 +1065,22 @@ document.addEventListener('click', e => {
   const d = t.dataset;
   if (d.tab) go(d.tab);
   else if (d.go) go(d.go, d.sub);
+  else if (d.start) startEntrance(d.here && d.here !== 'none' ? d.here : null);
+  else if (d.here) { st.here = d.here === 'none' ? null : d.here; setStage('ask'); }
+  else if (d.stage) setStage(d.stage);
+  else if (d.evday) { st.evDay = +d.evday; renderStage(); }
+  else if (d.opday) { st.pday = +d.opday; st.planOut = []; renderStage(); }
+  else if (d.optrack) { st.ptrack = d.optrack; st.planOut = []; renderStage(); }
+  else if (d.opbuild) { st.planOut = planFor(st.pday, st.ptrack).map(s => s.id); renderStage(); if (st.voice) speak(`Here’s your Day ${st.pday}. Tap Guide me on any event.`); }
+  else if (d.opsave) { st.planOut.forEach(id => st.plan.add(id)); persist(); const r = t.getBoundingClientRect(); burst(r.left + r.width / 2, r.top + r.height / 2); t.textContent = 'Saved to My plan'; render(); }
+  else if (d.guide) startGuideSession(d.guide);
+  else if (d.guideroom) startGuideTo(targetFromNum(d.guideroom));
+  else if (d.routemic) listenOnce(routeUtterance);
+  else if (d.say2) routeUtterance(d.say2);
+  else if (d.camclose) closeCam();
+  else if (d.camread) { unlockAudio(); scanOnce(false); }
+  else if (d.camauto) { camAuto = !camAuto; if (camAuto) camScans = 0; updateAutoBtn(); }
+  else if (d.camvoice) { st.voice = !st.voice; if (st.voice) unlockAudio(); else stopSpeak(); updateVoiceBtn(); }
   else if (d.spin) spin();
   else if (d.flow) { st.flow = st.flow === d.flow ? null : d.flow; st.bld = null; st.hiRoom = null; render(); }
   else if (d.pday) { st.pday = +d.pday; render(); }
@@ -873,12 +1090,7 @@ document.addEventListener('click', e => {
     st.tab = 'ask'; render(); window.scrollTo(0, 0); askAI(`Plan my Day ${st.pday}. I like ${like}.`);
   }
   else if (d.bld) openBuilding(d.bld, d.room);
-  else if (d.bback) { st.bld = null; st.hiRoom = null; render(); window.scrollTo(0, 0); }
-  else if (d.find) findEvent(d.find);
-  else if (d.live) { st.target = null; openCam(); }
-  else if (d.camclose) closeCam();
-  else if (d.camread) scanOnce(false);
-  else if (d.camauto) { camAuto = !camAuto; if (camAuto) camScans = 0; updateAutoBtn(); }
+  else if (d.bback) { st.bld = null; st.hiRoom = null; st.flow = null; render(); window.scrollTo(0, 0); }
   else if (d.roll) roll();
   else if (d.save) {
     const was = st.plan.has(d.save); if (was) st.plan.delete(d.save); else st.plan.add(d.save); persist();
@@ -894,7 +1106,7 @@ document.addEventListener('click', e => {
   else if (d.track) { st.track = d.track; render(); }
   else if (d.around) { st.around = d.around; render(); }
   else if (d.q) { if (!st.busy) askAI(d.q); }
-  else if (d.mic) listen();
+  else if (d.mic) listenOnce(askAI);
   else if (d.say) { const m = st.chat[+d.say]; if (m) { unlockAudio(); speak(m.content); } }
   else if (d.near) locate('nearOut', 'bus+stop', 'bus stop near 215 University Pl Syracuse NY');
   else if (d.eat) locate('eatOut', 'restaurants', 'restaurants near 215 University Pl Syracuse NY');
@@ -905,6 +1117,7 @@ $('camForm').onsubmit = e => {
   const list = readNums($('camNum').value);
   if (!list.length) { setStatus('Enter a three-digit room number, like 206F.'); return; }
   camLast = ''; showFound(list);
+  if (st.target && list.some(n => st.target.nums.includes(n))) applyMove('here', '');
 };
 $('logo').onclick = () => go('home');
 render();

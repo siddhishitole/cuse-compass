@@ -23,22 +23,21 @@ Picture a first-time visitor walking into Newhouse for the summit. They know the
 
 ---
 
-## How it works: a short conversation
+## How it works: from the entrance to the right door
 
-CuseCompass opens by asking one question: **plan your day, or head somewhere?**
+1. **Stand at the entrance and open the camera.** CuseCompass asks which building you're in, then pops up what that building is used for (from SU's own descriptions).
+2. **It asks where you're headed:** plan your day, what's happening in this building, or a specific room. You can tap, type, or just say it. "Take me to the keynote" works.
+3. **Tap Guide me.** The camera stays open and a big arrow tells you what to do: keep going straight, turn left, turn right, turn around, or go up to your floor. It speaks every instruction out loud.
+4. **Every door you pass pops up** with its building, its floor, and what's happening inside, or what it's used for if there's no summit event.
+5. **When you reach the right door,** you get "You're here" and the event.
 
-**Take me somewhere**
-1. Pick a building: Newhouse 1, 2, or 3.
-2. See what's happening there, and tap the event you want.
-3. Your camera opens. Point it at a door number, and CuseCompass reads it live.
-4. A card pops up over the camera: the room, the building, the floor, and what's happening inside. If it isn't your room, it tells you which way to go ("your room is on floor 4, this is floor 2, go up 2 floors"). When you reach the right door, you get a "You found it."
-
-**Plan my day** (made for first-time visitors)
-1. Pick a day and what you're into: image, video, and audio; building and coding; or a bit of everything.
-2. The AI builds a day from the real schedule, with a one-tap button to save it.
-3. Your plan shows what the schedule won't tell you: the building for each stop, a heads-up when you have to **change buildings** with the minutes you have, and a warning when two sessions **overlap**.
+**Plan my day** (made for first-time visitors): pick a day and what you're into, and the day is built from the real schedule. Your plan shows the building for each stop, a heads-up when you have to **change buildings** with the minutes you have, and a warning when two sessions **overlap**.
 
 It never makes up a room. If the answer isn't in our verified data, it says "I don't know."
+
+### How the directions work, honestly
+
+No public indoor map of Newhouse's hallways exists, and SU's floor plans don't draw every floor (the ground floor and the 4th floor are missing). So we don't pretend to have a pre-drawn route. Instead, the camera reads the building's own door numbers and directional signs, the way a person would, and the AI only points you when a sign or the order of door numbers actually shows the way. When it can't tell, it says "keep walking" rather than guess. Everything it says about rooms comes from our verified data. Always confirm with your own eyes.
 
 ---
 
@@ -67,9 +66,10 @@ It's also where teams are supposed to be formed for the Gen Jam, so the app show
 
 | What you do | Model |
 |---|---|
-| Ask anything, plan a day, brainstorm Gen Jam ideas | Claude (text) |
-| Point the live camera at a door number | Claude (vision) reads the number. The popup content comes from our verified data, not from the AI's imagination. |
-| Talk and hear answers | Your phone's speech input and voice, with an optional ElevenLabs voice |
+| Point the camera at doors and signs | Claude (vision) reads door numbers and directional signs. The room popups come from our verified data, not from the AI's imagination. |
+| Say where you want to go | Your phone's speech input, then smart matching to sessions, rooms, and buildings |
+| Hear the directions | Your phone's voice, with an optional ElevenLabs voice |
+| Ask anything, build a day, brainstorm Gen Jam ideas | Claude (text) |
 
 The camera scans automatically every few seconds, and you can tap **Scan now** any time. No camera, or the AI is down? Type a room number and get the same popup.
 
@@ -77,11 +77,10 @@ The camera scans automatically every few seconds, and you can tap **Scan now** a
 
 ## Also in the app
 
-- **Scan:** the camera, plus a room lookup and the rooms you've found
-- **Schedule:** both days, filter by track, save talks to **My plan**
+- **Home:** an illustrated entry point, a voice or text box ("Take me to Room 206F"), the three buildings, and a compass that spins up something real to do
+- **Schedule:** both days, filter by track, save talks to **My plan**, and a **Guide me** button on every talk
 - **Ask AI:** chat and voice
 - **Around:** a dice roll for lunch, nearby restaurants, and bus stops with SU's trolley loops and Centro routes
-- **Surprise me:** spin the compass for something real to do
 
 ---
 
@@ -100,12 +99,14 @@ What we don't have: a verified location for the Welcome session, the two 3:45 PM
 
 ## Try it in 60 seconds
 
-1. Home: tap **Take me somewhere**, then **Newhouse 2**, then **Find it** next to an event.
-2. Allow the camera. Write "Room 469" on a piece of paper and point the camera at it. A card pops up with the building, the floor, and the event.
-3. Try "Room 206F" or "Room 305" too. Each pops up something different.
-4. Home: tap **Plan my day**, pick Day 1, and tap **Build my day**. Tap **Add to my plan**.
-5. Schedule, My plan: see the building-change heads-up.
+1. Home: tap **Start at the entrance** and allow the camera.
+2. Tap **Newhouse 2**. A card says what the building is for. Tap **What's happening here**, then **Guide me** on an event.
+3. Aim the camera at a door number. You'll get a popup for each room you pass, plus an arrow and a spoken direction when a sign shows the way.
+4. Home: type "Take me to the keynote" or tap the mic and say it.
+5. Home: tap **Plan my day**, pick Day 1, and build it. Tap **Add to my plan**.
 6. Around: roll the dice for lunch.
+
+**Judges, you don't need to be in Newhouse:** write "Room 469" on paper and point the camera at it. Or hold up two sheets, "Room 205 ←" and "Room 207 →", and set the target to Room 206F.
 
 ---
 

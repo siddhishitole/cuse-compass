@@ -48,13 +48,19 @@ GEN JAM RULES:
 ${clip(ctx.rules, 2500)}`;
 }
 
-function scanPrompt() {
-  return `You read room numbers from camera frames inside a university building.
-
+function scanPrompt(target) {
+  return `You help a first-time visitor find a room inside a university building, using only what one camera frame shows.
+${target ? `\nTARGET ROOM: ${target}\n` : ''}
 RULES
-- Find room numbers on door signs, placards, or plaques in the image. A room number is three digits with an optional letter, like 206F, 101, or 305. If a sign shows two numbers, like 432/434, return both.
-- Respond ONLY with JSON, no markdown: {"numbers": ["206F"]}
-- If you cannot clearly read a room number, respond {"numbers": []}. Never guess. Ignore people. Do not describe the scene.`;
+- "numbers": every room number you can read on door signs, plaques, or directional signs. A room number is three digits with an optional letter, like 206F, 101, or 305. If a sign shows a range like 201-212, return both ends. If it shows 432/434, return both.
+- "move": where the visitor should go next to reach the target.
+  - "here" only if the target number is clearly on a door sign in view.
+  - "ahead", "left", "right", or "back" only when a visible directional sign (an arrow with a room range or name) or the order of door numbers clearly shows the way to the target.
+  - "up" or "down" only when a floor sign or stairwell sign clearly shows the target is on another floor.
+  - Otherwise "unknown". Never guess.${target ? '' : ' With no target, always use "unknown".'}
+- "why": at most 14 words naming what in the image tells you, or an empty string.
+- Ignore people. Do not describe the scene.
+- Respond ONLY with JSON, no markdown: {"numbers": ["206F"], "move": "unknown", "why": ""}`;
 }
 
 function cleanMessages(list) {
@@ -143,8 +149,9 @@ module.exports = async function handler(req, res) {
   if (mode === 'scan' && !image) return res.status(400).json({ error: 'Send an image to scan.' });
 
   try {
-    const system = mode === 'scan' ? scanPrompt() : chatPrompt(body.context || {}, !!image);
-    const maxTokens = mode === 'scan' ? 120 : 600;
+    const target = clip(String(body.target || '').replace(/[^\w\s/.,'’()-]/g, ''), 80).trim();
+    const system = mode === 'scan' ? scanPrompt(target) : chatPrompt(body.context || {}, !!image);
+    const maxTokens = mode === 'scan' ? 200 : 600;
     const provider = (process.env.AI_PROVIDER || 'anthropic').toLowerCase();
     const text = provider === 'anthropic'
       ? await callAnthropic(system, messages, image, maxTokens)
